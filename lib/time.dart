@@ -1,15 +1,15 @@
 class Time {
   final List data;
-  final int day;
-  final String dhuhr;
+  final String fajr;
   final String sunrise;
+  final String dhuhr;
   final String asr;
   final String maghrib;
   final String isha;
 
   Time({
     required this.data,
-    required this.day,
+    required this.fajr,
     required this.dhuhr,
     required this.sunrise,
     required this.asr,
@@ -17,14 +17,14 @@ class Time {
     required this.isha
   });
 
-  factory Time.fromJson(Map<String, dynamic> json) => Time(
+  factory Time.fromJson(Map<String, dynamic> json, int day) => Time(
     data: json['data'],
-    day: DateTime.now().day,
-    dhuhr: json['data']["day"]["Dhuhr"],
-    sunrise: json['data']["day"]["Sunrise"],
-    asr: json['data']["day"]["Asr"],
-    maghrib: json['data']["day"]["Maghrib"],
-    isha: json['data']["day"]["Isha"],
+    fajr: json['data'][day]['timings']['Fajr'],
+    dhuhr: json['data'][day]['timings']["Dhuhr"],
+    sunrise: json['data'][day]['timings']["Sunrise"],
+    asr: json['data'][day]['timings']["Asr"],
+    maghrib: json['data'][day]['timings']["Maghrib"],
+    isha: json['data'][day]['timings']["Isha"],
   );
 
 }

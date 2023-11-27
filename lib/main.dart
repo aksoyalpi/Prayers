@@ -4,84 +4,43 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import "package:location/location.dart";
+import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/time.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
-final prayerTimeZones = ["Fajr", "Sunrise", "Dhuhr", "Asr", "Maghrib", "Isha"];
-
-int day = DateTime.now().day;
-double? latitude;
-double? longitude;
-String city = "";
+PrayerTimes pt = PrayerTimes();
 
 void main() {
+  // declaring Notification
+  AwesomeNotifications().initialize(
+    // set the icon to null if you want to use the default app icon
+      null,
+      [
+        NotificationChannel(
+            channelGroupKey: 'basic_channel_group',
+            channelKey: 'basic_channel',
+            channelName: 'Basic notifications',
+            channelDescription: 'Notification channel for basic tests',
+            defaultColor: const Color(0xFF9D50DD),
+            ledColor: Colors.white)
+      ],
+      // Channel groups are only visual and are not required
+      channelGroups: [
+        NotificationChannelGroup(
+            channelGroupKey: 'basic_channel_group',
+            channelGroupName: 'Basic group')
+      ],
+      debug: true
+  );
+
+  // NotificationCalendar n = new NotificationCalendar();
+
+  //AwesomeNotifications().requestPermissionToSendNotifications(channelKey: null, permissions: )
+  // requestPermissionToSendNotifications
+
   runApp(const MyApp());
 }
 
-Future<double> setLocation() async {
-  var location = Location();
-
-  var serviceEnabled = await location.serviceEnabled();
-  if (!serviceEnabled) {
-    serviceEnabled = await location.requestService();
-    if (!serviceEnabled) return -1;
-  }
-
-  var permissionGranted = await location.hasPermission();
-  if (permissionGranted == PermissionStatus.denied) {
-    permissionGranted = await location.requestPermission();
-    if (permissionGranted != PermissionStatus.granted) {
-      return -1;
-    }
-  }
-
-  var currentLocation = await location.getLocation();
-  longitude = currentLocation.longitude;
-  latitude = currentLocation.latitude;
-  return 0;
-}
-
-
-/// Get Prayer times by location
-Future<Time> fetchPostByLocation() async {
-  day = DateTime.now().day;
-  final year = DateTime.now().year;
-  final month = DateTime.now().month;
-
-  await setLocation();
-  var uri = Uri.parse(
-      "http://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=13");
-
-  final response = await http.get(uri);
-
-  if (response.statusCode == 200) {
-    return Time.fromJson(json.decode(response.body));
-  } else {
-    throw Exception("Failed to load Times");
-  }
-}
-
-
-/// get prayertimes by city
-Future<Time> fetchPostByCity() async {
-  day = DateTime.now().day;
-  final year = DateTime.now().year;
-  final month = DateTime.now().month;
-
-  Uri uri;
-
-  if(city == "") city = "Hückelhoven";
-
-  uri = Uri.parse(
-      "http://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=Germany&method=13");
-
-  final response = await http.get(uri);
-
-  if (response.statusCode == 200) {
-    return Time.fromJson(json.decode(response.body));
-  } else {
-    throw Exception("Failed to load Times");
-  }
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -114,13 +73,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void getTimeByLocation() {
     setState(() {
-      time = fetchPostByLocation();
+      time = pt.fetchPostByLocation();
     });
   }
 
   void getTimesByCity() {
     setState(() {
-      time = fetchPostByCity();
+      time = pt.fetchPostByCity();
+      // TODO: look at this
+      //time = pt.fetchPostByCity();
     });
   }
 
@@ -171,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       labelText: "City",
                     ),
                     onChanged: (String value) {
-                      city = cityController.text;
+                      pt.city = cityController.text;
                     },
                   ),
                 ),
@@ -197,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          for (var time in prayerTimeZones) prayerTimeWidget(time, snapshot)
+          for (var time in PrayerTimes.prayerTimeZones) prayerTimeWidget(time, snapshot)
         ],
       );
 
@@ -206,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// time - Prayer time as text (Fajr, Dhuhr, ...);
   /// snapshot - whole data
   String getPrayerTime(snapshot, time) {
-    return snapshot.data.data[day - 1]["timings"]["$time"]
+    return snapshot.data.data[pt.day - 1]["timings"]["$time"]
         .toString()
         .split(" (")[0];
   }
@@ -216,17 +177,17 @@ class _MyHomePageState extends State<MyHomePage> {
   /// eg. if time is Dhuhr and the clock is between dhuhr and asr it should return
   /// true else false
   bool onTime(time, snapshot) {
-    if (time == prayerTimeZones[1]) return false;
+    if (time == PrayerTimes.prayerTimeZones[1]) return false;
 
     int hour = DateTime.now().hour;
     int min = DateTime.now().minute;
-    int prayerHour = int.parse(getPrayerTime(snapshot, time).split(":")[0]);
+    int prayerHour = int.parse(pt.getPrayerTime(time)!.split(":")[0]);//int.parse(getPrayerTime(snapshot, time).split(":")[0]);
     int prayerMin = int.parse(getPrayerTime(snapshot, time).split(":")[1]);
 
-    String nextTime = prayerTimeZones[0];
-    for (int i = 0; i < prayerTimeZones.length - 1; i++) {
-      if (time == prayerTimeZones[i]) {
-        nextTime = prayerTimeZones[i + 1];
+    String nextTime = PrayerTimes.prayerTimeZones[0];
+    for (int i = 0; i < PrayerTimes.prayerTimeZones.length - 1; i++) {
+      if (time == PrayerTimes.prayerTimeZones[i]) {
+        nextTime = PrayerTimes.prayerTimeZones[i + 1];
       }
     }
 
@@ -235,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
     int nextPrayerMin =
         int.parse(getPrayerTime(snapshot, nextTime).split(":")[1]);
 
-    if (time == prayerTimeZones[5]) {
+    if (time == PrayerTimes.prayerTimeZones[5]) {
       nextPrayerMin = 59;
       nextPrayerHour = 23;
     }
