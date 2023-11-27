@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:prayer_times/main.dart';
+import 'package:prayer_times/prayer_times.dart';
 
 class Notify {
-  static Future<bool> prayerTimesNotify(String prayer, int hour, int min) async {
+  static Future<bool> prayerTimesNotify(
+      String prayer, int hour, int min) async {
     final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
     return awesomeNotifications.createNotification(
         schedule: NotificationCalendar(
@@ -12,15 +14,20 @@ class Notify {
           minute: min,
         ),
         content: NotificationContent(
-            id: Random().nextInt(100),
+            id: 67,
             channelKey: 'prayer_notification',
             title: "$prayer: $hour:$min",
-            body: "It is time for $prayer"));
+            body: "It is time for $prayer",
+            wakeUpScreen: true,
+            category: NotificationCategory.Message));
   }
 
   static Future<bool> prayerTimesNotifiyAll() async {
-    for(final time in prayerTimeZones) {
-      // return prayerTimesNotify(time, hour, min)
+    PrayerTimes pt = PrayerTimes();
+    for (final time in PrayerTimes.prayerTimeZones) {
+      return prayerTimesNotify(
+          time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
     }
+    return true;
   }
 }

@@ -8,6 +8,8 @@ import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/time.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
+import 'Notify.dart';
+
 PrayerTimes pt = PrayerTimes();
 
 void main() {
@@ -17,10 +19,10 @@ void main() {
       null,
       [
         NotificationChannel(
-            channelGroupKey: 'basic_channel_group',
-            channelKey: 'basic_channel',
-            channelName: 'Basic notifications',
-            channelDescription: 'Notification channel for basic tests',
+            channelGroupKey: 'prayer_channel_group',
+            channelKey: 'prayer_notification',
+            channelName: 'Prayer notifications',
+            channelDescription: 'Notification channel for prayer times',
             defaultColor: const Color(0xFF9D50DD),
             ledColor: Colors.white)
       ],
@@ -31,8 +33,8 @@ void main() {
             channelGroupName: 'Basic group')
       ],
       debug: true
-  );
 
+  );
   // NotificationCalendar n = new NotificationCalendar();
 
   //AwesomeNotifications().requestPermissionToSendNotifications(channelKey: null, permissions: )
@@ -181,8 +183,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     int hour = DateTime.now().hour;
     int min = DateTime.now().minute;
-    int prayerHour = int.parse(pt.getPrayerTime(time)!.split(":")[0]);//int.parse(getPrayerTime(snapshot, time).split(":")[0]);
-    int prayerMin = int.parse(getPrayerTime(snapshot, time).split(":")[1]);
+    int prayerHour = pt.getPrayerTimeHour(time);//int.parse(getPrayerTime(snapshot, time).split(":")[0]);
+    int prayerMin = pt.getPrayerTimeMin(time);
 
     String nextTime = PrayerTimes.prayerTimeZones[0];
     for (int i = 0; i < PrayerTimes.prayerTimeZones.length - 1; i++) {
@@ -191,10 +193,8 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     }
 
-    int nextPrayerHour =
-        int.parse(getPrayerTime(snapshot, nextTime).split(":")[0]);
-    int nextPrayerMin =
-        int.parse(getPrayerTime(snapshot, nextTime).split(":")[1]);
+    int nextPrayerHour = pt.getPrayerTimeHour(nextTime);
+    int nextPrayerMin = pt.getPrayerTimeMin(nextTime);
 
     if (time == PrayerTimes.prayerTimeZones[5]) {
       nextPrayerMin = 59;
@@ -217,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// snapshot - data
   Widget prayerTimeWidget(time, snapshot) => Padding(
       padding: const EdgeInsets.all(10),
-      child: Text("$time: ${getPrayerTime(snapshot, time)}",
+      child: Text("$time: ${pt.getPrayerTime(time)!.split(" ")[0]}",
           style: TextStyle(
               fontSize: 20,
               color: onTime(time, snapshot) ? Colors.green : Colors.white70)));

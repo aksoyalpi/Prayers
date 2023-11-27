@@ -4,6 +4,8 @@ import 'package:location/location.dart';
 import 'package:prayer_times/time.dart';
 import 'package:http/http.dart' as http;
 
+import 'Notify.dart';
+
 class PrayerTimes {
   static final prayerTimeZones = [
     "Fajr",
@@ -61,6 +63,7 @@ class PrayerTimes {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
+      Notify.prayerTimesNotifiyAll();
       times = Time.fromJson(json.decode(response.body), day);
       return Time.fromJson(json.decode(response.body), day);
     } else {
@@ -85,6 +88,7 @@ class PrayerTimes {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
+      Notify.prayerTimesNotifiyAll();
       times = Time.fromJson(json.decode(response.body), day);
       return Time.fromJson(json.decode(response.body), day);
     } else {
@@ -92,6 +96,8 @@ class PrayerTimes {
     }
   }
 
+
+  /// Method to get the prayertime for given param time
   String? getPrayerTime(String time){
     switch(time){
       case "Fajr":
@@ -114,5 +120,16 @@ class PrayerTimes {
         break;
     }
     return "";
+  }
+
+  /// Method to just get the hour of the given prayertime as int
+  int getPrayerTimeHour(String time){
+    return int.parse(getPrayerTime(time)!.substring(0, 2));
+  }
+
+
+  /// Method to just get the minutes of the given prayertime as int
+  int getPrayerTimeMin(String time){
+    return int.parse(getPrayerTime(time)!.substring(3, 5));
   }
 }
