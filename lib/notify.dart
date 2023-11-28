@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:prayer_times/main.dart';
 import 'package:prayer_times/prayer_times.dart';
 
 class Notify {
@@ -17,17 +14,41 @@ class Notify {
             id: 67,
             channelKey: 'prayer_notification',
             title: "$prayer: $hour:$min",
-            body: "It is time for $prayer",
+            body: "It's time for $prayer",
             wakeUpScreen: true,
-            category: NotificationCategory.Message));
+            category: NotificationCategory.Reminder));
+  }
+
+  static Future<bool> instantNotification() async {
+    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    if (!isAllowed) isAllowed = await AwesomeNotifications().requestPermissionToSendNotifications();
+    if (!isAllowed) return false;
+    final AwesomeNotifications awesomeNotifications = AwesomeNotifications();
+    return awesomeNotifications.createNotification(
+        content: NotificationContent(
+            id: 74,
+            channelKey: 'prayer_notification',
+            title: "Prayer",
+            body: "It's time to pray",
+            category: NotificationCategory.Reminder));
   }
 
   static Future<bool> prayerTimesNotifiyAll() async {
+    bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+    if (!isAllowed) isAllowed = await AwesomeNotifications().requestPermissionToSendNotifications();
+    if (!isAllowed) return false;
     PrayerTimes pt = PrayerTimes();
     for (final time in PrayerTimes.prayerTimeZones) {
       return prayerTimesNotify(
           time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
     }
     return true;
+  }
+
+  /// Function to get all scheduled Notifications
+  static Future<void> retrieveScheduledNotifications() async {
+    final AwesomeNotifications an = AwesomeNotifications();
+    List<NotificationModel> notifications =
+        await an.listScheduledNotifications();
   }
 }

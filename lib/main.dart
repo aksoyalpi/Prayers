@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import "package:location/location.dart";
@@ -8,39 +9,32 @@ import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/time.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 
-import 'Notify.dart';
+import 'notify.dart';
 
 PrayerTimes pt = PrayerTimes();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await AwesomeNotifications().requestPermissionToSendNotifications();
+  // requestPermissionToSendNotifications
+  runApp(const MyApp());
   // declaring Notification
   AwesomeNotifications().initialize(
     // set the icon to null if you want to use the default app icon
       null,
       [
         NotificationChannel(
-            channelGroupKey: 'prayer_channel_group',
+            channelGroupKey: 'reminders',
             channelKey: 'prayer_notification',
             channelName: 'Prayer notifications',
             channelDescription: 'Notification channel for prayer times',
             defaultColor: const Color(0xFF9D50DD),
             ledColor: Colors.white)
       ],
-      // Channel groups are only visual and are not required
-      channelGroups: [
-        NotificationChannelGroup(
-            channelGroupKey: 'basic_channel_group',
-            channelGroupName: 'Basic group')
-      ],
       debug: true
 
   );
-  // NotificationCalendar n = new NotificationCalendar();
-
-  //AwesomeNotifications().requestPermissionToSendNotifications(channelKey: null, permissions: )
-  // requestPermissionToSendNotifications
-
-  runApp(const MyApp());
 }
 
 
@@ -73,10 +67,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Future<Time?>? time;
 
-  void getTimeByLocation() {
+  Future<void> getTimeByLocation() async {
     setState(() {
       time = pt.fetchPostByLocation();
     });
+    await Notify.prayerTimesNotifiyAll();
   }
 
   void getTimesByCity() {
@@ -147,7 +142,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         getTimesButton("Get by city", true),
                         getTimesButton("Get by location", false)
                       ],
-                    ))
+                    )),
+                TextButton(
+                    onPressed: () async {
+                      await Notify.instantNotification();
+                    },
+                    child: const Text("Test"))
               ],
             )
           ],
@@ -241,6 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
           } else {
             getTimeByLocation()
           }
+
         },
         child: Text(text),
       );

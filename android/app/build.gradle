@@ -29,12 +29,6 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-buildscript {
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
-    }
-}
-
 android {
     namespace "com.example.prayer_times"
     compileSdkVersion 34

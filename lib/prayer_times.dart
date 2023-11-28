@@ -63,7 +63,6 @@ class PrayerTimes {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      Notify.prayerTimesNotifiyAll();
       times = Time.fromJson(json.decode(response.body), day);
       return Time.fromJson(json.decode(response.body), day);
     } else {
@@ -88,7 +87,6 @@ class PrayerTimes {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      Notify.prayerTimesNotifiyAll();
       times = Time.fromJson(json.decode(response.body), day);
       return Time.fromJson(json.decode(response.body), day);
     } else {
