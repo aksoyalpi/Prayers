@@ -65,18 +65,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<Time?>? time;
+  Future<Time?>? times;
 
   Future<void> getTimeByLocation() async {
     setState(() {
-      time = pt.fetchPostByLocation();
+      times = pt.fetchPostByLocation();
     });
-    await Notify.prayerTimesNotifiyAll();
+    times?.then((value) async => await Notify.prayerTimesNotifiyAll(pt));
+    // times?.whenComplete(() async => await Notify.prayerTimesNotifiyAll());
+    //print(Notify.retrieveScheduledNotifications());
   }
 
   void getTimesByCity() {
-    setState(() {
-      time = pt.fetchPostByCity();
+    setState((){
+      times = pt.fetchPostByCity();
       // TODO: look at this
       //time = pt.fetchPostByCity();
     });
@@ -97,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
             ),
             FutureBuilder(
-                future: time,
+                future: times,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();

@@ -18,7 +18,7 @@ class PrayerTimes {
 
   int day = 0;
   Future<Time?>? time;
-  Time? times;
+  late Time times;
   double? latitude;
   double? longitude;
   String city = "";
@@ -63,7 +63,10 @@ class PrayerTimes {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
+      print("test");
       times = Time.fromJson(json.decode(response.body), day);
+
+      // TODO: why is times null ?
       return Time.fromJson(json.decode(response.body), day);
     } else {
       throw Exception("Failed to load Times");
@@ -88,6 +91,7 @@ class PrayerTimes {
 
     if (response.statusCode == 200) {
       times = Time.fromJson(json.decode(response.body), day);
+      //await Notify.prayerTimesNotifiyAll(pt);
       return Time.fromJson(json.decode(response.body), day);
     } else {
       throw Exception("Failed to load Times");
@@ -95,28 +99,22 @@ class PrayerTimes {
   }
 
 
-  /// Method to get the prayertime for given param time
+  /// Method to get the prayertimes for given param time
   String? getPrayerTime(String time){
-    switch(time){
-      case "Fajr":
-        return times?.fajr;
-        break;
-      case "Sunrise":
-        return times?.sunrise;
-        break;
-      case "Dhuhr":
-        return times?.dhuhr;
-        break;
-      case "Asr":
-        return times?.asr;
-        break;
-      case "Maghrib":
-        return times?.maghrib;
-        break;
-      case "Isha":
-        return times?.isha;
-        break;
-    }
+      switch(time){
+        case "Fajr":
+          return times?.fajr;
+        case "Sunrise":
+          return times?.sunrise;
+        case "Dhuhr":
+          return times?.dhuhr;
+        case "Asr":
+          return times?.asr;
+        case "Maghrib":
+          return times?.maghrib;
+        case "Isha":
+          return times?.isha;
+      }
     return "";
   }
 

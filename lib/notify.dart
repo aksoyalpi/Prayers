@@ -33,15 +33,16 @@ class Notify {
             category: NotificationCategory.Reminder));
   }
 
-  static Future<bool> prayerTimesNotifiyAll() async {
+  /// sends notification for all prayer times
+  static Future<bool> prayerTimesNotifiyAll(PrayerTimes pt) async {
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) isAllowed = await AwesomeNotifications().requestPermissionToSendNotifications();
     if (!isAllowed) return false;
-    PrayerTimes pt = PrayerTimes();
-    for (final time in PrayerTimes.prayerTimeZones) {
-      return prayerTimesNotify(
-          time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
+    //PrayerTimes pt = PrayerTimes();
+    for (var time in PrayerTimes.prayerTimeZones) {
+      await prayerTimesNotify(time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
     }
+    print("Notifications ${Notify.retrieveScheduledNotifications()}");
     return true;
   }
 
