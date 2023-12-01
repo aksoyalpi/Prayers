@@ -11,6 +11,9 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 
 import 'notify.dart';
 
+// TODO: check out of bounds
+// TODO: 30 (day) is out of bounds better: day-1
+
 PrayerTimes pt = PrayerTimes();
 
 void main() async {
@@ -72,16 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
       times = pt.fetchPostByLocation();
     });
     times?.then((value) async => await Notify.prayerTimesNotifiyAll(pt));
-    // times?.whenComplete(() async => await Notify.prayerTimesNotifiyAll());
-    //print(Notify.retrieveScheduledNotifications());
   }
 
   void getTimesByCity() {
     setState((){
       times = pt.fetchPostByCity();
-      // TODO: look at this
-      //time = pt.fetchPostByCity();
     });
+    times?.then((value) async => await Notify.prayerTimesNotifiyAll(pt));
   }
 
   TextEditingController cityController = TextEditingController();
@@ -144,12 +144,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         getTimesButton("Get by city", true),
                         getTimesButton("Get by location", false)
                       ],
-                    )),
-                TextButton(
-                    onPressed: () async {
-                      await Notify.instantNotification();
-                    },
-                    child: const Text("Test"))
+                    )
+                ),
               ],
             )
           ],
