@@ -1,10 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import "package:location/location.dart";
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/time.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';

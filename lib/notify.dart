@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:prayer_times/prayer_times.dart';
 

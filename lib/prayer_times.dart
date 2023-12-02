@@ -63,7 +63,6 @@ class PrayerTimes {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      print("test");
       times = Time.fromJson(json.decode(response.body), day);
 
       // TODO: why is times null ?
