@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_times/prayer_times.dart';
+import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/time.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'notify.dart';
 
@@ -11,16 +14,20 @@ import 'notify.dart';
 // TODO: 30 (day) is out of bounds better: day-1
 
 PrayerTimes pt = PrayerTimes();
+late SharedPreferences prefs;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await AwesomeNotifications().requestPermissionToSendNotifications();
+
+  prefs = await SharedPreferences.getInstance();
+  if(!prefs.containsKey("notification")) prefs.setBool("notifications", true);
   // requestPermissionToSendNotifications
   runApp(const MyApp());
   // declaring Notification
   AwesomeNotifications().initialize(
-    // set the icon to null if you want to use the default app icon
+      // set the icon to null if you want to use the default app icon
       null,
       [
         NotificationChannel(
@@ -31,11 +38,8 @@ void main() async {
             defaultColor: const Color(0xFF9D50DD),
             ledColor: Colors.white)
       ],
-      debug: true
-
-  );
+      debug: true);
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -65,6 +69,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Future<Time?>? times;
+  bool notificationsOn = true;
 
   Future<void> getTimeByLocation() async {
     setState(() {
@@ -74,10 +79,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getTimesByCity() {
-    setState((){
+    setState(() {
       times = pt.fetchPostByCity();
     });
     times?.then((value) async => await Notify.prayerTimesNotifiyAll(pt));
+  }
+
+  void showSetting() {
+    showCupertinoDialog(
+        // TODO: setting dialog
+        context: context,
+        builder: (context) => const Settings(),
+        barrierDismissible: true);
   }
 
   TextEditingController cityController = TextEditingController();
@@ -85,67 +98,80 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              DateFormat.yMMMd('en_US').format(DateTime.now()),
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            FutureBuilder(
-                future: times,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.connectionState == ConnectionState.none) {
-                    return Container();
-                  } else {
-                    if (snapshot.hasData) {
-                      return buildDataWidget(context, snapshot);
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    } else {
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+                padding: const EdgeInsets.all(30),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () => showSetting(),
+                icon: const Icon(Icons.notifications)),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                DateFormat.yMMMd('en_US').format(DateTime.now()),
+                style:
+                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+              FutureBuilder(
+                  future: times,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.none) {
                       return Container();
+                    } else {
+                      if (snapshot.hasData) {
+                        return buildDataWidget(context, snapshot);
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      } else {
+                        return Container();
+                      }
                     }
-                  }
-                }),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  width: 250,
-                  height: 50,
-                  child: TextField(
-                    controller: cityController,
-                    style: const TextStyle(color: Colors.white70),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(10.0))),
-                      labelText: "City",
+                  }),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 250,
+                    height: 50,
+                    child: TextField(
+                      controller: cityController,
+                      style: const TextStyle(color: Colors.white70),
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10.0))),
+                        labelText: "City",
+                      ),
+                      onChanged: (String value) {
+                        pt.city = cityController.text;
+                      },
                     ),
-                    onChanged: (String value) {
-                      pt.city = cityController.text;
-                    },
                   ),
-                ),
-                SizedBox(
-                    height: 100,
-                    width: 300,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        getTimesButton("Get by city", true),
-                        getTimesButton("Get by location", false)
-                      ],
-                    )
-                ),
-              ],
-            )
-          ],
-        ),
+                  SizedBox(
+                      height: 100,
+                      width: 300,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          getTimesButton("Get by city", true),
+                          getTimesButton("Get by location", false)
+                        ],
+                      )),
+                ],
+              )
+            ],
+          )
+        ],
       ),
     );
   }
@@ -154,7 +180,8 @@ class _MyHomePageState extends State<MyHomePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          for (var time in PrayerTimes.prayerTimeZones) prayerTimeWidget(time, snapshot)
+          for (var time in PrayerTimes.prayerTimeZones)
+            prayerTimeWidget(time, snapshot)
         ],
       );
 
@@ -177,7 +204,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     int hour = DateTime.now().hour;
     int min = DateTime.now().minute;
-    int prayerHour = pt.getPrayerTimeHour(time);//int.parse(getPrayerTime(snapshot, time).split(":")[0]);
+    int prayerHour = pt.getPrayerTimeHour(
+        time); //int.parse(getPrayerTime(snapshot, time).split(":")[0]);
     int prayerMin = pt.getPrayerTimeMin(time);
 
     String nextTime = PrayerTimes.prayerTimeZones[0];
@@ -229,13 +257,8 @@ class _MyHomePageState extends State<MyHomePage> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           foregroundColor: Colors.white70,
         ),
-        onPressed:() => {
-          if(city){
-            getTimesByCity()
-          } else {
-            getTimeByLocation()
-          }
-
+        onPressed: () => {
+          if (city) {getTimesByCity()} else {getTimeByLocation()}
         },
         child: Text(text),
       );
