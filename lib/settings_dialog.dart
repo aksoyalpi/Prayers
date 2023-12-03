@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:prayer_times/prayer_times.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Notify.dart';
 import 'main.dart';
+import 'notify.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -48,7 +46,11 @@ class _SettingsState extends State<Settings> {
             child: const Text("save"),
             onPressed: (){
               prefs.setBool("notifications", notifications);
-              Notify.prayerTimesNotifiyAll(pt);
+              if(notifications) {
+                Notify.prayerTimesNotifiyAll(pt);
+              } else {
+                Notify.cancelNotifications();
+              }
               Navigator.of(context, rootNavigator: true).pop();
             }
         ),

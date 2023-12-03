@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Prayer Times',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
@@ -90,7 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
         // TODO: setting dialog
         context: context,
         builder: (context) => const Settings(),
-        barrierDismissible: true);
+        barrierDismissible: true
+    );
   }
 
   TextEditingController cityController = TextEditingController();

@@ -36,6 +36,13 @@ class Notify {
     return true;
   }
 
+  /// cancels all scheduled Notifications
+  static void cancelNotifications(){
+    for(int i = 0; i < PrayerTimes.prayerTimeZones.length; i++){
+      AwesomeNotifications().cancel(i);
+    }
+  }
+
   /// Function to get all scheduled Notifications
   static Future<void> retrieveScheduledNotifications() async {
     final AwesomeNotifications an = AwesomeNotifications();
