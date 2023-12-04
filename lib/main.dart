@@ -7,6 +7,7 @@ import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/time.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'notify.dart';
 
@@ -22,7 +23,7 @@ void main() async {
   await AwesomeNotifications().requestPermissionToSendNotifications();
 
   prefs = await SharedPreferences.getInstance();
-  if(!prefs.containsKey("notification")) prefs.setBool("notifications", true);
+  if (!prefs.containsKey("notification")) prefs.setBool("notifications", true);
   // requestPermissionToSendNotifications
   runApp(const MyApp());
   // declaring Notification
@@ -54,7 +55,9 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: MaterialApp(
-          theme: ThemeData.dark(),
+          theme: ThemeData.light(),
+          themeMode: ThemeMode.system,
+          darkTheme: ThemeData.dark(),
           home: const MyHomePage(),
         ));
   }
@@ -69,29 +72,54 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Future<Time?>? times;
-  bool notificationsOn = true;
+  late IconData _notificationIcon;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _notificationIcon =
+        notificationIsOn() ? Icons.notifications : Icons.notifications_off;
+  }
+
+  bool notificationIsOn() {
+    if (prefs.getBool("notifications")!) {
+      return true;
+    }
+    return false;
+  }
+
+  void notify() {
+    times?.then((value) async => {
+          if (prefs.getBool("notifications")!)
+            {await Notify.prayerTimesNotifiyAll(pt)}
+        });
+  }
 
   Future<void> getTimeByLocation() async {
     setState(() {
       times = pt.fetchPostByLocation();
     });
-    times?.then((value) async => await Notify.prayerTimesNotifiyAll(pt));
+    notify();
   }
 
   void getTimesByCity() {
     setState(() {
       times = pt.fetchPostByCity();
     });
-    times?.then((value) async => await Notify.prayerTimesNotifiyAll(pt));
+    notify();
   }
 
   void showSetting() {
-    showCupertinoDialog(
-        // TODO: setting dialog
-        context: context,
-        builder: (context) => const Settings(),
-        barrierDismissible: true
-    );
+    showDialog(
+            context: context,
+            builder: (context) => const Settings(),
+            barrierDismissible: true)
+        .then((value) => setState(() {
+              _notificationIcon = notificationIsOn()
+                  ? Icons.notifications
+                  : Icons.notifications_off;
+            }));
   }
 
   TextEditingController cityController = TextEditingController();
@@ -109,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
                 onPressed: () => showSetting(),
-                icon: const Icon(Icons.notifications)),
+                icon: Icon(_notificationIcon)),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -238,12 +266,55 @@ class _MyHomePageState extends State<MyHomePage> {
   ///
   /// time - Prayer time (Fajr, Dhuhr, ...);
   /// snapshot - data
-  Widget prayerTimeWidget(time, snapshot) => Padding(
-      padding: const EdgeInsets.all(10),
-      child: Text("$time: ${pt.getPrayerTime(time)!.split(" ")[0]}",
-          style: TextStyle(
-              fontSize: 20,
-              color: onTime(time, snapshot) ? Colors.green : Colors.white70)));
+  Widget prayerTimeWidget(time, snapshot) => SizedBox(
+      width: 200,
+      height: 50,
+      child: Card(
+          elevation: 10,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5))),
+          child: Align(
+            alignment: AlignmentDirectional.center,
+            child: onTime(time, snapshot)
+                ? Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      Radio(
+                        fillColor: MaterialStateProperty.all(Colors.green),
+                        value: true,
+                        groupValue: true,
+                        toggleable: false,
+                        onChanged: (bool? value) {},
+                      ),
+                      Align(
+                        alignment: AlignmentDirectional.center,
+                        child: Text(
+                          "$time: ${pt.getPrayerTime(time)!.split(" ")[0]}",
+                          style: GoogleFonts.lato(),
+                        ),
+                      )
+                    ],
+                  )
+                : Text("$time: ${pt.getPrayerTime(time)!.split(" ")[0]}",
+                    style: GoogleFonts.lato()
+
+                    //TextStyle(
+                    //  fontSize: 20,
+                    //color: Colors.white70,
+                    ),
+          )));
+
+  Color getBtnTxtColor() {
+    // Get the current theme data
+    ThemeData currentTheme = Theme.of(context);
+
+    // Determine the text color based on the theme brightness
+    Color btnTxtColor = currentTheme.brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
+
+    return btnTxtColor;
+  }
 
   /// personal button to get Times
   /// one button for searching with city name;
@@ -256,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
         style: OutlinedButton.styleFrom(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          foregroundColor: Colors.white70,
+          foregroundColor: getBtnTxtColor(),
         ),
         onPressed: () => {
           if (city) {getTimesByCity()} else {getTimeByLocation()}
