@@ -44,11 +44,6 @@ class _SettingsState extends State<Settings> {
           child: const Text('Save'),
             onPressed: (){
               prefs.setBool("notifications", notifications);
-              if(notifications) {
-                Notify.prayerTimesNotifiyAll(pt);
-              } else {
-                Notify.cancelNotifications();
-              }
               Navigator.of(context).pop();
             },
         ),

@@ -30,23 +30,21 @@ class Notify {
     if (!isAllowed) return false;
 
     for (var time in PrayerTimes.prayerTimeZones) {
-      if (time == PrayerTimes.prayerTimeZones[1]) return false;
-      await prayerTimesNotify(time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
+      if (time != PrayerTimes.prayerTimeZones[1]){
+        await prayerTimesNotify(time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
+      }
     }
     return true;
   }
 
   /// cancels all scheduled Notifications
   static void cancelNotifications(){
-    for(int i = 0; i < PrayerTimes.prayerTimeZones.length; i++){
-      AwesomeNotifications().cancel(i);
-    }
+    AwesomeNotifications().cancelAllSchedules();
   }
 
-  /// Function to get all scheduled Notifications
-  static Future<void> retrieveScheduledNotifications() async {
+  /// Function to get a List of all scheduled Notifications
+  static Future<List<NotificationModel>> retrieveScheduledNotifications() async {
     final AwesomeNotifications an = AwesomeNotifications();
-    List<NotificationModel> notifications =
-        await an.listScheduledNotifications();
+    return await an.listScheduledNotifications();
   }
 }

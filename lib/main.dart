@@ -77,7 +77,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _notificationIcon =
         notificationIsOn() ? Icons.notifications : Icons.notifications_off;
@@ -90,10 +89,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return false;
   }
 
+  /// Function for prayer notifications if notifications are on
   void notify() {
+    bool alreadyNotificated = false;
+    Notify.retrieveScheduledNotifications()
+        .then((value) => alreadyNotificated = value.isNotEmpty);
     times?.then((value) async => {
-          if (prefs.getBool("notifications")!)
-            {await Notify.prayerTimesNotifiyAll(pt)}
+          if (prefs.getBool("notifications")! && !alreadyNotificated)
+            await Notify.prayerTimesNotifiyAll(pt)
         });
   }
 
@@ -116,11 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
             context: context,
             builder: (context) => const Settings(),
             barrierDismissible: true)
-        .then((value) => setState(() {
-              _notificationIcon = notificationIsOn()
-                  ? Icons.notifications
-                  : Icons.notifications_off;
-            }));
+        .then((value) async {
+      setState(() {
+        _notificationIcon =
+            notificationIsOn() ? Icons.notifications : Icons.notifications_off;
+      });
+      notify();
+    });
   }
 
   TextEditingController cityController = TextEditingController();
@@ -314,10 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: GoogleFonts.lato(),
                         )
                       ],
-                    )
-              //Text("$time: ${pt.getPrayerTime(time)!}",
-              //    style: GoogleFonts.lato()),
-              )));
+                    ))));
 
   Color getBtnTxtColor() {
     // Get the current theme data
