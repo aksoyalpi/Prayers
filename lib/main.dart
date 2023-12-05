@@ -210,7 +210,11 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           for (var time in PrayerTimes.prayerTimeZones)
-            prayerTimeWidget(time, snapshot)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2.5),
+              child: prayerTimeWidget(time, snapshot),
+            )
+          //prayerTimeWidget(time, snapshot)
         ],
       );
 
@@ -267,42 +271,52 @@ class _MyHomePageState extends State<MyHomePage> {
   /// time - Prayer time (Fajr, Dhuhr, ...);
   /// snapshot - data
   Widget prayerTimeWidget(time, snapshot) => SizedBox(
-      width: 200,
+      width: 300,
       height: 50,
       child: Card(
           elevation: 10,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5))),
           child: Align(
-            alignment: AlignmentDirectional.center,
-            child: onTime(time, snapshot)
-                ? Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                      Radio(
-                        fillColor: MaterialStateProperty.all(Colors.green),
-                        value: true,
-                        groupValue: true,
-                        toggleable: false,
-                        onChanged: (bool? value) {},
-                      ),
-                      Align(
-                        alignment: AlignmentDirectional.center,
-                        child: Text(
-                          "$time: ${pt.getPrayerTime(time)!.split(" ")[0]}",
-                          style: GoogleFonts.lato(),
+              alignment: AlignmentDirectional.center,
+              child: onTime(time, snapshot)
+                  ? Stack(
+                      alignment: Alignment.centerLeft,
+                      children: [
+                        Radio(
+                          fillColor: MaterialStateProperty.all(Colors.green),
+                          value: true,
+                          groupValue: true,
+                          toggleable: false,
+                          onChanged: (bool? value) {},
                         ),
-                      )
-                    ],
-                  )
-                : Text("$time: ${pt.getPrayerTime(time)!.split(" ")[0]}",
-                    style: GoogleFonts.lato()
-
-                    //TextStyle(
-                    //  fontSize: 20,
-                    //color: Colors.white70,
-                    ),
-          )));
+                        Align(
+                            alignment: AlignmentDirectional.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text("$time", style: GoogleFonts.lato()),
+                                Text(
+                                  pt.getPrayerTime(time)!,
+                                  style: GoogleFonts.lato(),
+                                )
+                              ],
+                            ))
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text("$time", style: GoogleFonts.lato()),
+                        Text(
+                          pt.getPrayerTime(time)!,
+                          style: GoogleFonts.lato(),
+                        )
+                      ],
+                    )
+              //Text("$time: ${pt.getPrayerTime(time)!}",
+              //    style: GoogleFonts.lato()),
+              )));
 
   Color getBtnTxtColor() {
     // Get the current theme data

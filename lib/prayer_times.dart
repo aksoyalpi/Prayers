@@ -102,17 +102,17 @@ class PrayerTimes {
   String? getPrayerTime(String time){
       switch(time){
         case "Fajr":
-          return times?.fajr;
+          return times?.fajr.substring(0, 5);
         case "Sunrise":
-          return times?.sunrise;
+          return times?.sunrise.substring(0, 5);
         case "Dhuhr":
-          return times?.dhuhr;
+          return times?.dhuhr.substring(0, 5);
         case "Asr":
-          return times?.asr;
+          return times?.asr.substring(0, 5);
         case "Maghrib":
-          return times?.maghrib;
+          return times?.maghrib.substring(0, 5);
         case "Isha":
-          return times?.isha;
+          return times?.isha.substring(0, 5);
       }
     return "";
   }
