@@ -51,13 +51,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'Prayer Times',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorSchemeSeed: Colors.indigo[700],
+          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
           useMaterial3: true,
         ),
         home: MaterialApp(
-          theme: ThemeData.light(),
+          theme: ThemeData.light(useMaterial3: true),
           themeMode: ThemeMode.system,
-          darkTheme: ThemeData.dark(),
+          darkTheme: ThemeData.dark(useMaterial3: true),
           home: const MyHomePage(),
         ));
   }
@@ -174,7 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 50,
                     child: TextField(
                       controller: cityController,
-                      style: const TextStyle(color: Colors.white70),
+                      style: GoogleFonts.lato(),
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(
                             borderRadius:
@@ -272,9 +273,11 @@ class _MyHomePageState extends State<MyHomePage> {
   /// snapshot - data
   Widget prayerTimeWidget(time, snapshot) => SizedBox(
       width: 300,
-      height: 50,
+      height: 60,
       child: Card(
-          elevation: 10,
+          surfaceTintColor: Theme.of(context).cardColor,
+          shadowColor: Theme.of(context).shadowColor,
+          elevation: 12,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5))),
           child: Align(
@@ -290,18 +293,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           toggleable: false,
                           onChanged: (bool? value) {},
                         ),
-                        Align(
-                            alignment: AlignmentDirectional.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text("$time", style: GoogleFonts.lato()),
-                                Text(
-                                  pt.getPrayerTime(time)!,
-                                  style: GoogleFonts.lato(),
-                                )
-                              ],
-                            ))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text("$time", style: GoogleFonts.lato()),
+                            Text(
+                              pt.getPrayerTime(time)!,
+                              style: GoogleFonts.lato(),
+                            )
+                          ],
+                        )
                       ],
                     )
                   : Row(

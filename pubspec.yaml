@@ -43,6 +43,7 @@ dependencies:
   awesome_notifications_core: ^0.8.1
   shared_preferences: ^2.2.2
   google_fonts: ^6.1.0
+  dynamic_color: ^1.6.8
 
 flutter_icons:
   android: true
