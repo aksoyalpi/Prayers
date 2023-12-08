@@ -50,6 +50,33 @@ class PrayerTimes {
     return 0;
   }
 
+  Future<Time?>? fetchPost(String location) async {
+    day = DateTime.now().day;
+    final year = DateTime.now().year;
+    final month = DateTime.now().month;
+    var uri;
+
+    if (location == "") {
+      await setLocation();
+      uri = Uri.parse(
+          "http://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=13");
+    } else {
+      uri = Uri.parse(
+          "http://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=Germany&method=13");
+    }
+
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      times = Time.fromJson(json.decode(response.body), day);
+      return Time.fromJson(json.decode(response.body), day);
+    } else {
+      throw Exception("Failed to load Times");
+    }
+
+
+  }
+
   /// Get Prayer times by location
   Future<Time?>? fetchPostByLocation() async {
     day = DateTime.now().day;
@@ -82,7 +109,6 @@ class PrayerTimes {
 
     if (city == "") throw Exception("Please Enter a city");
 
-
     uri = Uri.parse(
         "http://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=Germany&method=13");
 
@@ -97,34 +123,32 @@ class PrayerTimes {
     }
   }
 
-
   /// Method to get the prayertimes for given param time
-  String? getPrayerTime(String time){
-      switch(time){
-        case "Fajr":
-          return times?.fajr.substring(0, 5);
-        case "Sunrise":
-          return times?.sunrise.substring(0, 5);
-        case "Dhuhr":
-          return times?.dhuhr.substring(0, 5);
-        case "Asr":
-          return times?.asr.substring(0, 5);
-        case "Maghrib":
-          return times?.maghrib.substring(0, 5);
-        case "Isha":
-          return times?.isha.substring(0, 5);
-      }
+  String? getPrayerTime(String time) {
+    switch (time) {
+      case "Fajr":
+        return times?.fajr.substring(0, 5);
+      case "Sunrise":
+        return times?.sunrise.substring(0, 5);
+      case "Dhuhr":
+        return times?.dhuhr.substring(0, 5);
+      case "Asr":
+        return times?.asr.substring(0, 5);
+      case "Maghrib":
+        return times?.maghrib.substring(0, 5);
+      case "Isha":
+        return times?.isha.substring(0, 5);
+    }
     return "";
   }
 
   /// Method to just get the hour of the given prayertime as int
-  int getPrayerTimeHour(String time){
+  int getPrayerTimeHour(String time) {
     return int.parse(getPrayerTime(time)!.substring(0, 2));
   }
 
-
   /// Method to just get the minutes of the given prayertime as int
-  int getPrayerTimeMin(String time){
+  int getPrayerTimeMin(String time) {
     return int.parse(getPrayerTime(time)!.substring(3, 5));
   }
 }

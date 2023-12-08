@@ -14,14 +14,16 @@ class Location extends StatefulWidget {
 
 class _LocationState extends State<Location> {
   TextEditingController cityController = TextEditingController();
-  String location = /*prefs.getString("location")!*/ "Hückelhoven";
-  bool isCity = false;
+
+  String location = prefs.getString("location")!;
+  bool useCity = prefs.getString("location") == "" ? false : true;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Location"),
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20))),
       content: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -29,45 +31,41 @@ class _LocationState extends State<Location> {
           children: [
             RadioMenuButton(
                 value: false,
-                groupValue: isCity,
+                groupValue: useCity,
                 onChanged: (value) => setState(() {
-                  isCity = value!;
-                }),
-                child: const Text("GPS")
-            ),
+                      useCity = value!;
+                    }),
+                child: const Text("GPS")),
             RadioMenuButton(
                 value: true,
-                groupValue: isCity,
+                groupValue: useCity,
                 onChanged: (value) => setState(() {
-                  isCity = value!;
-                }),
-                child: const Text("City")
-            ),
-            if(isCity)
-              SizedBox(
-                width: 250,
-                height: 50,
-                child: TextField(
-                  controller: cityController,
-                  style: GoogleFonts.lato(),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius:
-                        BorderRadius.all(Radius.circular(10.0))),
-                    labelText: "City",
-                  ),
-                  onChanged: (String value) {
-                    pt.city = cityController.text;
-                  },
-                ),
-              ),
+                      useCity = value!;
+                    }),
+                child: const Text("City")),
+            if (useCity)
+              Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: TextField(
+                    controller: cityController,
+                    style: GoogleFonts.lato(),
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(10.0))),
+                      labelText: "City",
+                    ),
+                    onChanged: (String value) {
+                      location = cityController.text;
+                    },
+                  )),
           ]),
       actions: [
         TextButton(
           child: const Text('Save'),
-          onPressed: (){
-            // TODO: Save changes
-            Navigator.of(context).pop();
+          onPressed: () {
+            useCity ? prefs.setString("location", location) : prefs.setString("location", "");
+            Navigator.of(context).pop("save");
           },
         ),
         TextButton(

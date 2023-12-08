@@ -80,6 +80,17 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _notificationIcon =
         notificationIsOn() ? Icons.notifications : Icons.notifications_off;
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) {
+          if(!prefs.containsKey("location")){
+            prefs.setString("location", "");
+            showLocationSetting();
+          } else {
+            setState(() {
+              times = pt.fetchPost(prefs.getString("location")!);
+            });
+          }
+    });
   }
 
   bool notificationIsOn() {
@@ -100,21 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  Future<void> getTimeByLocation() async {
-    setState(() {
-      times = pt.fetchPostByLocation();
-    });
-    notify();
-  }
 
-  void getTimesByCity() {
-    setState(() {
-      times = pt.fetchPostByCity();
-    });
-    notify();
-  }
-
-  void showSetting() {
+  /// show setting dialog
+  void showNotificationSetting() {
     showDialog(
             context: context,
             builder: (context) => const Settings(),
@@ -128,12 +127,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Show Location dialog
   void showLocationSetting() {
     showDialog(
         context: context,
         builder: (context) => const Location(),
         barrierDismissible: true
-    );
+    ).then((value) {
+      if(value == "save"){
+        setState(() {
+          times = pt.fetchPost(prefs.getString("location")!);
+        });
+      }
+    });
   }
 
   TextEditingController cityController = TextEditingController();
@@ -145,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
         alignment: Alignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.only(right: 30, top: 30),
+            padding: const EdgeInsets.only(right: 30, top: 30),
             child: Align(
                 alignment: Alignment.topRight,
                 child: Column(
@@ -156,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        onPressed: () => showSetting(),
+                        onPressed: () => showNotificationSetting(),
                         icon: Icon(_notificationIcon)
                     ),
                     IconButton(
@@ -170,32 +176,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 )
             ),
           ),
-          /*Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
-                padding: const EdgeInsets.all(30),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: () => showSetting(),
-                icon: Icon(_notificationIcon)),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 30, 20, 0),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: () => showLocationSetting(),
-                icon: const Icon(Icons.location_on),
-            )),*/
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Text(
                 DateFormat.yMMMd('en_US').format(DateTime.now()),
-                style:
-                    const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                style: GoogleFonts.lato(fontSize: 32, fontWeight: FontWeight.bold),
               ),
               FutureBuilder(
                   future: times,
@@ -215,38 +202,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     }
                   }),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  SizedBox(
-                    width: 250,
-                    height: 50,
-                    child: TextField(
-                      controller: cityController,
-                      style: GoogleFonts.lato(),
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10.0))),
-                        labelText: "City",
-                      ),
-                      onChanged: (String value) {
-                        pt.city = cityController.text;
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                      height: 100,
-                      width: 300,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          getTimesButton("Get by city", true),
-                          getTimesButton("Get by location", false)
-                        ],
-                      )),
-                ],
-              )
             ],
           )
         ],
@@ -255,6 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildDataWidget(context, snapshot) => Column(
+    key: UniqueKey(),
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -367,34 +323,4 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ))));
 
-  Color getBtnTxtColor() {
-    // Get the current theme data
-    ThemeData currentTheme = Theme.of(context);
-
-    // Determine the text color based on the theme brightness
-    Color btnTxtColor = currentTheme.brightness == Brightness.dark
-        ? Colors.white
-        : Colors.black;
-
-    return btnTxtColor;
-  }
-
-  /// personal button to get Times
-  /// one button for searching with city name;
-  /// other button for searching via location
-  ///
-  /// param:
-  /// text - Text in Button;
-  /// city - boolean if you should search by city
-  Widget getTimesButton(String text, bool city) => OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          foregroundColor: getBtnTxtColor(),
-        ),
-        onPressed: () => {
-          if (city) {getTimesByCity()} else {getTimeByLocation()}
-        },
-        child: Text(text),
-      );
 }
