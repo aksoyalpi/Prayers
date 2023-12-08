@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'notify.dart';
+import 'location_dialog.dart';
 
 // TODO: check out of bounds
 // TODO: 30 (day) is out of bounds better: day-1
@@ -128,6 +128,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void showLocationSetting() {
+    showDialog(
+        context: context,
+        builder: (context) => const Location(),
+        barrierDismissible: true
+    );
+  }
+
   TextEditingController cityController = TextEditingController();
 
   @override
@@ -136,7 +144,33 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          Align(
+          Padding(
+            padding: EdgeInsets.only(right: 30, top: 30),
+            child: Align(
+                alignment: Alignment.topRight,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    IconButton(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onPressed: () => showSetting(),
+                        icon: Icon(_notificationIcon)
+                    ),
+                    IconButton(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onPressed: () => showLocationSetting(),
+                      icon: const Icon(Icons.location_on),
+                    )
+                  ],
+                )
+            ),
+          ),
+          /*Align(
             alignment: Alignment.topRight,
             child: IconButton(
                 padding: const EdgeInsets.all(30),
@@ -145,6 +179,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () => showSetting(),
                 icon: Icon(_notificationIcon)),
           ),
+          Align(
+            alignment: Alignment.topRight,
+            child: IconButton(
+                padding: EdgeInsetsDirectional.fromSTEB(0, 30, 20, 0),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () => showLocationSetting(),
+                icon: const Icon(Icons.location_on),
+            )),*/
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
