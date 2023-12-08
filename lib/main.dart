@@ -80,16 +80,15 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _notificationIcon =
         notificationIsOn() ? Icons.notifications : Icons.notifications_off;
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) {
-          if(!prefs.containsKey("location")){
-            prefs.setString("location", "");
-            showLocationSetting();
-          } else {
-            setState(() {
-              times = pt.fetchPost(prefs.getString("location")!);
-            });
-          }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!prefs.containsKey("location")) {
+        prefs.setString("location", "");
+        showLocationSetting();
+      } else {
+        setState(() {
+          times = pt.fetchPost(prefs.getString("location")!);
+        });
+      }
     });
   }
 
@@ -111,7 +110,6 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-
   /// show setting dialog
   void showNotificationSetting() {
     showDialog(
@@ -130,11 +128,11 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Show Location dialog
   void showLocationSetting() {
     showDialog(
-        context: context,
-        builder: (context) => const Location(),
-        barrierDismissible: true
-    ).then((value) {
-      if(value == "save"){
+            context: context,
+            builder: (context) => const Location(),
+            barrierDismissible: true)
+        .then((value) {
+      if (value == "save") {
         setState(() {
           times = pt.fetchPost(prefs.getString("location")!);
         });
@@ -163,8 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onPressed: () => showNotificationSetting(),
-                        icon: Icon(_notificationIcon)
-                    ),
+                        icon: Icon(_notificationIcon)),
                     IconButton(
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       splashColor: Colors.transparent,
@@ -173,44 +170,52 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: const Icon(Icons.location_on),
                     )
                   ],
-                )
-            ),
+                )),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                DateFormat.yMMMd('en_US').format(DateTime.now()),
-                style: GoogleFonts.lato(fontSize: 32, fontWeight: FontWeight.bold),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 75),
+                  child: Text(
+                    DateFormat.yMMMd('en_US').format(DateTime.now()),
+                    style: GoogleFonts.lato(
+                        fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
-              FutureBuilder(
-                  future: times,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.none) {
-                      return Container();
-                    } else {
-                      if (snapshot.hasData) {
-                        return buildDataWidget(context, snapshot);
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
-                      } else {
+              Align(
+                alignment: Alignment.center,
+                child: FutureBuilder(
+                    future: times,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.connectionState ==
+                          ConnectionState.none) {
                         return Container();
+                      } else {
+                        if (snapshot.hasData) {
+                          return buildDataWidget(context, snapshot);
+                        } else if (snapshot.hasError) {
+                          return Text("${snapshot.error}");
+                        } else {
+                          return Container();
+                        }
                       }
-                    }
-                  }),
+                    }),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
   Widget buildDataWidget(context, snapshot) => Column(
-    key: UniqueKey(),
+        key: UniqueKey(),
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -280,7 +285,9 @@ class _MyHomePageState extends State<MyHomePage> {
       height: 60,
       child: Card(
           surfaceTintColor: Theme.of(context).cardColor,
-          shadowColor: onTime(time, snapshot) ? Colors.green : Theme.of(context).shadowColor,
+          shadowColor: onTime(time, snapshot)
+              ? Colors.green
+              : Theme.of(context).shadowColor,
           elevation: 12,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -291,15 +298,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       alignment: Alignment.centerLeft,
                       children: [
                         Transform.scale(
-                          scale: 0.75,
-                          child: Radio(
-                            fillColor: MaterialStateProperty.all(Colors.green),
-                            value: true,
-                            groupValue: true,
-                            toggleable: false,
-                            onChanged: (bool? value) {},
-                          )
-                        ),
+                            scale: 0.75,
+                            child: Radio(
+                              fillColor:
+                                  MaterialStateProperty.all(Colors.green),
+                              value: true,
+                              groupValue: true,
+                              toggleable: false,
+                              onChanged: (bool? value) {},
+                            )),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
@@ -322,5 +329,4 @@ class _MyHomePageState extends State<MyHomePage> {
                         )
                       ],
                     ))));
-
 }
