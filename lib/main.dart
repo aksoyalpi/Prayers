@@ -281,7 +281,7 @@ class _MyHomePageState extends State<MyHomePage> {
       height: 60,
       child: Card(
           surfaceTintColor: Theme.of(context).cardColor,
-          shadowColor: Theme.of(context).shadowColor,
+          shadowColor: onTime(time, snapshot) ? Colors.green : Theme.of(context).shadowColor,
           elevation: 12,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -291,12 +291,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? Stack(
                       alignment: Alignment.centerLeft,
                       children: [
-                        Radio(
-                          fillColor: MaterialStateProperty.all(Colors.green),
-                          value: true,
-                          groupValue: true,
-                          toggleable: false,
-                          onChanged: (bool? value) {},
+                        Transform.scale(
+                          scale: 0.75,
+                          child: Radio(
+                            fillColor: MaterialStateProperty.all(Colors.green),
+                            value: true,
+                            groupValue: true,
+                            toggleable: false,
+                            onChanged: (bool? value) {},
+                          )
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
