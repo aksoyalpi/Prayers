@@ -121,12 +121,11 @@ class _MyHomePageState extends State<MyHomePage> {
         _notificationIcon =
             value ? Icons.notifications : Icons.notifications_off;
       });
-      if(value){
+      if (value) {
         notify();
       } else {
         Notify.cancelNotifications();
       }
-
     });
   }
 
@@ -154,43 +153,38 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 30, top: 30),
-            child: Align(
-                alignment: Alignment.topRight,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    IconButton(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onPressed: () => showNotificationSetting(),
-                        icon: Icon(_notificationIcon)),
-                    IconButton(
+          Positioned(
+              top: 30,
+              right: 10,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  IconButton(
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
-                      onPressed: () => showLocationSetting(),
-                      icon: const Icon(Icons.location_on),
-                    )
-                  ],
-                )),
-          ),
+                      onPressed: () => showNotificationSetting(),
+                      icon: Icon(_notificationIcon)),
+                  IconButton(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onPressed: () => showLocationSetting(),
+                    icon: const Icon(Icons.location_on),
+                  )
+                ],
+              )),
           Stack(
             alignment: Alignment.center,
             children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 75),
-                  child: Text(
-                    DateFormat.yMMMd('en_US').format(DateTime.now()),
-                    style: GoogleFonts.lato(
-                        fontSize: 32, fontWeight: FontWeight.bold),
-                  ),
-                ),
+              Positioned(
+                top: 50,
+                child: Text(
+                  DateFormat.yMMMd('en_US').format(DateTime.now()),
+                  style: GoogleFonts.lato(
+                      fontSize: 32, fontWeight: FontWeight.bold),
+                )
               ),
               Align(
                 alignment: Alignment.center,
@@ -253,8 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     int hour = DateTime.now().hour;
     int min = DateTime.now().minute;
-    int prayerHour = pt.getPrayerTimeHour(
-        time); //int.parse(getPrayerTime(snapshot, time).split(":")[0]);
+    int prayerHour = pt.getPrayerTimeHour(time);
     int prayerMin = pt.getPrayerTimeMin(time);
 
     String nextTime = PrayerTimes.prayerTimeZones[0];

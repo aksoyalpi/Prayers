@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'main.dart';
-import 'notify.dart';
 
 class Location extends StatefulWidget {
   const Location({super.key});
