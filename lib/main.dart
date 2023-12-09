@@ -116,12 +116,17 @@ class _MyHomePageState extends State<MyHomePage> {
             context: context,
             builder: (context) => const Settings(),
             barrierDismissible: true)
-        .then((value) async {
+        .then((value) {
       setState(() {
         _notificationIcon =
-            notificationIsOn() ? Icons.notifications : Icons.notifications_off;
+            value ? Icons.notifications : Icons.notifications_off;
       });
-      notify();
+      if(value){
+        notify();
+      } else {
+        Notify.cancelNotifications();
+      }
+
     });
   }
 
@@ -136,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           times = pt.fetchPost(prefs.getString("location")!);
         });
+        notify();
       }
     });
   }

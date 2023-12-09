@@ -12,7 +12,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  bool notifications = prefs.getBool("notifications")!;
+  bool notificationsisOns = prefs.getBool("notifications")!;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +26,16 @@ class _SettingsState extends State<Settings> {
           children: [
             RadioMenuButton(
                 value: true,
-                groupValue: notifications,
+                groupValue: notificationsisOns,
                 onChanged: (value) => setState(() {
-                  notifications = value!;
+                  notificationsisOns = value!;
                 }),
                 child: const Text("On")),
             RadioMenuButton(
                 value: false,
-                groupValue: notifications,
+                groupValue: notificationsisOns,
                 onChanged: (value) => setState(() {
-                  notifications = value!;
+                  notificationsisOns = value!;
                 }),
                 child: const Text("Off")),
           ]),
@@ -43,8 +43,8 @@ class _SettingsState extends State<Settings> {
         TextButton(
           child: const Text('Save'),
             onPressed: (){
-              prefs.setBool("notifications", notifications);
-              Navigator.of(context).pop();
+              prefs.setBool("notifications", notificationsisOns);
+              Navigator.of(context).pop(notificationsisOns);
             },
         ),
         TextButton(

@@ -54,7 +54,7 @@ class PrayerTimes {
     day = DateTime.now().day;
     final year = DateTime.now().year;
     final month = DateTime.now().month;
-    var uri;
+    Uri uri;
 
     if (location == "") {
       await setLocation();
@@ -62,7 +62,7 @@ class PrayerTimes {
           "http://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=13");
     } else {
       uri = Uri.parse(
-          "http://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=Germany&method=13");
+          "http://api.aladhan.com/v1/calendarByCity/$year/$month?city=$location&country=Germany&method=13");
     }
 
     final response = await http.get(uri);

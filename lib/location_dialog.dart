@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -20,6 +19,8 @@ class _LocationState extends State<Location> {
 
   @override
   Widget build(BuildContext context) {
+    cityController.text = location;
+
     return AlertDialog(
       title: const Text("Location"),
       shape: const RoundedRectangleBorder(
