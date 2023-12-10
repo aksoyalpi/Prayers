@@ -25,11 +25,15 @@ void main() async {
   await AwesomeNotifications().requestPermissionToSendNotifications();
 
   prefs = await SharedPreferences.getInstance();
+  if(!prefs.containsKey(Strings.location["location"]!)){
+    prefs.setString(Strings.location["location"]!, "");
+  }
   if (!prefs.containsKey(Strings.notificationOn)) {
     prefs.setBool(Strings.notificationOn, true);
   }
   if (!prefs.containsKey(Strings.aktDay) ||
       prefs.getInt(Strings.aktDay) != DateTime.now().day) {
+    prefs.setInt(Strings.aktDay, DateTime.now().day);
     for (int i = 0; i < PrayerTimes.prayerTimeZones.length; i++) {
       if (i != 1) {
         prefs.setBool(PrayerTimes.prayerTimeZones[i], false);
@@ -147,8 +151,10 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (context) => const LocationSettings(),
             barrierDismissible: true)
         .then((value) {
-      if (value == "save") {
-        setState(() {});
+      if (value != "") {
+        setState(() {
+          times = pt.fetchPost(prefs.getString(Strings.prefs["location"]!)!);
+        });
         notify();
       }
     });
@@ -159,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
     showDialog(context: context, builder: (context) => const Settings())
         .then((value) {
       setState(() {
-        times = pt.fetchPost(prefs.getString("location")!);
+        times = pt.fetchPost(prefs.getString(Strings.prefs["location"]!)!);
       });
       notify();
     });
@@ -245,65 +251,15 @@ class _MyHomePageState extends State<MyHomePage> {
         .toString()
         .split(" (")[0];
   }
-
-  /*/// Widget for one Prayer time (eg. Dhuhr)
-  ///
-  /// time - Prayer time (Fajr, Dhuhr, ...);
-  /// snapshot - data
-  Widget prayerTimeWidget(time, snapshot) => SizedBox(
-      width: 300,
-      height: 60,
-      child: Card(
-          surfaceTintColor: Theme.of(context).cardColor,
-          shadowColor: onTime(time, snapshot)
-              ? Colors.green
-              : Theme.of(context).shadowColor,
-          elevation: 12,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5))),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              if (onTime(time, snapshot))
-                Positioned(
-                  left: 0,
-                  child: Transform.scale(
-                      scale: 0.75,
-                      child: Radio(
-                        fillColor: MaterialStateProperty.all(Colors.green),
-                        value: true,
-                        groupValue: true,
-                        toggleable: false,
-                        onChanged: (bool? value) {},
-                      )),
-                ),
-              Positioned(
-                left: 45,
-                child: Text("$time", style: GoogleFonts.lato()),
-              ),
-              Positioned(
-                  right: 55,
-                  child: Text(
-                    pt.getPrayerTime(time)!,
-                    style: GoogleFonts.lato(),
-                  )),
-              if (time != PrayerTimes.prayerTimeZones[1])
-                Positioned(
-                    right: 10,
-                    child: Checkbox(
-                      activeColor: Colors.white,
-                      value: prefs.getBool(time),
-                      onChanged: (bool? value) {
-                        prefs.setBool(time, value!);
-                      },
-                    ))
-            ],
-          )));*/
 }
 
+
+/// Widget for one Prayer time (eg. Dhuhr)
+///
+/// time - Prayer time (Fajr, Dhuhr, ...);
+/// snapshot - data
 class PrayerTime extends StatefulWidget {
   final time;
-
   final snapshot;
 
   const PrayerTime({

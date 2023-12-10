@@ -22,7 +22,7 @@ class _LocationSettingsState extends State<LocationSettings> {
     cityController.text = location;
 
     return AlertDialog(
-      title: Text(Strings.prefs["location"]!),
+      title: Text(Strings.location["location"]!),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
       content: Column(
