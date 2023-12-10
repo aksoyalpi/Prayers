@@ -65,20 +65,25 @@ class _SettingsState extends State<Settings> {
                   });
                 },
               ),
-              SettingsTile(
-                title: Text(Strings.location["location"]!),
-                leading: const Icon(Icons.location_on),
-                description: Text(aktLocation == "" ? Strings.location["gps"]! : aktLocation),
-                onPressed: (context) => showDialog(
-                  context: context,
-                  builder: (context) => const LocationSettings(),
-                ).then((value){
-                  setState(() {
-                    aktLocation = value;
-                  });
-                }),
-              )
             ],
+          ),
+          SettingsSection(
+            title: Text(Strings.location["location"]!),
+              tiles: [
+                SettingsTile(
+                  title: Text(Strings.location["location"]!),
+                  leading: const Icon(Icons.location_on),
+                  description: Text(aktLocation == "" ? Strings.location["gps"]! : aktLocation),
+                  onPressed: (context) => showDialog(
+                    context: context,
+                    builder: (context) => const LocationSettings(),
+                  ).then((value){
+                    setState(() {
+                      aktLocation = value;
+                    });
+                  }),
+                )
+              ]
           )
         ],
       ),
