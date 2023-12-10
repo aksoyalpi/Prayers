@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'main.dart';
 import 'notify.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class NotificationSettings extends StatefulWidget {
+  const NotificationSettings({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<NotificationSettings> createState() => _NotificationSettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _NotificationSettingsState extends State<NotificationSettings> {
   bool notificationsisOns = prefs.getBool("notifications")!;
 
   @override

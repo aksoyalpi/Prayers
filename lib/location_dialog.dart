@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'consts/strings.dart';
 import 'main.dart';
 
-class Location extends StatefulWidget {
-  const Location({super.key});
+class LocationSettings extends StatefulWidget {
+  const LocationSettings({super.key});
 
   @override
-  State<Location> createState() => _LocationState();
+  State<LocationSettings> createState() => _LocationSettingsState();
 }
 
-class _LocationState extends State<Location> {
+class _LocationSettingsState extends State<LocationSettings> {
   TextEditingController cityController = TextEditingController();
 
-  String location = prefs.getString("location")!;
-  bool useCity = prefs.getString("location") == "" ? false : true;
+  String location = prefs.getString(Strings.prefs["location"]!)!;
+  bool useCity = prefs.getString(Strings.prefs["location"]!) == "" ? false : true;
 
   @override
   Widget build(BuildContext context) {
     cityController.text = location;
 
     return AlertDialog(
-      title: const Text("Location"),
+      title: Text(Strings.prefs["location"]!),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
       content: Column(
@@ -62,14 +63,14 @@ class _LocationState extends State<Location> {
           ]),
       actions: [
         TextButton(
-          child: const Text('Save'),
+          child: const Text(Strings.save),
           onPressed: () {
-            useCity ? prefs.setString("location", location) : prefs.setString("location", "");
-            Navigator.of(context).pop("save");
+            useCity ? prefs.setString(Strings.prefs["location"]!, location) : prefs.setString(Strings.prefs["location"]!, "");
+            Navigator.of(context).pop(useCity? location : Strings.location["gps"]);
           },
         ),
         TextButton(
-          child: const Text('Cancel'),
+          child: const Text(Strings.cancel),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],

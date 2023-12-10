@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:prayer_times/prayer_times.dart';
+import 'package:prayer_times/settings.dart';
 import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/time.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'consts/strings.dart';
 import 'notify.dart';
 import 'location_dialog.dart';
 
@@ -23,7 +25,8 @@ void main() async {
   await AwesomeNotifications().requestPermissionToSendNotifications();
 
   prefs = await SharedPreferences.getInstance();
-  if (!prefs.containsKey("notification")) prefs.setBool("notifications", true);
+  if (!prefs.containsKey(Strings.notificationOn))
+    prefs.setBool(Strings.notificationOn, true);
   // requestPermissionToSendNotifications
   runApp(const MyApp());
   // declaring Notification
@@ -57,10 +60,28 @@ class MyApp extends StatelessWidget {
         ),
         home: MaterialApp(
           theme: ThemeData.light(useMaterial3: true),
-          themeMode: ThemeMode.system,
+          themeMode: getThemeMode(),
           darkTheme: ThemeData.dark(useMaterial3: true),
           home: const MyHomePage(),
         ));
+  }
+}
+
+/// Function to get set Theme mode from stored value
+ThemeMode getThemeMode() {
+  if (!prefs.containsKey(Strings.theme["appTheme"]!)) {
+    prefs.setString(Strings.theme["appTheme"]!, Strings.theme["system"]!);
+    return ThemeMode.system;
+  }
+  switch (prefs.getString(Strings.theme["appTheme"]!)) {
+    case "System":
+      return ThemeMode.system;
+    case "Light":
+      return ThemeMode.light;
+    case "Dark":
+      return ThemeMode.dark;
+    default:
+      return ThemeMode.system;
   }
 }
 
@@ -93,55 +114,50 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   bool notificationIsOn() {
-    if (prefs.getBool("notifications")!) {
+    if (prefs.getBool(Strings.notificationOn)!) {
       return true;
     }
     return false;
   }
 
-  /// Function for prayer notifications if notifications are on
+  /// Function for prayer notifications if notifications are on else they get cancelled
   void notify() {
+    if(!notificationIsOn()) {
+      Notify.cancelNotifications();
+      return;
+    }
     bool alreadyNotificated = false;
     Notify.retrieveScheduledNotifications()
         .then((value) => alreadyNotificated = value.isNotEmpty);
     times?.then((value) async => {
-          if (prefs.getBool("notifications")! && !alreadyNotificated)
+          if (!alreadyNotificated)
             await Notify.prayerTimesNotifiyAll(pt)
         });
-  }
-
-  /// show setting dialog
-  void showNotificationSetting() {
-    showDialog(
-            context: context,
-            builder: (context) => const Settings(),
-            barrierDismissible: true)
-        .then((value) {
-      setState(() {
-        _notificationIcon =
-            value ? Icons.notifications : Icons.notifications_off;
-      });
-      if (value) {
-        notify();
-      } else {
-        Notify.cancelNotifications();
-      }
-    });
   }
 
   /// Show Location dialog
   void showLocationSetting() {
     showDialog(
             context: context,
-            builder: (context) => const Location(),
+            builder: (context) => const LocationSettings(),
             barrierDismissible: true)
         .then((value) {
       if (value == "save") {
         setState(() {
-          times = pt.fetchPost(prefs.getString("location")!);
         });
         notify();
       }
+    });
+  }
+
+  /// Show Settings dialog
+  void showSettings() {
+    showDialog(context: context, builder: (context) => const Settings())
+        .then((value) {
+      setState(() {
+        times = pt.fetchPost(prefs.getString("location")!);
+      });
+      notify();
     });
   }
 
@@ -154,38 +170,26 @@ class _MyHomePageState extends State<MyHomePage> {
         alignment: Alignment.center,
         children: [
           Positioned(
-              top: 30,
-              right: 10,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      onPressed: () => showNotificationSetting(),
-                      icon: Icon(_notificationIcon)),
-                  IconButton(
-                    padding: const EdgeInsets.symmetric(vertical: 5),
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onPressed: () => showLocationSetting(),
-                    icon: const Icon(Icons.location_on),
-                  )
-                ],
-              )),
+            top: 30,
+            right: 10,
+            child: IconButton(
+              style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () => showSettings(),
+                icon: const Icon(Icons.settings)),
+          ),
           Stack(
             alignment: Alignment.center,
             children: [
               Positioned(
-                top: 50,
-                child: Text(
-                  DateFormat.yMMMd('en_US').format(DateTime.now()),
-                  style: GoogleFonts.lato(
-                      fontSize: 32, fontWeight: FontWeight.bold),
-                )
-              ),
+                  top: 50,
+                  child: Text(
+                    DateFormat.yMMMd('en_US').format(DateTime.now()),
+                    style: GoogleFonts.lato(
+                        fontSize: 32, fontWeight: FontWeight.bold),
+                  )),
               Align(
                 alignment: Alignment.center,
                 child: FutureBuilder(
