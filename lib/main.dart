@@ -25,8 +25,18 @@ void main() async {
   await AwesomeNotifications().requestPermissionToSendNotifications();
 
   prefs = await SharedPreferences.getInstance();
-  if (!prefs.containsKey(Strings.notificationOn))
+  if (!prefs.containsKey(Strings.notificationOn)) {
     prefs.setBool(Strings.notificationOn, true);
+  }
+  if (!prefs.containsKey(Strings.aktDay) ||
+      prefs.getInt(Strings.aktDay) != DateTime.now().day) {
+    for (int i = 0; i < PrayerTimes.prayerTimeZones.length; i++) {
+      if (i != 1) {
+        prefs.setBool(PrayerTimes.prayerTimeZones[i], false);
+      }
+    }
+  }
+
   // requestPermissionToSendNotifications
   runApp(const MyApp());
   // declaring Notification
@@ -94,20 +104,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Future<Time?>? times;
-  late IconData _notificationIcon;
 
   @override
   void initState() {
     super.initState();
-    _notificationIcon =
-        notificationIsOn() ? Icons.notifications : Icons.notifications_off;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!prefs.containsKey("location")) {
-        prefs.setString("location", "");
+      if (!prefs.containsKey(Strings.prefs["location"]!)) {
+        prefs.setString(Strings.prefs["location"]!, "");
         showLocationSetting();
       } else {
         setState(() {
-          times = pt.fetchPost(prefs.getString("location")!);
+          times = pt.fetchPost(prefs.getString(Strings.prefs["location"]!)!);
         });
       }
     });
@@ -122,17 +129,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   /// Function for prayer notifications if notifications are on else they get cancelled
   void notify() {
-    if(!notificationIsOn()) {
+    if (!notificationIsOn()) {
       Notify.cancelNotifications();
       return;
     }
     bool alreadyNotificated = false;
     Notify.retrieveScheduledNotifications()
         .then((value) => alreadyNotificated = value.isNotEmpty);
-    times?.then((value) async => {
-          if (!alreadyNotificated)
-            await Notify.prayerTimesNotifiyAll(pt)
-        });
+    times?.then((value) async =>
+        {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
   }
 
   /// Show Location dialog
@@ -143,8 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
             barrierDismissible: true)
         .then((value) {
       if (value == "save") {
-        setState(() {
-        });
+        setState(() {});
         notify();
       }
     });
@@ -173,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
             top: 30,
             right: 10,
             child: IconButton(
-              style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
+                style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
@@ -226,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
           for (var time in PrayerTimes.prayerTimeZones)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 2.5),
-              child: prayerTimeWidget(time, snapshot),
+              child: PrayerTime(time: time, snapshot: snapshot),
             )
           //prayerTimeWidget(time, snapshot)
         ],
@@ -242,44 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .split(" (")[0];
   }
 
-  /// Function to return boolean if now is the time for the given parameter
-  ///
-  /// eg. if time is Dhuhr and the clock is between dhuhr and asr it should return
-  /// true else false
-  bool onTime(time, snapshot) {
-    if (time == PrayerTimes.prayerTimeZones[1]) return false;
-
-    int hour = DateTime.now().hour;
-    int min = DateTime.now().minute;
-    int prayerHour = pt.getPrayerTimeHour(time);
-    int prayerMin = pt.getPrayerTimeMin(time);
-
-    String nextTime = PrayerTimes.prayerTimeZones[0];
-    for (int i = 0; i < PrayerTimes.prayerTimeZones.length - 1; i++) {
-      if (time == PrayerTimes.prayerTimeZones[i]) {
-        nextTime = PrayerTimes.prayerTimeZones[i + 1];
-      }
-    }
-
-    int nextPrayerHour = pt.getPrayerTimeHour(nextTime);
-    int nextPrayerMin = pt.getPrayerTimeMin(nextTime);
-
-    if (time == PrayerTimes.prayerTimeZones[5]) {
-      nextPrayerMin = 59;
-      nextPrayerHour = 23;
-    }
-
-    if (hour > prayerHour && hour < nextPrayerHour) {
-      return true;
-    } else if (hour == prayerHour && min >= prayerMin) {
-      return true;
-    } else if (hour == nextPrayerHour && min < nextPrayerMin) {
-      return true;
-    }
-    return false;
-  }
-
-  /// Widget for one Prayer time (eg. Dhuhr)
+  /*/// Widget for one Prayer time (eg. Dhuhr)
   ///
   /// time - Prayer time (Fajr, Dhuhr, ...);
   /// snapshot - data
@@ -294,42 +261,155 @@ class _MyHomePageState extends State<MyHomePage> {
           elevation: 12,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(5))),
-          child: Align(
-              alignment: AlignmentDirectional.center,
-              child: onTime(time, snapshot)
-                  ? Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        Transform.scale(
-                            scale: 0.75,
-                            child: Radio(
-                              fillColor:
-                                  MaterialStateProperty.all(Colors.green),
-                              value: true,
-                              groupValue: true,
-                              toggleable: false,
-                              onChanged: (bool? value) {},
-                            )),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text("$time", style: GoogleFonts.lato()),
-                            Text(
-                              pt.getPrayerTime(time)!,
-                              style: GoogleFonts.lato(),
-                            )
-                          ],
-                        )
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text("$time", style: GoogleFonts.lato()),
-                        Text(
-                          pt.getPrayerTime(time)!,
-                          style: GoogleFonts.lato(),
-                        )
-                      ],
-                    ))));
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (onTime(time, snapshot))
+                Positioned(
+                  left: 0,
+                  child: Transform.scale(
+                      scale: 0.75,
+                      child: Radio(
+                        fillColor: MaterialStateProperty.all(Colors.green),
+                        value: true,
+                        groupValue: true,
+                        toggleable: false,
+                        onChanged: (bool? value) {},
+                      )),
+                ),
+              Positioned(
+                left: 45,
+                child: Text("$time", style: GoogleFonts.lato()),
+              ),
+              Positioned(
+                  right: 55,
+                  child: Text(
+                    pt.getPrayerTime(time)!,
+                    style: GoogleFonts.lato(),
+                  )),
+              if (time != PrayerTimes.prayerTimeZones[1])
+                Positioned(
+                    right: 10,
+                    child: Checkbox(
+                      activeColor: Colors.white,
+                      value: prefs.getBool(time),
+                      onChanged: (bool? value) {
+                        prefs.setBool(time, value!);
+                      },
+                    ))
+            ],
+          )));*/
+}
+
+class PrayerTime extends StatefulWidget {
+  final time;
+
+  final snapshot;
+
+  const PrayerTime({
+    super.key,
+    required this.time,
+    required this.snapshot,
+  });
+
+  @override
+  State<PrayerTime> createState() => _PrayerTimeState();
+}
+
+/// Function to return boolean if now is the time for the given parameter
+///
+/// eg. if time is Dhuhr and the clock is between dhuhr and asr it should return
+/// true else false
+bool onTime(time, snapshot) {
+  if (time == PrayerTimes.prayerTimeZones[1]) return false;
+
+  int hour = DateTime.now().hour;
+  int min = DateTime.now().minute;
+  int prayerHour = pt.getPrayerTimeHour(time);
+  int prayerMin = pt.getPrayerTimeMin(time);
+
+  String nextTime = PrayerTimes.prayerTimeZones[0];
+  for (int i = 0; i < PrayerTimes.prayerTimeZones.length - 1; i++) {
+    if (time == PrayerTimes.prayerTimeZones[i]) {
+      nextTime = PrayerTimes.prayerTimeZones[i + 1];
+    }
+  }
+
+  int nextPrayerHour = pt.getPrayerTimeHour(nextTime);
+  int nextPrayerMin = pt.getPrayerTimeMin(nextTime);
+
+  if (time == PrayerTimes.prayerTimeZones[5]) {
+    nextPrayerMin = 59;
+    nextPrayerHour = 23;
+  }
+
+  if (hour > prayerHour && hour < nextPrayerHour) {
+    return true;
+  } else if (hour == prayerHour && min >= prayerMin) {
+    return true;
+  } else if (hour == nextPrayerHour && min < nextPrayerMin) {
+    return true;
+  }
+  return false;
+}
+
+class _PrayerTimeState extends State<PrayerTime> {
+  late bool? isChecked = prefs.getBool(widget.time);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+        width: 300,
+        height: 60,
+        child: Card(
+            surfaceTintColor: Theme.of(context).cardColor,
+            shadowColor: onTime(widget.time, widget.snapshot)
+                ? Colors.green
+                : Theme.of(context).shadowColor,
+            elevation: 12,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(5))),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                if (onTime(widget.time, widget.snapshot))
+                  Positioned(
+                    left: 0,
+                    child: Transform.scale(
+                        scale: 0.75,
+                        child: Radio(
+                          fillColor: MaterialStateProperty.all(Colors.green),
+                          value: true,
+                          groupValue: true,
+                          toggleable: false,
+                          onChanged: (bool? value) {},
+                        )),
+                  ),
+                Positioned(
+                  left: 45,
+                  child: Text("${widget.time}", style: GoogleFonts.lato()),
+                ),
+                Positioned(
+                    right: 55,
+                    child: Text(
+                      pt.getPrayerTime(widget.time)!,
+                      style: GoogleFonts.lato(),
+                    )),
+                if (widget.time != PrayerTimes.prayerTimeZones[1])
+                  Positioned(
+                      right: 10,
+                      child: Checkbox(
+                        activeColor: Colors.green,
+                        checkColor: Colors.white,
+                        value: isChecked,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isChecked = value!;
+                          });
+                          prefs.setBool(widget.time, value!);
+                        },
+                      ))
+              ],
+            )));
+  }
 }

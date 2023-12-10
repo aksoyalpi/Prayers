@@ -15,6 +15,8 @@ class Strings {
     "gps": "GPS",
     "city": "City"
   };
+  static const String aktDay = "aktDay";
+  static const String checked = "checked";
   static const String save = "Save";
   static const String cancel = "Cancel";
   static const String settings = "Settings";
