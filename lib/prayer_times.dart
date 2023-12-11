@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:location/location.dart';
 import 'package:prayer_times/time.dart';
@@ -24,7 +25,9 @@ class PrayerTimes {
   String city = "";
 
   PrayerTimes() {
-    day = DateTime.now().day;
+    day = DateTime
+        .now()
+        .day;
   }
 
   Future<double> setLocation() async {
@@ -51,72 +54,30 @@ class PrayerTimes {
   }
 
   Future<Time?>? fetchPost(String location) async {
-    day = DateTime.now().day;
-    final year = DateTime.now().year;
-    final month = DateTime.now().month;
+    day = DateTime
+        .now()
+        .day;
+    final year = DateTime
+        .now()
+        .year;
+    final month = DateTime
+        .now()
+        .month;
     Uri uri;
 
     if (location == "") {
       await setLocation();
       uri = Uri.parse(
-          "http://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=13");
+          "https://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=13");
     } else {
       uri = Uri.parse(
-          "http://api.aladhan.com/v1/calendarByCity/$year/$month?city=$location&country=Germany&method=13");
+          "https://api.aladhan.com/v1/calendarByCity/$year/$month?city=$location&country=Germany&method=13");
     }
 
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
       times = Time.fromJson(json.decode(response.body), day);
-      return Time.fromJson(json.decode(response.body), day);
-    } else {
-      throw Exception("Failed to load Times");
-    }
-
-
-  }
-
-  /// Get Prayer times by location
-  Future<Time?>? fetchPostByLocation() async {
-    day = DateTime.now().day;
-    final year = DateTime.now().year;
-    final month = DateTime.now().month;
-
-    await setLocation();
-    var uri = Uri.parse(
-        "http://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=13");
-
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      times = Time.fromJson(json.decode(response.body), day);
-
-      // TODO: why is times null ?
-      return Time.fromJson(json.decode(response.body), day);
-    } else {
-      throw Exception("Failed to load Times");
-    }
-  }
-
-  /// get prayertimes by city
-  Future<Time?>? fetchPostByCity() async {
-    day = DateTime.now().day;
-    final year = DateTime.now().year;
-    final month = DateTime.now().month;
-
-    Uri uri;
-
-    if (city == "") throw Exception("Please Enter a city");
-
-    uri = Uri.parse(
-        "http://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=Germany&method=13");
-
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      times = Time.fromJson(json.decode(response.body), day);
-      //await Notify.prayerTimesNotifiyAll(pt);
       return Time.fromJson(json.decode(response.body), day);
     } else {
       throw Exception("Failed to load Times");
