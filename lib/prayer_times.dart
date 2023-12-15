@@ -6,8 +6,25 @@ import 'package:prayer_times/time.dart';
 import 'package:http/http.dart' as http;
 
 import 'Notify.dart';
+import 'consts/strings.dart';
+import 'main.dart';
 
 class PrayerTimes {
+  static final List<String> calcMethods = ["Shia Ithna-Ansari",
+    "University of Islamic Sciences, Karachi",
+    "Islamic Society of North America", "Muslim World League",
+    "Umm Al-Qura University, Makkah",
+    "Egyptian General Authority of Survey",
+    "Institute of Geophysics, University of Tehran",
+    "Gulf Region"
+        "Kuwait",
+    "Qatar",
+    "Majlis Ugama Islam Singapura, Singapore",
+    "Union Organization islamic de France",
+    "Diyanet İşleri Başkanlığı, Turkey",
+    "Spiritual Administration of Muslims of Russia",
+    "Moonsighting Committee Worldwide", /*(also requires shafaq parameter)*/
+    "Dubai (unofficial)"];
   static final prayerTimeZones = [
     "Fajr",
     "Sunrise",
@@ -53,25 +70,23 @@ class PrayerTimes {
     return 0;
   }
 
-  Future<Time?>? fetchPost(String location) async {
-    day = DateTime
-        .now()
-        .day;
-    final year = DateTime
-        .now()
-        .year;
-    final month = DateTime
-        .now()
-        .month;
+  Future<Time?>? fetchPost(bool gps) async {
+    day = DateTime.now().day;
+    final year = DateTime.now().year;
+    final month = DateTime.now().month;
+    final method = prefs.getInt(Strings.prefs["calculationMethod"]!)!;
+    final city = prefs.getString(Strings.prefs["city"]!);
+    final country = prefs.getString(Strings.prefs["country"]!);
+
     Uri uri;
 
-    if (location == "") {
+    if (gps) {
       await setLocation();
       uri = Uri.parse(
-          "https://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=13");
+          "https://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=$method");
     } else {
       uri = Uri.parse(
-          "https://api.aladhan.com/v1/calendarByCity/$year/$month?city=$location&country=Germany&method=13");
+          "https://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=$country&method=$method");
     }
 
     final response = await http.get(uri);
@@ -88,17 +103,17 @@ class PrayerTimes {
   String? getPrayerTime(String time) {
     switch (time) {
       case "Fajr":
-        return times?.fajr.substring(0, 5);
+        return times.fajr.substring(0, 5);
       case "Sunrise":
-        return times?.sunrise.substring(0, 5);
+        return times.sunrise.substring(0, 5);
       case "Dhuhr":
-        return times?.dhuhr.substring(0, 5);
+        return times.dhuhr.substring(0, 5);
       case "Asr":
-        return times?.asr.substring(0, 5);
+        return times.asr.substring(0, 5);
       case "Maghrib":
-        return times?.maghrib.substring(0, 5);
+        return times.maghrib.substring(0, 5);
       case "Isha":
-        return times?.isha.substring(0, 5);
+        return times.isha.substring(0, 5);
     }
     return "";
   }

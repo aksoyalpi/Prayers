@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#1c1b1f",
     "theme_color": "#1c1b1f",
-    "description": "A new Flutter project.",
+    "description": "Minimalistic Prayer Times App",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

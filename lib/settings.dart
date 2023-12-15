@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:prayer_times/location_dialog.dart';
+import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/theme_setting.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -19,7 +20,12 @@ class Settings extends StatefulWidget {
 class _SettingsState extends State<Settings> {
   bool notificationOn = prefs.getBool(Strings.notificationOn)!;
   String aktTheme = prefs.getString(Strings.theme["appTheme"]!)!;
-  String aktLocation = prefs.getString(Strings.prefs["location"]!)!;
+  bool useGPS = prefs.getBool(Strings.prefs["useGPS"]!)!;
+  String city = prefs.getString(Strings.prefs["city"]!)!;
+  String country = prefs.getString(Strings.prefs["country"]!)!;
+
+  String calcMethod = PrayerTimes
+      .calcMethods[prefs.getInt(Strings.prefs["calculationMethod"]!)!];
 
   @override
   Widget build(BuildContext context) {
@@ -67,24 +73,44 @@ class _SettingsState extends State<Settings> {
               ),
             ],
           ),
-          SettingsSection(
-            title: Text(Strings.location["location"]!),
-              tiles: [
-                SettingsTile(
-                  title: Text(Strings.location["location"]!),
-                  leading: const Icon(Icons.location_on),
-                  description: Text(aktLocation == "" ? Strings.location["gps"]! : aktLocation),
-                  onPressed: (context) => showDialog(
-                    context: context,
-                    builder: (context) => const LocationSettings(),
-                  ).then((value){
-                    setState(() {
-                      aktLocation = value;
-                    });
-                  }),
-                )
-              ]
-          )
+          SettingsSection(title: Text(Strings.location["location"]!), tiles: [
+            SettingsTile(
+              title: Text(Strings.location["location"]!),
+              leading: const Icon(Icons.location_on),
+              description:
+                  Text(useGPS ? Strings.location["gps"]! : "$city, $country"),
+              onPressed: (context) => showDialog(
+                context: context,
+                builder: (context) => const LocationSettings(),
+              ).then((value) {
+                setState(() {
+                  useGPS = !value;
+                });
+              }),
+            ),
+            SettingsTile(
+              leading: const Icon(Icons.calculate),
+              title: const Text(Strings.calculation_method),
+              description: DropdownButton(
+                //value: calcMethod.length > 10 ? "$calcMethod..." : calcMethod,
+                value: calcMethod,
+                items: PrayerTimes.calcMethods
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  prefs.setInt(Strings.prefs["calculationMethod"]!,
+                      PrayerTimes.calcMethods.indexOf(value!));
+                  setState(() {
+                    calcMethod = value;
+                  });
+                },
+              ),
+            )
+          ])
         ],
       ),
     ));

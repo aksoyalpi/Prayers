@@ -13,8 +13,7 @@ import 'consts/strings.dart';
 import 'notify.dart';
 import 'location_dialog.dart';
 
-// TODO: check out of bounds
-// TODO: 30 (day) is out of bounds better: day-1
+
 
 PrayerTimes pt = PrayerTimes();
 late SharedPreferences prefs;
@@ -25,8 +24,17 @@ void main() async {
   await AwesomeNotifications().requestPermissionToSendNotifications();
 
   prefs = await SharedPreferences.getInstance();
-  if(!prefs.containsKey(Strings.location["location"]!)){
-    prefs.setString(Strings.location["location"]!, "");
+  if(!prefs.containsKey(Strings.prefs["calculationMethod"]!)){
+    prefs.setInt(Strings.prefs["calculationMethod"]!, 12);
+  }
+  if(!prefs.containsKey(Strings.prefs["useGPS"]!)){
+    prefs.setBool(Strings.prefs["useGPS"]!, true);
+  }
+  if(!prefs.containsKey(Strings.prefs["city"]!)){
+    prefs.setString(Strings.prefs["city"]!, "");
+  }
+  if(!prefs.containsKey(Strings.prefs["country"]!)){
+    prefs.setString(Strings.prefs["country"]!, "");
   }
   if (!prefs.containsKey(Strings.notificationOn)) {
     prefs.setBool(Strings.notificationOn, true);
@@ -119,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
         showLocationSetting();
       } else {
         setState(() {
-          times = pt.fetchPost(prefs.getString(Strings.prefs["location"]!)!);
+          times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
         });
       }
     });
@@ -154,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .then((value) {
       if (value != "") {
         setState(() {
-          times = pt.fetchPost(prefs.getString(Strings.prefs["location"]!)!);
+          times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
         });
         notify();
       }
@@ -166,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
     showDialog(context: context, builder: (context) => const Settings())
         .then((value) {
       setState(() {
-        times = pt.fetchPost(prefs.getString(Strings.prefs["location"]!)!);
+        times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
       });
       notify();
     });

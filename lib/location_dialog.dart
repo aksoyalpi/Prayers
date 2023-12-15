@@ -13,13 +13,16 @@ class LocationSettings extends StatefulWidget {
 
 class _LocationSettingsState extends State<LocationSettings> {
   TextEditingController cityController = TextEditingController();
+  TextEditingController countryController = TextEditingController();
 
-  String location = prefs.getString(Strings.prefs["location"]!)!;
-  bool useCity = prefs.getString(Strings.prefs["location"]!) == "" ? false : true;
+  String country = prefs.getString(Strings.prefs["country"]!)!;
+  String city = prefs.getString(Strings.prefs["city"]!)!;
+  bool useGPS = prefs.getBool(Strings.prefs["useGPS"]!)!;
 
   @override
   Widget build(BuildContext context) {
-    cityController.text = location;
+    cityController.text = city;
+    countryController.text = country;
 
     return AlertDialog(
       title: Text(Strings.location["location"]!),
@@ -32,41 +35,63 @@ class _LocationSettingsState extends State<LocationSettings> {
           children: [
             RadioMenuButton(
                 value: false,
-                groupValue: useCity,
+                groupValue: useGPS,
                 onChanged: (value) => setState(() {
-                      useCity = value!;
+                      useGPS = value!;
                     }),
                 child: const Text("GPS")),
             RadioMenuButton(
                 value: true,
-                groupValue: useCity,
+                groupValue: useGPS,
                 onChanged: (value) => setState(() {
-                      useCity = value!;
+                      useGPS = value!;
                     }),
                 child: const Text("City")),
-            if (useCity)
-              Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: TextField(
-                    controller: cityController,
+            if (useGPS)
+              Column(
+                children: [
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: TextField(
+                        controller: cityController,
+                        style: GoogleFonts.lato(),
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0))),
+                          labelText: Strings.location["city"]!,
+                        ),
+                        onChanged: (String value) {
+                          city = cityController.text;
+                        },
+                      )),
+                  TextField(
+                    controller: countryController,
                     style: GoogleFonts.lato(),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(
                           borderRadius:
                               BorderRadius.all(Radius.circular(10.0))),
-                      labelText: "City",
+                      labelText: Strings.location["country"]!,
                     ),
                     onChanged: (String value) {
-                      location = cityController.text;
+                      country = countryController.text;
                     },
-                  )),
+                  )
+                ],
+              ),
           ]),
       actions: [
         TextButton(
           child: const Text(Strings.save),
           onPressed: () {
-            useCity ? prefs.setString(Strings.prefs["location"]!, location) : prefs.setString(Strings.prefs["location"]!, "");
-            Navigator.of(context).pop(useCity? location : Strings.location["gps"]);
+            prefs.setBool(Strings.prefs["useGPS"]!, useGPS);
+            if(useGPS){
+              prefs.setString(Strings.prefs["city"]!, city);
+              prefs.setString(Strings.prefs["country"]!, country);
+            }
+            Navigator.of(context)
+                .pop(useGPS);
           },
         ),
         TextButton(
