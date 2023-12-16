@@ -13,8 +13,6 @@ import 'consts/strings.dart';
 import 'notify.dart';
 import 'location_dialog.dart';
 
-
-
 PrayerTimes pt = PrayerTimes();
 late SharedPreferences prefs;
 
@@ -24,16 +22,16 @@ void main() async {
   await AwesomeNotifications().requestPermissionToSendNotifications();
 
   prefs = await SharedPreferences.getInstance();
-  if(!prefs.containsKey(Strings.prefs["calculationMethod"]!)){
-    prefs.setInt(Strings.prefs["calculationMethod"]!, 12);
+  if (!prefs.containsKey(Strings.prefs["calculationMethod"]!)) {
+    prefs.setInt(Strings.prefs["calculationMethod"]!, 11);
   }
-  if(!prefs.containsKey(Strings.prefs["useGPS"]!)){
+  if (!prefs.containsKey(Strings.prefs["useGPS"]!)) {
     prefs.setBool(Strings.prefs["useGPS"]!, true);
   }
-  if(!prefs.containsKey(Strings.prefs["city"]!)){
+  if (!prefs.containsKey(Strings.prefs["city"]!)) {
     prefs.setString(Strings.prefs["city"]!, "");
   }
-  if(!prefs.containsKey(Strings.prefs["country"]!)){
+  if (!prefs.containsKey(Strings.prefs["country"]!)) {
     prefs.setString(Strings.prefs["country"]!, "");
   }
   if (!prefs.containsKey(Strings.notificationOn)) {
@@ -212,6 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Align(
                 alignment: Alignment.center,
                 child: FutureBuilder(
+                    key: UniqueKey(),
                     future: times,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -261,7 +260,6 @@ class _MyHomePageState extends State<MyHomePage> {
         .split(" (")[0];
   }
 }
-
 
 /// Widget for one Prayer time (eg. Dhuhr)
 ///

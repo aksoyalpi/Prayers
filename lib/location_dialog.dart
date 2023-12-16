@@ -34,20 +34,20 @@ class _LocationSettingsState extends State<LocationSettings> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RadioMenuButton(
-                value: false,
+                value: true,
                 groupValue: useGPS,
                 onChanged: (value) => setState(() {
                       useGPS = value!;
                     }),
                 child: const Text("GPS")),
             RadioMenuButton(
-                value: true,
+                value: false,
                 groupValue: useGPS,
                 onChanged: (value) => setState(() {
                       useGPS = value!;
                     }),
                 child: const Text("City")),
-            if (useGPS)
+            if (!useGPS)
               Column(
                 children: [
                   Padding(

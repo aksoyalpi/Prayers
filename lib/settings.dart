@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:prayer_times/calculation_method_dialog.dart';
 import 'package:prayer_times/location_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/settings_dialog.dart';
@@ -84,31 +85,22 @@ class _SettingsState extends State<Settings> {
                 builder: (context) => const LocationSettings(),
               ).then((value) {
                 setState(() {
-                  useGPS = !value;
+                  useGPS = value;
                 });
               }),
             ),
             SettingsTile(
               leading: const Icon(Icons.calculate),
               title: const Text(Strings.calculation_method),
-              description: DropdownButton(
-                //value: calcMethod.length > 10 ? "$calcMethod..." : calcMethod,
-                value: calcMethod,
-                items: PrayerTimes.calcMethods
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                onChanged: (String? value) {
-                  prefs.setInt(Strings.prefs["calculationMethod"]!,
-                      PrayerTimes.calcMethods.indexOf(value!));
-                  setState(() {
-                    calcMethod = value;
-                  });
-                },
-              ),
+              description: Text(calcMethod),
+              onPressed: (context) => showDialog(
+                context: context,
+                builder: (context) => const CalculationMethodDialog(),
+              ).then((value) {
+                setState(() {
+                  calcMethod = value;
+                });
+              }),
             )
           ])
         ],
