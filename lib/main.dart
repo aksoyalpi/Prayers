@@ -321,58 +321,66 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: 300,
-        height: 60,
-        child: Card(
-            surfaceTintColor: Theme.of(context).cardColor,
-            shadowColor: onTime(widget.time, widget.snapshot)
-                ? Colors.green
-                : Theme.of(context).shadowColor,
-            elevation: 12,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(5))),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (onTime(widget.time, widget.snapshot))
+    return GestureDetector(
+      onTap: (){
+        setState(() {
+          isChecked = !isChecked!;
+        });
+        prefs.setBool(widget.time, isChecked!);
+      },
+      child: SizedBox(
+          width: 300,
+          height: 60,
+          child: Card(
+              surfaceTintColor: Theme.of(context).cardColor,
+              shadowColor: onTime(widget.time, widget.snapshot)
+                  ? Colors.green
+                  : Theme.of(context).shadowColor,
+              elevation: 12,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5))),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (onTime(widget.time, widget.snapshot))
+                    Positioned(
+                      left: 0,
+                      child: Transform.scale(
+                          scale: 0.75,
+                          child: Radio(
+                            fillColor: MaterialStateProperty.all(Colors.green),
+                            value: true,
+                            groupValue: true,
+                            toggleable: false,
+                            onChanged: (bool? value) {},
+                          )),
+                    ),
                   Positioned(
-                    left: 0,
-                    child: Transform.scale(
-                        scale: 0.75,
-                        child: Radio(
-                          fillColor: MaterialStateProperty.all(Colors.green),
-                          value: true,
-                          groupValue: true,
-                          toggleable: false,
-                          onChanged: (bool? value) {},
-                        )),
+                    left: 45,
+                    child: Text("${widget.time}", style: GoogleFonts.lato()),
                   ),
-                Positioned(
-                  left: 45,
-                  child: Text("${widget.time}", style: GoogleFonts.lato()),
-                ),
-                Positioned(
-                    right: 55,
-                    child: Text(
-                      pt.getPrayerTime(widget.time)!,
-                      style: GoogleFonts.lato(),
-                    )),
-                if (widget.time != PrayerTimes.prayerTimeZones[1])
                   Positioned(
-                      right: 10,
-                      child: Checkbox(
-                        activeColor: Colors.green,
-                        checkColor: Colors.white,
-                        value: isChecked,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isChecked = value!;
-                          });
-                          prefs.setBool(widget.time, value!);
-                        },
-                      ))
-              ],
-            )));
+                      right: 55,
+                      child: Text(
+                        pt.getPrayerTime(widget.time)!,
+                        style: GoogleFonts.lato(),
+                      )),
+                  if (widget.time != PrayerTimes.prayerTimeZones[1])
+                    Positioned(
+                        right: 10,
+                        child: Checkbox(
+                          activeColor: Colors.green,
+                          checkColor: Colors.white,
+                          value: isChecked,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isChecked = value!;
+                            });
+                            prefs.setBool(widget.time, value!);
+                          },
+                        ))
+                ],
+              )))
+    );
   }
 }

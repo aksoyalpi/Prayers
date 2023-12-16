@@ -28,26 +28,25 @@ class _CalculationMethodDialogState extends State<CalculationMethodDialog> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(
-              calcMethods.length,
-              (index) => SizedBox(
+          children: [
+            for (int i = 0; i < calcMethods.length; i++)
+              SizedBox(
                   height: 50,
                   child: RadioMenuButton(
-                    value: calcMethods[index],
-                    groupValue: calcMethod,
-                    onChanged: (value) {
-                      setState(() {
-                        calcMethod = value!;
-                      });
-                    },
-                    child: SizedBox(
-                      width: 250,
-                      child: Text(
-                        calcMethods[index],
-                        overflow: TextOverflow.fade,
-                      )
-                    ),
-                  )))),
+                      value: calcMethods[i],
+                      groupValue: calcMethod,
+                      onChanged: (value) {
+                        setState(() {
+                          calcMethod = value!;
+                        });
+                      },
+                      child: SizedBox(
+                          width: 250,
+                          child: Text(
+                            calcMethods[i],
+                            overflow: TextOverflow.fade,
+                          )))),
+          ]),
       actions: [
         TextButton(
           child: const Text('Save'),
