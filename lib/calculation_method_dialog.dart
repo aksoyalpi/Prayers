@@ -30,18 +30,22 @@ class _CalculationMethodDialogState extends State<CalculationMethodDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: List.generate(
               calcMethods.length,
-              (index) => RadioMenuButton(
-                  value: calcMethods[index],
-                  groupValue: calcMethod,
-                  onChanged: (value) {
-                    setState(() {
-                      calcMethod = value!;
-                    });
-                  },
-                  child: Flexible(
-                    child: Text(
-                      calcMethods[index],
-                      overflow: TextOverflow.fade,
+              (index) => SizedBox(
+                  height: 50,
+                  child: RadioMenuButton(
+                    value: calcMethods[index],
+                    groupValue: calcMethod,
+                    onChanged: (value) {
+                      setState(() {
+                        calcMethod = value!;
+                      });
+                    },
+                    child: SizedBox(
+                      width: 250,
+                      child: Text(
+                        calcMethods[index],
+                        overflow: TextOverflow.fade,
+                      )
                     ),
                   )))),
       actions: [

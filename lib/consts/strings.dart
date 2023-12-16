@@ -26,6 +26,7 @@ class Strings {
   static const String notification = "Notification";
   static const String notificationOn = "notificationOn";
   static const String calculation_method = "Calculation method";
+  static const String prayerTimes = "Prayer times";
 
   static const Map<String, String> prefs = {
     "location": "location",

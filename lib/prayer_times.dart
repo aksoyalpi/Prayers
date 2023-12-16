@@ -10,21 +10,25 @@ import 'consts/strings.dart';
 import 'main.dart';
 
 class PrayerTimes {
-  static final List<String> calcMethods = ["Shia Ithna-Ansari",
+  static final List<String> calcMethods = [
+    "Shia Ithna-Ansari",
     "University of Islamic Sciences, Karachi",
-    "Islamic Society of North America", "Muslim World League",
+    "Islamic Society of North America",
+    "Muslim World League",
     "Umm Al-Qura University, Makkah",
     "Egyptian General Authority of Survey",
     "Institute of Geophysics, University of Tehran",
-    "Gulf Region"
-        "Kuwait",
+    "Gulf Region",
+    "Kuwait",
     "Qatar",
     "Majlis Ugama Islam Singapura, Singapore",
     "Union Organization islamic de France",
     "Diyanet İşleri Başkanlığı, Turkey",
     "Spiritual Administration of Muslims of Russia",
-    "Moonsighting Committee Worldwide", /*(also requires shafaq parameter)*/
-    "Dubai (unofficial)"];
+    "Moonsighting Committee Worldwide",
+    /*(also requires shafaq parameter)*/
+    "Dubai (unofficial)"
+  ];
   static final prayerTimeZones = [
     "Fajr",
     "Sunrise",
@@ -42,9 +46,7 @@ class PrayerTimes {
   String city = "";
 
   PrayerTimes() {
-    day = DateTime
-        .now()
-        .day;
+    day = DateTime.now().day;
   }
 
   Future<double> setLocation() async {
@@ -74,7 +76,8 @@ class PrayerTimes {
     day = DateTime.now().day;
     final year = DateTime.now().year;
     final month = DateTime.now().month;
-    final method = prefs.getInt(Strings.prefs["calculationMethod"]!)!;
+    var method = prefs.getInt(Strings.prefs["calculationMethod"]!)!;
+    if (method > 5) method++;
     final city = prefs.getString(Strings.prefs["city"]!);
     final country = prefs.getString(Strings.prefs["country"]!);
 

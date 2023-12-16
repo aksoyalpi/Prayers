@@ -74,7 +74,7 @@ class _SettingsState extends State<Settings> {
               ),
             ],
           ),
-          SettingsSection(title: Text(Strings.location["location"]!), tiles: [
+          SettingsSection(title: const Text(Strings.prayerTimes), tiles: [
             SettingsTile(
               title: Text(Strings.location["location"]!),
               leading: const Icon(Icons.location_on),
