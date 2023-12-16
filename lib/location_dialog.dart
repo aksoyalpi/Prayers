@@ -86,7 +86,7 @@ class _LocationSettingsState extends State<LocationSettings> {
           child: const Text(Strings.save),
           onPressed: () {
             prefs.setBool(Strings.prefs["useGPS"]!, useGPS);
-            if(useGPS){
+            if(!useGPS){
               prefs.setString(Strings.prefs["city"]!, city);
               prefs.setString(Strings.prefs["country"]!, country);
             }

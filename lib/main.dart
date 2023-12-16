@@ -23,7 +23,7 @@ void main() async {
 
   prefs = await SharedPreferences.getInstance();
   if (!prefs.containsKey(Strings.prefs["calculationMethod"]!)) {
-    prefs.setInt(Strings.prefs["calculationMethod"]!, 11);
+    prefs.setInt(Strings.prefs["calculationMethod"]!, 12);
   }
   if (!prefs.containsKey(Strings.prefs["useGPS"]!)) {
     prefs.setBool(Strings.prefs["useGPS"]!, true);

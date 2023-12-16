@@ -86,6 +86,10 @@ class _SettingsState extends State<Settings> {
               ).then((value) {
                 setState(() {
                   useGPS = value;
+                  if(!value){
+                    city = prefs.getString(Strings.prefs["city"]!)!;
+                    country = prefs.getString(Strings.prefs["country"]!)!;
+                  }
                 });
               }),
             ),
