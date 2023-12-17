@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'consts/strings.dart';
 import 'main.dart';
@@ -25,7 +26,7 @@ class _LocationSettingsState extends State<LocationSettings> {
     countryController.text = country;
 
     return AlertDialog(
-      title: Text(Strings.location["location"]!),
+      title: Text(AppLocalizations.of(context)!.location),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
       content: Column(
@@ -39,14 +40,14 @@ class _LocationSettingsState extends State<LocationSettings> {
                 onChanged: (value) => setState(() {
                       useGPS = value!;
                     }),
-                child: const Text("GPS")),
+                child: Text(AppLocalizations.of(context)!.gps)),
             RadioMenuButton(
                 value: false,
                 groupValue: useGPS,
                 onChanged: (value) => setState(() {
                       useGPS = value!;
                     }),
-                child: const Text("City")),
+                child: Text(AppLocalizations.of(context)!.city)),
             if (!useGPS)
               Column(
                 children: [
@@ -59,7 +60,7 @@ class _LocationSettingsState extends State<LocationSettings> {
                           border: const OutlineInputBorder(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10.0))),
-                          labelText: Strings.location["city"]!,
+                          labelText: AppLocalizations.of(context)!.city,
                         ),
                         onChanged: (String value) {
                           city = cityController.text;
@@ -72,7 +73,7 @@ class _LocationSettingsState extends State<LocationSettings> {
                       border: const OutlineInputBorder(
                           borderRadius:
                               BorderRadius.all(Radius.circular(10.0))),
-                      labelText: Strings.location["country"]!,
+                      labelText: AppLocalizations.of(context)!.country,
                     ),
                     onChanged: (String value) {
                       country = countryController.text;
@@ -83,7 +84,7 @@ class _LocationSettingsState extends State<LocationSettings> {
           ]),
       actions: [
         TextButton(
-          child: const Text(Strings.save),
+          child: Text(AppLocalizations.of(context)!.save),
           onPressed: () {
             prefs.setBool(Strings.prefs["useGPS"]!, useGPS);
             if(!useGPS){
@@ -95,7 +96,7 @@ class _LocationSettingsState extends State<LocationSettings> {
           },
         ),
         TextButton(
-          child: const Text(Strings.cancel),
+          child: Text(AppLocalizations.of(context)!.cancel),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],

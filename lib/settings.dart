@@ -1,12 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:prayer_times/calculation_method_dialog.dart';
+import 'package:prayer_times/language_dialog.dart';
 import 'package:prayer_times/location_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/theme_setting.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 import 'consts/strings.dart';
 import 'main.dart';
@@ -24,6 +26,8 @@ class _SettingsState extends State<Settings> {
   bool useGPS = prefs.getBool(Strings.prefs["useGPS"]!)!;
   String city = prefs.getString(Strings.prefs["city"]!)!;
   String country = prefs.getString(Strings.prefs["country"]!)!;
+  // returns the country code of the saved languageCode
+  String language = prefs.getString(Strings.languageCode)!;
 
   String calcMethod = PrayerTimes
       .calcMethods[prefs.getInt(Strings.prefs["calculationMethod"]!)!];
@@ -34,21 +38,21 @@ class _SettingsState extends State<Settings> {
         child: Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.settings),
-        title: const Text(Strings.settings),
+        title: Text(AppLocalizations.of(context)!.settings),
         actions: [
           TextButton(
               onPressed: () => {Navigator.of(context).pop("save")},
-              child: const Text(Strings.save))
+              child: Text(AppLocalizations.of(context)!.save))
         ],
       ),
       body: SettingsList(
         sections: [
           SettingsSection(
-            title: const Text(Strings.general),
+            title: Text(AppLocalizations.of(context)!.general),
             tiles: [
               SettingsTile.switchTile(
                 initialValue: notificationOn,
-                title: const Text(Strings.notification),
+                title: Text(AppLocalizations.of(context)!.notification),
                 leading: const Icon(Icons.notifications),
                 onToggle: (bool value) {
                   setState(() {
@@ -58,8 +62,22 @@ class _SettingsState extends State<Settings> {
                 },
               ),
               SettingsTile(
-                title: Text(Strings.theme["appTheme"]!),
-                description: Text(aktTheme),
+                  title: Text(AppLocalizations.of(context)!.language),
+                description: Text(language),
+                leading: const Icon(Icons.language),
+                onPressed: (context) => showDialog(
+                    context: context,
+                    builder: (context) => const LanguageDialog(),
+                ).then((value) {
+                  MyApp.of(context)!.setLocale(Locale(value!));
+                  setState(() {
+                    language = value!;
+                  });
+                }),
+              ),
+              SettingsTile(
+                title: Text(AppLocalizations.of(context)!.appThemeTitle),
+                description: Text(AppLocalizations.of(context)!.appTheme(aktTheme)),
                 leading: const Icon(Icons.smartphone),
                 onPressed: (context) {
                   showDialog(
@@ -74,12 +92,12 @@ class _SettingsState extends State<Settings> {
               ),
             ],
           ),
-          SettingsSection(title: const Text(Strings.prayerTimes), tiles: [
+          SettingsSection(title: Text(AppLocalizations.of(context)!.prayerTimes), tiles: [
             SettingsTile(
-              title: Text(Strings.location["location"]!),
+              title: Text(AppLocalizations.of(context)!.location),
               leading: const Icon(Icons.location_on),
               description:
-                  Text(useGPS ? Strings.location["gps"]! : "$city, $country"),
+                  Text(useGPS ? AppLocalizations.of(context)!.gps : "$city, $country"),
               onPressed: (context) => showDialog(
                 context: context,
                 builder: (context) => const LocationSettings(),
@@ -95,7 +113,7 @@ class _SettingsState extends State<Settings> {
             ),
             SettingsTile(
               leading: const Icon(Icons.calculate),
-              title: const Text(Strings.calculation_method),
+              title: Text(AppLocalizations.of(context)!.calculationMethod),
               description: Text(calcMethod),
               onPressed: (context) => showDialog(
                 context: context,

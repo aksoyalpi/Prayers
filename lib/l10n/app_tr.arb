@@ -1,10 +1,16 @@
 {
   "prayerTime": "{time, select, Fajr{Sabah / Fajr} Sunrise{Günes} Dhuhr{Ögle / Dhuhr} Asr{Ikindi / Asr} Maghrib{Aksam / Maghrib} Isha{Yatsi / Isha} other{Namaz}}",
 
-  "appTheme": "Uygulama teması",
+  "appTheme": "{theme, select, System{Sistem} Dark{Koyu} Light{Açık} other{Sistem}}",
+  "appThemeTitle": "Uygulama teması",
   "system": "Sistem",
   "dark": "Koyu",
   "light": "Açık",
+  "restartAppToChangeTheme": "Uygulama temasını değiştirmek için uygulamayı yeniden başlatmanız gerekiyor.",
+
+  "language": "Dil",
+  "english": "Ingilizce",
+  "turkish": "Türkçe",
 
   "location": "Konum",
   "gps": "GPS",

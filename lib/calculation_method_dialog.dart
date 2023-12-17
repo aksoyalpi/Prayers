@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:prayer_times/prayer_times.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'consts/strings.dart';
 import 'main.dart';
@@ -23,7 +24,7 @@ class _CalculationMethodDialogState extends State<CalculationMethodDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: const Text(Strings.calculation_method),
+      title: Text(AppLocalizations.of(context)!.calculationMethod),
       content: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -49,7 +50,7 @@ class _CalculationMethodDialogState extends State<CalculationMethodDialog> {
           ]),
       actions: [
         TextButton(
-          child: const Text('Save'),
+          child: Text(AppLocalizations.of(context)!.save),
           onPressed: () {
             prefs.setInt(Strings.prefs["calculationMethod"]!,
                 calcMethods.indexOf(calcMethod));
@@ -57,7 +58,7 @@ class _CalculationMethodDialogState extends State<CalculationMethodDialog> {
           },
         ),
         TextButton(
-          child: const Text('Cancel'),
+          child: Text(AppLocalizations.of(context)!.cancel),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],

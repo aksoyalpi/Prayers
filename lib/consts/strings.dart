@@ -28,6 +28,8 @@ class Strings {
   static const String calculation_method = "Calculation method";
   static const String prayerTimes = "Prayer times";
 
+  static const String languageCode = "languageCode";
+
   static const Map<String, String> prefs = {
     "location": "location",
     "notification": "notification",

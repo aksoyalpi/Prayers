@@ -48,6 +48,9 @@ void main() async {
       }
     }
   }
+  if(!prefs.containsKey(Strings.languageCode)){
+    prefs.setString(Strings.languageCode, "en");
+  }
 
   // requestPermissionToSendNotifications
   runApp(const MyApp());
@@ -67,14 +70,36 @@ void main() async {
       debug: true);
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-// This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+
+  static _MyAppState? of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>();
+}
+
+class _MyAppState extends State<MyApp> {
+  final ThemeMode _themeMode = getThemeMode();
+  Locale _locale = const Locale("en");
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void setLocale(Locale value){
+    setState(() {
+      _locale = value;
+    });
+  }
+
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Prayers',
+        locale: _locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
@@ -84,10 +109,11 @@ class MyApp extends StatelessWidget {
         ),
         home: MaterialApp(
           title: "Prayers",
+          locale: _locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: ThemeData.light(useMaterial3: true),
-          themeMode: getThemeMode(),
+          themeMode: _themeMode,
           darkTheme: ThemeData.dark(useMaterial3: true),
           home: const MyHomePage(),
         ));
@@ -276,7 +302,7 @@ class PrayerTime extends StatefulWidget {
 /// eg. if time is Dhuhr and the clock is between dhuhr and asr it should return
 /// true else false
 bool onTime(time, snapshot) {
-  if (time == PrayerTimes.prayerTimeZones[1]) return true;
+  if (time == PrayerTimes.prayerTimeZones[1]) return false;
 
   int hour = DateTime.now().hour;
   int min = DateTime.now().minute;

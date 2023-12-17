@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'consts/strings.dart';
 import 'main.dart';
@@ -18,7 +19,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        title: Text(Strings.theme["appTheme"]!),
+        title: Text(AppLocalizations.of(context)!.appThemeTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -30,37 +31,37 @@ class _ThemeSettingState extends State<ThemeSetting> {
                 onChanged: (value) {
                   setState(() => appTheme = value!);
                 },
-                child: Text(Strings.theme["system"]!)),
+                child: Text(AppLocalizations.of(context)!.system)),
             RadioMenuButton(
                 value: Strings.theme["light"],
                 groupValue: appTheme,
                 onChanged: (value) {
                   setState(() => appTheme = value!);
                 },
-                child: Text(Strings.theme["light"]!)),
+                child: Text(AppLocalizations.of(context)!.light)),
             RadioMenuButton(
                 value: Strings.theme["dark"],
                 groupValue: appTheme,
                 onChanged: (value) {
                   setState(() => appTheme = value!);
                 },
-                child: Text(Strings.theme["dark"]!)),
+                child: Text(AppLocalizations.of(context)!.dark)),
               if(oldAppTheme != appTheme) const Divider(),
-              if (oldAppTheme != appTheme )Text("You have to restart the App to change the App theme.",
-              style: GoogleFonts.lato(fontSize: 12),
+              if (oldAppTheme != appTheme )Text(AppLocalizations.of(context)!.restartAppToChangeTheme,
+              style: const TextStyle(fontSize: 12),
             )
           ],
         ),
       actions: [
         TextButton(
-          child: const Text('Save'),
+          child: Text(AppLocalizations.of(context)!.save),
           onPressed: () {
             prefs.setString(Strings.theme["appTheme"]!, appTheme);
             Navigator.of(context).pop(appTheme);
           },
         ),
         TextButton(
-          child: const Text('Cancel'),
+          child:  Text(AppLocalizations.of(context)!.cancel),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],
