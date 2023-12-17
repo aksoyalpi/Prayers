@@ -1,0 +1,10 @@
+{
+  "prayerTime": "{time, select, Fajr{صلاة الفجر} Sunrise{شروق} Dhuhr{صلاة الظهر} Asr{صلاة العصر} Maghrib{صلاة المغرب} Isha{صلاة العشاء} other{صلاة}}",
+
+  "appTheme": "App theme",
+  "system": "System",
+  "dark": "Dark",
+  "light": "Light"
+
+
+}

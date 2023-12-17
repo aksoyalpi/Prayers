@@ -1,0 +1,22 @@
+{
+  "prayerTime": "{time, select, Fajr{Sabah / Fajr} Sunrise{Günes} Dhuhr{Ögle / Dhuhr} Asr{Ikindi / Asr} Maghrib{Aksam / Maghrib} Isha{Yatsi / Isha} other{Namaz}}",
+
+  "appTheme": "Uygulama teması",
+  "system": "Sistem",
+  "dark": "Koyu",
+  "light": "Açık",
+
+  "location": "Konum",
+  "gps": "GPS",
+  "city": "Şehir",
+  "country": "Ülke",
+
+  "save": "Kaydet",
+  "cancel": "Iptal",
+  "settings": "Ayarlar",
+  "general": "Genel",
+  "notification": "Bildirim",
+  "calculationMethod": "Hesaplama yöntemi",
+  "prayerTimes": "Namaz vakitleri"
+
+}

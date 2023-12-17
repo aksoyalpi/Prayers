@@ -1,0 +1,32 @@
+{
+  "prayerTime": "{time, select, Fajr{Morning / Fajr} Sunrise{Sunrise} Dhuhr{Noon / Dhuhr} Asr{Afternoon / Asr} Maghrib{Evening / Maghrib} Isha{Night / Isha} other{Prayer}}",
+  "date": "{date}",
+  "@date": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMd"
+      }
+    }
+  },
+
+  "appTheme": "App theme",
+  "system": "System",
+  "dark": "Dark",
+  "light": "Light",
+
+  "location": "Location",
+  "useGPS": "use GPS",
+  "gps": "GPS",
+  "city": "City",
+  "country": "Country",
+
+  "save": "Save",
+  "cancel": "Cancel",
+  "settings": "Settings",
+  "general": "General",
+  "notification": "Notification",
+  "calculationMethod": "Calculation method",
+  "prayerTimes": "Prayer times"
+
+}
