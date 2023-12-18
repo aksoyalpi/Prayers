@@ -32,6 +32,15 @@ class _SettingsState extends State<Settings> {
   String calcMethod = PrayerTimes
       .calcMethods[prefs.getInt(Strings.prefs["calculationMethod"]!)!];
 
+  String getLanguage(String value){
+    const Map<String, String> langs = {
+      "en": "English",
+      "de": "Deutsch",
+      "tr": "Türkçe"
+    };
+    return langs[value].toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog.fullscreen(
@@ -63,7 +72,7 @@ class _SettingsState extends State<Settings> {
               ),
               SettingsTile(
                   title: Text(AppLocalizations.of(context)!.language),
-                description: Text(language),
+                description: Text(getLanguage(language)),
                 leading: const Icon(Icons.language),
                 onPressed: (context) => showDialog(
                     context: context,
