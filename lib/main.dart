@@ -81,7 +81,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final ThemeMode _themeMode = getThemeMode();
-  Locale _locale = const Locale("en");
+  Locale _locale = Locale(prefs.getString(Strings.languageCode)!);
 
   @override
   void initState() {

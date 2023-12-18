@@ -32,8 +32,8 @@
   "cancel": "Abbrechen",
   "settings": "Einstellungen",
   "general": "Allgemein",
-  "notification": "Benachrichtigungen",
-  "calculationMethod": "Berechnugsmethode",
+  "notification": "Benachrichtigung",
+  "calculationMethod": "Berechnungsmethode",
   "prayerTimes": "Gebetszeiten"
 
 }
