@@ -1,5 +1,5 @@
 {
-  "prayerTime": "{time, select, Fajr{Sabah / Fajr} Sunrise{Günes} Dhuhr{Ögle / Dhuhr} Asr{Ikindi / Asr} Maghrib{Aksam / Maghrib} Isha{Yatsi / Isha} other{Namaz}}",
+  "prayerTime": "{time, select, Fajr{Sabah} Sunrise{Günes} Dhuhr{Ögle} Asr{Ikindi} Maghrib{Aksam} Isha{Yatsi} other{Namaz}}",
 
   "appTheme": "{theme, select, System{Sistem} Dark{Koyu} Light{Açık} other{Sistem}}",
   "appThemeTitle": "Uygulama teması",
@@ -11,6 +11,7 @@
   "language": "Dil",
   "english": "Ingilizce",
   "turkish": "Türkçe",
+  "german": "Almanca",
 
   "location": "Konum",
   "gps": "GPS",

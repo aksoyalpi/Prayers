@@ -28,6 +28,22 @@ class Strings {
   static const String calculation_method = "Calculation method";
   static const String prayerTimes = "Prayer times";
 
+  static const String fajrArabic = "صلاة الفجر";
+  static const String sunriseArabic = "شروق";
+  static const String dhuhrArabic = "صلاة الظهر";
+  static const String asrArabic = "صلاة العصر";
+  static const String maghribArabic = "صلاة المغرب";
+  static const String ishaArabic = "صلاة العشاء";
+
+  static const Map<String, String> prayersArabic = {
+    "Fajr": "صلاة الفجر",
+    "Sunrise": "شروق",
+    "Dhuhr": "صلاة الظهر",
+    "Asr": "صلاة العصر",
+    "Maghrib": "صلاة المغرب",
+    "Isha": "صلاة العشاء"
+  };
+
   static const String languageCode = "languageCode";
 
   static const Map<String, String> prefs = {

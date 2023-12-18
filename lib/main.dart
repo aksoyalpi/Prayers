@@ -148,6 +148,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   Future<Time?>? times;
 
+  @override
+  void initState() {
+    times = pt.fetchPost(prefs.getBool("useGPS")!);
+    notify();
+    super.initState();
+  }
+
   bool notificationIsOn() {
     if (prefs.getBool(Strings.notificationOn)!) {
       return true;
@@ -378,7 +385,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                       left: 40,
                       child: Text(
                           /*widget.time*/
-                          AppLocalizations.of(context)!.prayerTime(widget.time),
+                          "${AppLocalizations.of(context)!.prayerTime(widget.time)} / ${Strings.prayersArabic[widget.time]}",
                           style: GoogleFonts.lato(
                               textStyle: const TextStyle(fontSize: 12))),
                     ),

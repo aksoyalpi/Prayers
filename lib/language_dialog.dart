@@ -38,6 +38,13 @@ class _LanguageDialogState extends State<LanguageDialog> {
                 setState(() => aktLocale = const Locale("tr"));
               },
               child: Text(AppLocalizations.of(context)!.turkish)),
+          RadioMenuButton(
+              value: const Locale("de"),
+              groupValue: aktLocale,
+              onChanged: (value) {
+                setState(() => aktLocale = const Locale("de"));
+              },
+              child: Text(AppLocalizations.of(context)!.german)),
         ],
       ),
       actions: [

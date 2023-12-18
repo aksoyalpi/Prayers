@@ -1,5 +1,5 @@
 {
-  "prayerTime": "{time, select, Fajr{Morning / Fajr} Sunrise{Sunrise} Dhuhr{Noon / Dhuhr} Asr{Afternoon / Asr} Maghrib{Evening / Maghrib} Isha{Night / Isha} other{Prayer}}",
+  "prayerTime": "{time, select, Fajr{Morning} Sunrise{Sunrise} Dhuhr{Noon} Asr{Afternoon} Maghrib{Evening} Isha{Night} other{Prayer}}",
   "date": "{date}",
   "@date": {
     "placeholders": {
@@ -20,6 +20,7 @@
   "language": "Language",
   "english": "English",
   "turkish": "Turkish",
+  "german": "German",
 
   "location": "Location",
   "useGPS": "use GPS",

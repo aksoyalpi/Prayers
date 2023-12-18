@@ -1,0 +1,39 @@
+{
+  "prayerTime": "{time, select, Fajr{Morgen} Sunrise{Sonnenaufgang} Dhuhr{Mittag} Asr{Nachmittag} Maghrib{Abend} Isha{Nacht} other{Gebet}}",
+  "date": "{date}",
+  "@date": {
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMd"
+      }
+    }
+  },
+
+  "appTheme": "{theme, select, System{System} Dark{Dunkel} Light{Hell} other{System}}",
+  "appThemeTitle": "App-Thema",
+  "system": "System",
+  "dark": "Dunkel",
+  "light": "Hell",
+  "restartAppToChangeTheme": "Sie müssen die App neustarten, um die Änderungen zu übernehmen.",
+
+  "language": "Sprache",
+  "english": "Englisch",
+  "turkish": "Türkisch",
+  "german": "Deutsch",
+
+  "location": "Standort",
+  "useGPS": "use GPS",
+  "gps": "GPS",
+  "city": "Stadt",
+  "country": "Land",
+
+  "save": "Speichern",
+  "cancel": "Abbrechen",
+  "settings": "Einstellungen",
+  "general": "Allgemein",
+  "notification": "Benachrichtigungen",
+  "calculationMethod": "Berechnugsmethode",
+  "prayerTimes": "Gebetszeiten"
+
+}
