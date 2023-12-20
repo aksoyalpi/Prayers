@@ -48,7 +48,7 @@ void main() async {
       }
     }
   }
-  if(!prefs.containsKey(Strings.languageCode)){
+  if (!prefs.containsKey(Strings.languageCode)) {
     prefs.setString(Strings.languageCode, "en");
   }
 
@@ -76,7 +76,8 @@ class MyApp extends StatefulWidget {
   @override
   State<MyApp> createState() => _MyAppState();
 
-  static _MyAppState? of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>();
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
 }
 
 class _MyAppState extends State<MyApp> {
@@ -88,7 +89,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  void setLocale(Locale value){
+  void setLocale(Locale value) {
     setState(() {
       _locale = value;
     });
@@ -151,7 +152,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     times = pt.fetchPost(prefs.getBool("useGPS")!);
-    notify();
+    times?.then((value) {
+      if (prefs.getInt(Strings.aktDay) != DateTime.now().day) {
+        notify();
+      }
+    });
     super.initState();
   }
 
@@ -202,63 +207,80 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future _refresh() async {
+    setState(() {
+      times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
+    });
+    return times;
+  }
+
   TextEditingController cityController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            top: 30,
-            right: 10,
-            child: IconButton(
-                style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: () => showSettings(),
-                icon: const Icon(Icons.settings)),
-          ),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Positioned(
-                  top: 50,
-                  child: Text(
-                    /*DateFormat.yMMMd('en_US').format(DateTime.now())*/
-                    AppLocalizations.of(context)!.date(DateTime.now()),
-                    style: GoogleFonts.lato(
-                        fontSize: 32, fontWeight: FontWeight.bold),
-                  )),
-              Align(
-                alignment: Alignment.center,
-                child: FutureBuilder(
-                    key: UniqueKey(),
-                    future: times,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      } else if (snapshot.connectionState ==
-                          ConnectionState.none) {
-                        return Container();
-                      } else {
-                        if (snapshot.hasData) {
-                          return buildDataWidget(context, snapshot);
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        } else {
-                          return Container();
-                        }
-                      }
-                    }),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+        body: RefreshIndicator(
+            onRefresh: () => _refresh(),
+            child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned(
+                          top: 30,
+                          right: 10,
+                          child: IconButton(
+                              style: ButtonStyle(
+                                  iconSize: MaterialStateProperty.all(25)),
+                              padding: const EdgeInsets.symmetric(vertical: 5),
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              onPressed: () => showSettings(),
+                              icon: const Icon(Icons.settings)),
+                        ),
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Positioned(
+                                top: 50,
+                                child: Text(
+                                  /*DateFormat.yMMMd('en_US').format(DateTime.now())*/
+                                  AppLocalizations.of(context)!
+                                      .date(DateTime.now()),
+                                  style: GoogleFonts.lato(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.bold),
+                                )),
+                            Align(
+                              alignment: Alignment.center,
+                              child: FutureBuilder(
+                                  key: UniqueKey(),
+                                  future: times,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.none) {
+                                      return Container();
+                                    } else {
+                                      if (snapshot.hasData) {
+                                        return buildDataWidget(
+                                            context, snapshot);
+                                      } else if (snapshot.hasError) {
+                                        return Text("${snapshot.error}");
+                                      } else {
+                                        return Container();
+                                      }
+                                    }
+                                  }),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )))));
   }
 
   Widget buildDataWidget(context, snapshot) => Column(

@@ -129,7 +129,7 @@ class _SettingsState extends State<Settings> {
                 builder: (context) => const CalculationMethodDialog(),
               ).then((value) {
                 setState(() {
-                  calcMethod = value;
+                  calcMethod = value!;
                 });
               }),
             )
