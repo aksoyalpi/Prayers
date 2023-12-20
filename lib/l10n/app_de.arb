@@ -10,12 +10,15 @@
     }
   },
 
+  "checkInternetError": "Bitte prüfen sie ihre Internet-Verbindung.",
+
+
   "appTheme": "{theme, select, System{System} Dark{Dunkel} Light{Hell} other{System}}",
   "appThemeTitle": "App-Thema",
   "system": "System",
   "dark": "Dunkel",
   "light": "Hell",
-  "restartAppToChangeTheme": "Sie müssen die App neustarten, um die Änderungen zu übernehmen.",
+  "restartAppToChangeTheme": "Sie müssen die Einstellungen speichern, um die Änderungen zu übernehmen.",
 
   "language": "Sprache",
   "english": "Englisch",

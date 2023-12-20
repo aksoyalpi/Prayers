@@ -6,7 +6,10 @@
   "system": "Sistem",
   "dark": "Koyu",
   "light": "Açık",
-  "restartAppToChangeTheme": "Uygulama temasını değiştirmek için uygulamayı yeniden başlatmanız gerekiyor.",
+  "restartAppToChangeTheme": "Uygulama temasını değiştirmek icin ayarlari kaydetmeniz lazim.",
+
+  "checkInternetError": "Lütfen internet baglantinizi kontrol ediniz.",
+
 
   "language": "Dil",
   "english": "Ingilizce",

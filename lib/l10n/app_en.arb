@@ -10,12 +10,14 @@
     }
   },
 
+  "checkInternetError": "Please check your internet connection.",
+
   "appTheme": "{theme, select, System{System} Dark{Dark} Light{Light} other{System}}",
   "appThemeTitle": "App theme",
   "system": "System",
   "dark": "Dark",
   "light": "Light",
-  "restartAppToChangeTheme": "You have to restart the App to change the App theme.",
+  "restartAppToChangeTheme": "You have to save the settings to change the App theme.",
 
   "language": "Language",
   "english": "English",

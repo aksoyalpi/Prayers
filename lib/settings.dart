@@ -93,6 +93,7 @@ class _SettingsState extends State<Settings> {
                     context: context,
                     builder: (context) => const ThemeSetting(),
                   ).then((value) {
+                    MyApp.of(context)?.setThemeMode(getThemeMode());
                     setState(() {
                       aktTheme = value;
                     });

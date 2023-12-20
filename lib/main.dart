@@ -39,18 +39,17 @@ void main() async {
   if (!prefs.containsKey(Strings.notificationOn)) {
     prefs.setBool(Strings.notificationOn, true);
   }
-  if (!prefs.containsKey(Strings.aktDay) ||
-      prefs.getInt(Strings.aktDay) != DateTime.now().day) {
+  if (!prefs.containsKey(Strings.aktDay)) {
     prefs.setInt(Strings.aktDay, DateTime.now().day);
-    for (int i = 0; i < PrayerTimes.prayerTimeZones.length; i++) {
-      if (i != 1) {
-        prefs.setBool(PrayerTimes.prayerTimeZones[i], false);
-      }
-    }
+    setCheckboxesFalse();
   }
   if (!prefs.containsKey(Strings.languageCode)) {
     prefs.setString(Strings.languageCode, "en");
   }
+  if(!prefs.containsKey(Strings.prayerTimes)){
+    prefs.setStringList(Strings.prayerTimes, []);
+  }
+
 
   // requestPermissionToSendNotifications
   runApp(const MyApp());
@@ -70,6 +69,14 @@ void main() async {
       debug: true);
 }
 
+void setCheckboxesFalse(){
+  for (int i = 0; i < PrayerTimes.prayerTimeZones.length; i++) {
+    if (i != 1) {
+      prefs.setBool(PrayerTimes.prayerTimeZones[i], false);
+    }
+  }
+}
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -81,7 +88,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final ThemeMode _themeMode = getThemeMode();
+  ThemeMode _themeMode = getThemeMode();
   Locale _locale = Locale(prefs.getString(Strings.languageCode)!);
 
   @override
@@ -92,6 +99,12 @@ class _MyAppState extends State<MyApp> {
   void setLocale(Locale value) {
     setState(() {
       _locale = value;
+    });
+  }
+
+  void setThemeMode(ThemeMode value){
+    setState(() {
+      _themeMode = value;
     });
   }
 
@@ -151,15 +164,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    times = pt.fetchPost(prefs.getBool("useGPS")!);
-    times?.then((value) {
-      if (prefs.getInt(Strings.aktDay) != DateTime.now().day) {
-        notify();
-      }
-    });
+    setTimes();
     super.initState();
   }
 
+  void setTimes(){
+    List<String> savedTimes = prefs.getStringList(Strings.prayerTimes)!;
+    if(savedTimes.isEmpty || prefs.getInt(Strings.aktDay) != DateTime.now().day){
+      prefs.setInt(Strings.aktDay, DateTime.now().day);
+      setState(() {
+        times = pt.fetchPost(prefs.getBool("useGPS")!);
+      });
+      setCheckboxesFalse();
+      times?.then((value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
+      Notify.prayerTimesNotifiyAll(pt);
+    }
+  }
+
+
+  /// Returns bool if notification is on
   bool notificationIsOn() {
     if (prefs.getBool(Strings.notificationOn)!) {
       return true;
@@ -203,13 +226,20 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
       });
+      times?.then((value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
       notify();
     });
   }
 
+  /// Funktion beim runterziehen
   Future _refresh() async {
     setState(() {
       times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
+    });
+    times?.then((value) {
+      if(value != null){
+        prefs.setStringList(Strings.prayerTimes, value.toList());
+      }
     });
     return times;
   }
@@ -289,6 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           for (var time in PrayerTimes.prayerTimeZones)
+            if(time != PrayerTimes.prayerTimeZones[1] || pt.getPrayerTimeHour(time) > DateTime.now().hour || (pt.getPrayerTimeHour(time) >= DateTime.now().hour && pt.getPrayerTimeMin(time) >= DateTime.now().minute))
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 3),
               child: PrayerTime(time: time, snapshot: snapshot),
