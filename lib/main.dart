@@ -159,13 +159,20 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
   Future<Time?>? times;
 
   @override
   void initState() {
     setTimes();
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.resumed){
+      setTimes();
+    }
   }
 
   void setTimes(){
@@ -253,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
             onRefresh: () => _refresh(),
             child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                child: Container(
+                child: SizedBox(
                     height: MediaQuery.of(context).size.height,
                     child: Stack(
                       alignment: Alignment.center,

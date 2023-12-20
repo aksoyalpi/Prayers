@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:location/location.dart';
 import 'package:prayer_times/time.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'Notify.dart';
 import 'consts/strings.dart';
@@ -73,6 +76,10 @@ class PrayerTimes {
   }
 
   Future<Time?>? fetchPost(bool gps) async {
+    /*bool result = await InternetConnectionChecker().hasConnection;
+    if(result == false) {
+      throw Exception("Please check your internet connection.");
+    }*/
     day = DateTime.now().day;
     final year = DateTime.now().year;
     final month = DateTime.now().month;
@@ -92,13 +99,16 @@ class PrayerTimes {
           "https://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=$country&method=$method");
     }
 
-    final response = await http.get(uri);
-
-    if (response.statusCode == 200) {
-      times = Time.fromJson(json.decode(response.body), day);
-      return Time.fromJson(json.decode(response.body), day);
-    } else {
-      throw Exception("Failed to load Times");
+    try{
+      final response = await http.get(uri);
+      if (response.statusCode == 200) {
+        times = Time.fromJson(json.decode(response.body), day);
+        return Time.fromJson(json.decode(response.body), day);
+      } else {
+        throw Exception("Failed to load Times");
+      }
+    }on SocketException catch(_){
+      throw Exception("Please check your internet connection.");
     }
   }
 
