@@ -46,10 +46,9 @@ void main() async {
   if (!prefs.containsKey(Strings.languageCode)) {
     prefs.setString(Strings.languageCode, "en");
   }
-  if(!prefs.containsKey(Strings.prayerTimes)){
+  if (!prefs.containsKey(Strings.prayerTimes)) {
     prefs.setStringList(Strings.prayerTimes, []);
   }
-
 
   // requestPermissionToSendNotifications
   runApp(const MyApp());
@@ -69,7 +68,7 @@ void main() async {
       debug: true);
 }
 
-void setCheckboxesFalse(){
+void setCheckboxesFalse() {
   for (int i = 0; i < PrayerTimes.prayerTimeZones.length; i++) {
     if (i != 1) {
       prefs.setBool(PrayerTimes.prayerTimeZones[i], false);
@@ -102,7 +101,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void setThemeMode(ThemeMode value){
+  void setThemeMode(ThemeMode value) {
     setState(() {
       _themeMode = value;
     });
@@ -118,7 +117,6 @@ class _MyAppState extends State<MyApp> {
         supportedLocales: AppLocalizations.supportedLocales,
         theme: ThemeData(
           colorSchemeSeed: Colors.indigo[700],
-          //colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
           useMaterial3: true,
         ),
         home: MaterialApp(
@@ -159,7 +157,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Future<Time?>? times;
 
   @override
@@ -170,24 +168,26 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(state == AppLifecycleState.resumed){
+    if (state == AppLifecycleState.resumed) {
       setTimes();
     }
   }
 
-  void setTimes(){
+  /// Function that checks the condition and sets the time to a new one or get it from the prefs
+  void setTimes() {
     List<String> savedTimes = prefs.getStringList(Strings.prayerTimes)!;
-    if(savedTimes.isEmpty || prefs.getInt(Strings.aktDay) != DateTime.now().day){
+    if (savedTimes.isEmpty ||
+        prefs.getInt(Strings.aktDay) != DateTime.now().day) {
       prefs.setInt(Strings.aktDay, DateTime.now().day);
       setState(() {
         times = pt.fetchPost(prefs.getBool("useGPS")!);
       });
       setCheckboxesFalse();
-      times?.then((value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
+      times?.then(
+          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
       Notify.prayerTimesNotifiyAll(pt);
     }
   }
-
 
   /// Returns bool if notification is on
   bool notificationIsOn() {
@@ -233,7 +233,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
       setState(() {
         times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
       });
-      times?.then((value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
+      times?.then(
+          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
       notify();
     });
   }
@@ -244,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
       times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
     });
     times?.then((value) {
-      if(value != null){
+      if (value != null) {
         prefs.setStringList(Strings.prayerTimes, value.toList());
       }
     });
@@ -281,14 +282,26 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
                           alignment: Alignment.center,
                           children: [
                             Positioned(
-                                top: 50,
-                                child: Text(
-                                  /*DateFormat.yMMMd('en_US').format(DateTime.now())*/
-                                  AppLocalizations.of(context)!
-                                      .date(DateTime.now()),
-                                  style: GoogleFonts.lato(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.bold),
+                                top: 150,
+                                child: Row(
+                                  children: [
+                                    TextButton(
+                                        onPressed: () => {},
+                                        child: const Text("< ", style: TextStyle(color: Colors.white),)
+                                    ),
+                                    Text(
+                                      /*DateFormat.yMMMd('en_US').format(DateTime.now())*/
+                                      AppLocalizations.of(context)!
+                                          .date(DateTime.now()),
+                                      style: GoogleFonts.lato(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    TextButton(
+                                        onPressed: () => {},
+                                        child: const Text(" >", style: TextStyle(color: Colors.white))
+                                    ),
+                                  ],
                                 )),
                             Align(
                               alignment: Alignment.center,
@@ -326,11 +339,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver{
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           for (var time in PrayerTimes.prayerTimeZones)
-            if(time != PrayerTimes.prayerTimeZones[1] || pt.getPrayerTimeHour(time) > DateTime.now().hour || (pt.getPrayerTimeHour(time) >= DateTime.now().hour && pt.getPrayerTimeMin(time) >= DateTime.now().minute))
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-              child: PrayerTime(time: time, snapshot: snapshot),
-            )
+            if (time != PrayerTimes.prayerTimeZones[1] ||
+                pt.getPrayerTimeHour(time) > DateTime.now().hour ||
+                (pt.getPrayerTimeHour(time) >= DateTime.now().hour &&
+                    pt.getPrayerTimeMin(time) >= DateTime.now().minute))
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 3),
+                child: PrayerTime(time: time, snapshot: snapshot),
+              )
           //prayerTimeWidget(time, snapshot)
         ],
       );
