@@ -75,11 +75,9 @@ class PrayerTimes {
     return 0;
   }
 
+
+  /// Function to fetch Prayer times for today
   Future<Time?>? fetchPost(bool gps) async {
-    /*bool result = await InternetConnectionChecker().hasConnection;
-    if(result == false) {
-      throw Exception("Please check your internet connection.");
-    }*/
     day = DateTime.now().day;
     final year = DateTime.now().year;
     final month = DateTime.now().month;
@@ -111,6 +109,44 @@ class PrayerTimes {
       throw Exception("Please check your internet connection.");
     }
   }
+
+
+  /// Function to fetch prayer times by a given date
+  Future<Time?>? fetchPostByDate(bool gps, DateTime date) async {
+    final day = date.day;
+    final year = date.year;
+    final month = date.month;
+    var method = prefs.getInt(Strings.prefs["calculationMethod"]!)!;
+    if (method > 5) method++;
+    final city = prefs.getString(Strings.prefs["city"]!);
+    final country = prefs.getString(Strings.prefs["country"]!);
+
+    Uri uri;
+
+    if (gps) {
+      await setLocation();
+      uri = Uri.parse(
+          "https://api.aladhan.com/v1/calendar/$year/$month?latitude=$latitude&longitude=$longitude&method=$method");
+    } else {
+      uri = Uri.parse(
+          "https://api.aladhan.com/v1/calendarByCity/$year/$month?city=$city&country=$country&method=$method");
+    }
+
+    try{
+      final response = await http.get(uri);
+      if (response.statusCode == 200) {
+        times = Time.fromJson(json.decode(response.body), day);
+        return Time.fromJson(json.decode(response.body), day);
+      } else {
+        throw Exception("Failed to load Times");
+      }
+    }on SocketException catch(_){
+      throw Exception("Please check your internet connection.");
+    }
+  }
+
+
+
 
   /// Method to get the prayertimes for given param time
   String? getPrayerTime(String time) {

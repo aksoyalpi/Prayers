@@ -159,6 +159,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Future<Time?>? times;
+  DateTime date = DateTime.now();
 
   @override
   void initState() {
@@ -252,6 +253,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return times;
   }
 
+  void changeDate(int day){
+    DateTime tmpDate = date.add(Duration(days: day));
+    setState(() {
+      date = tmpDate;
+      times = pt.fetchPostByDate(prefs.getBool(Strings.prefs["useGPS"]!)!, date);
+    });
+
+  }
+
   TextEditingController cityController = TextEditingController();
 
   @override
@@ -286,19 +296,19 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                 child: Row(
                                   children: [
                                     TextButton(
-                                        onPressed: () => {},
+                                        onPressed: () => changeDate(-1),
                                         child: const Text("< ", style: TextStyle(color: Colors.white),)
                                     ),
                                     Text(
                                       /*DateFormat.yMMMd('en_US').format(DateTime.now())*/
                                       AppLocalizations.of(context)!
-                                          .date(DateTime.now()),
+                                          .date(date),
                                       style: GoogleFonts.lato(
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     TextButton(
-                                        onPressed: () => {},
+                                        onPressed: () => changeDate(1),
                                         child: const Text(" >", style: TextStyle(color: Colors.white))
                                     ),
                                   ],
