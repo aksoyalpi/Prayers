@@ -253,13 +253,29 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     return times;
   }
 
-  void changeDate(int day){
+  /// Funtction that is called when user clicks on arrow left or right to see the next day or the day before
+  void changeDate(int day) {
     DateTime tmpDate = date.add(Duration(days: day));
     setState(() {
       date = tmpDate;
-      times = pt.fetchPostByDate(prefs.getBool(Strings.prefs["useGPS"]!)!, date);
+      times =
+          pt.fetchPostByDate(prefs.getBool(Strings.prefs["useGPS"]!)!, date);
     });
+  }
 
+  void changeDateByDatePicker() async {
+    DateTime? tmpTime = await showDatePicker(
+        context: context,
+        initialDate: date,
+        firstDate: DateTime(DateTime.now().year - 5),
+        lastDate: DateTime(DateTime.now().year + 5));
+    if (tmpTime != null) {
+      setState(() {
+        date = tmpTime;
+        times =
+            pt.fetchPostByDate(prefs.getBool(Strings.prefs["useGPS"]!)!, date);
+      });
+    }
   }
 
   TextEditingController cityController = TextEditingController();
@@ -297,20 +313,26 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                   children: [
                                     TextButton(
                                         onPressed: () => changeDate(-1),
-                                        child: const Text("< ", style: TextStyle(color: Colors.white),)
-                                    ),
-                                    Text(
-                                      /*DateFormat.yMMMd('en_US').format(DateTime.now())*/
-                                      AppLocalizations.of(context)!
-                                          .date(date),
-                                      style: GoogleFonts.lato(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                        child: const Text(
+                                          "< ",
+                                          style: TextStyle(color: Colors.white),
+                                        )),
+                                    TextButton(
+                                        onPressed: () =>
+                                            changeDateByDatePicker(),
+                                        child: Text(
+                                          AppLocalizations.of(context)!
+                                              .date(date),
+                                          style: GoogleFonts.lato(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        )),
                                     TextButton(
                                         onPressed: () => changeDate(1),
-                                        child: const Text(" >", style: TextStyle(color: Colors.white))
-                                    ),
+                                        child: const Text(" >",
+                                            style: TextStyle(
+                                                color: Colors.white))),
                                   ],
                                 )),
                             Align(
@@ -355,7 +377,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     pt.getPrayerTimeMin(time) >= DateTime.now().minute))
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
-                child: PrayerTime(time: time, snapshot: snapshot),
+                child: PrayerTime(time: time, snapshot: snapshot, selectedDate: date),
               )
           //prayerTimeWidget(time, snapshot)
         ],
@@ -379,22 +401,30 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 class PrayerTime extends StatefulWidget {
   final time;
   final snapshot;
+  final DateTime selectedDate;
 
   const PrayerTime({
     super.key,
     required this.time,
     required this.snapshot,
+    required this.selectedDate
   });
 
   @override
   State<PrayerTime> createState() => _PrayerTimeState();
 }
 
+
+bool dateIsToday(DateTime date){
+  return (date.day == DateTime.now().day && date.month == DateTime.now().month && date.year == DateTime.now().year);
+}
+
 /// Function to return boolean if now is the time for the given parameter
 ///
 /// eg. if time is Dhuhr and the clock is between dhuhr and asr it should return
 /// true else false
-bool onTime(time, snapshot) {
+bool onTime(String time, snapshot, DateTime date) {
+  if(!dateIsToday(date)) return false;
   if (time == PrayerTimes.prayerTimeZones[1]) return false;
 
   int hour = DateTime.now().hour;
@@ -444,7 +474,7 @@ class _PrayerTimeState extends State<PrayerTime> {
             height: 65,
             child: Card(
                 surfaceTintColor: Theme.of(context).cardColor,
-                shadowColor: onTime(widget.time, widget.snapshot)
+                shadowColor: onTime(widget.time, widget.snapshot, widget.selectedDate)
                     ? Colors.green
                     : Theme.of(context).shadowColor,
                 elevation: 12,
@@ -453,7 +483,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    if (onTime(widget.time, widget.snapshot))
+                    if (onTime(widget.time, widget.snapshot, widget.selectedDate))
                       Positioned(
                         left: 0,
                         child: Transform.scale(
@@ -488,7 +518,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                           child: Checkbox(
                             activeColor: Colors.green,
                             checkColor: Colors.white,
-                            value: isChecked,
+                            value: dateIsToday(widget.selectedDate) ?  isChecked : false,
                             onChanged: (bool? value) {
                               setState(() {
                                 isChecked = value!;
