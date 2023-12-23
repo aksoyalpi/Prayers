@@ -40,7 +40,9 @@ void main() async {
     prefs.setBool(Strings.notificationOn, true);
   }
   if (!prefs.containsKey(Strings.aktDay)) {
-    prefs.setInt(Strings.aktDay, DateTime.now().day);
+    prefs.setInt(Strings.aktDay, DateTime
+        .now()
+        .day);
     setCheckboxesFalse();
   }
   if (!prefs.containsKey(Strings.languageCode)) {
@@ -54,7 +56,7 @@ void main() async {
   runApp(const MyApp());
   // declaring Notification
   AwesomeNotifications().initialize(
-      // set the icon to null if you want to use the default app icon
+    // set the icon to null if you want to use the default app icon
       null,
       [
         NotificationChannel(
@@ -163,7 +165,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    setTimes();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setTimes();
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -178,14 +183,19 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void setTimes() {
     List<String> savedTimes = prefs.getStringList(Strings.prayerTimes)!;
     if (savedTimes.isEmpty ||
-        prefs.getInt(Strings.aktDay) != DateTime.now().day) {
-      prefs.setInt(Strings.aktDay, DateTime.now().day);
+        prefs.getInt(Strings.aktDay) != DateTime
+            .now()
+            .day) {
+      prefs.setInt(Strings.aktDay, DateTime
+          .now()
+          .day);
       setState(() {
         times = pt.fetchPost(prefs.getBool("useGPS")!);
       });
       setCheckboxesFalse();
       times?.then(
-          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
+              (value) =>
+              prefs.setStringList(Strings.prayerTimes, value!.toList()));
       Notify.prayerTimesNotifiyAll(pt);
     }
   }
@@ -208,15 +218,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     Notify.retrieveScheduledNotifications()
         .then((value) => alreadyNotificated = value.isNotEmpty);
     times?.then((value) async =>
-        {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
+    {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
   }
 
   /// Show Location dialog
   void showLocationSetting() {
     showDialog(
-            context: context,
-            builder: (context) => const LocationSettings(),
-            barrierDismissible: true)
+        context: context,
+        builder: (context) => const LocationSettings(),
+        barrierDismissible: true)
         .then((value) {
       if (value != "") {
         setState(() {
@@ -235,7 +245,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
       });
       times?.then(
-          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
+              (value) =>
+              prefs.setStringList(Strings.prayerTimes, value!.toList()));
       notify();
     });
   }
@@ -267,8 +278,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     DateTime? tmpTime = await showDatePicker(
         context: context,
         initialDate: date,
-        firstDate: DateTime(DateTime.now().year - 5),
-        lastDate: DateTime(DateTime.now().year + 5));
+        firstDate: DateTime(DateTime
+            .now()
+            .year - 5),
+        lastDate: DateTime(DateTime
+            .now()
+            .year + 5));
     if (tmpTime != null) {
       setState(() {
         date = tmpTime;
@@ -283,101 +298,123 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: RefreshIndicator(
-            onRefresh: () => _refresh(),
-            child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned(
-                          top: 30,
-                          right: 10,
-                          child: IconButton(
-                              style: ButtonStyle(
-                                  iconSize: MaterialStateProperty.all(25)),
-                              padding: const EdgeInsets.symmetric(vertical: 5),
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              onPressed: () => showSettings(),
-                              icon: const Icon(Icons.settings)),
-                        ),
-                        Stack(
+        body: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              if (details.primaryVelocity! > 0) {
+                changeDate(-1);
+              } else if (details.primaryVelocity! < 0) {
+                changeDate(1);
+              }
+            },
+            child: RefreshIndicator(
+                onRefresh: () => _refresh(),
+                child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                        height: MediaQuery
+                            .of(context)
+                            .size
+                            .height,
+                        child: Stack(
                           alignment: Alignment.center,
                           children: [
                             Positioned(
-                                top: 150,
-                                child: Row(
-                                  children: [
-                                    TextButton(
-                                        onPressed: () => changeDate(-1),
-                                        child: const Text(
-                                          "< ",
-                                          style: TextStyle(color: Colors.white),
-                                        )),
-                                    TextButton(
-                                        onPressed: () =>
-                                            changeDateByDatePicker(),
-                                        child: Text(
-                                          AppLocalizations.of(context)!
-                                              .date(date),
-                                          style: GoogleFonts.lato(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white),
-                                        )),
-                                    TextButton(
-                                        onPressed: () => changeDate(1),
-                                        child: const Text(" >",
-                                            style: TextStyle(
-                                                color: Colors.white))),
-                                  ],
-                                )),
-                            Align(
+                              top: 30,
+                              right: 10,
+                              child: IconButton(
+                                  style: ButtonStyle(
+                                      iconSize: MaterialStateProperty.all(25)),
+                                  padding:
+                                  const EdgeInsets.symmetric(vertical: 5),
+                                  splashColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onPressed: () => showSettings(),
+                                  icon: const Icon(Icons.settings)),
+                            ),
+                            Stack(
                               alignment: Alignment.center,
-                              child: FutureBuilder(
-                                  key: UniqueKey(),
-                                  future: times,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const CircularProgressIndicator();
-                                    } else if (snapshot.connectionState ==
-                                        ConnectionState.none) {
-                                      return Container();
-                                    } else {
-                                      if (snapshot.hasData) {
-                                        return buildDataWidget(
-                                            context, snapshot);
-                                      } else if (snapshot.hasError) {
-                                        return Text("${snapshot.error}");
-                                      } else {
-                                        return Container();
-                                      }
-                                    }
-                                  }),
+                              children: [
+                                Positioned(
+                                    top: 150,
+                                    child: Row(
+                                      children: [
+                                        TextButton(
+                                            onPressed: () => changeDate(-1),
+                                            child: const Text(
+                                              "< ",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            )),
+                                        TextButton(
+                                            onPressed: () =>
+                                                changeDateByDatePicker(),
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .date(date),
+                                              style: GoogleFonts.lato(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            )),
+                                        TextButton(
+                                            onPressed: () => changeDate(1),
+                                            child: const Text(" >",
+                                                style: TextStyle(
+                                                    color: Colors.white))),
+                                      ],
+                                    )),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: FutureBuilder(
+                                      key: UniqueKey(),
+                                      future: times,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const CircularProgressIndicator();
+                                        } else if (snapshot.connectionState ==
+                                            ConnectionState.none) {
+                                          return Container();
+                                        } else {
+                                          if (snapshot.hasData) {
+                                            return buildDataWidget(
+                                                context, snapshot, date);
+                                          } else if (snapshot.hasError) {
+                                            return Text("${snapshot.error}");
+                                          } else {
+                                            return Container();
+                                          }
+                                        }
+                                      }),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                      ],
-                    )))));
+                        ))))));
   }
 
-  Widget buildDataWidget(context, snapshot) => Column(
+  Widget buildDataWidget(context, snapshot, DateTime date) =>
+      Column(
         key: UniqueKey(),
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           for (var time in PrayerTimes.prayerTimeZones)
-            if (time != PrayerTimes.prayerTimeZones[1] ||
-                pt.getPrayerTimeHour(time) > DateTime.now().hour ||
-                (pt.getPrayerTimeHour(time) >= DateTime.now().hour &&
-                    pt.getPrayerTimeMin(time) >= DateTime.now().minute))
+            if (!dateIsToday(date) ||
+                time != PrayerTimes.prayerTimeZones[1] ||
+                pt.getPrayerTimeHour(time) > DateTime
+                    .now()
+                    .hour ||
+                (pt.getPrayerTimeHour(time) >= DateTime
+                    .now()
+                    .hour &&
+                    pt.getPrayerTimeMin(time) >= DateTime
+                        .now()
+                        .minute))
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
-                child: PrayerTime(time: time, snapshot: snapshot, selectedDate: date),
+                child: PrayerTime(
+                    time: time, snapshot: snapshot, selectedDate: date),
               )
           //prayerTimeWidget(time, snapshot)
         ],
@@ -403,20 +440,25 @@ class PrayerTime extends StatefulWidget {
   final snapshot;
   final DateTime selectedDate;
 
-  const PrayerTime({
-    super.key,
+  const PrayerTime({super.key,
     required this.time,
     required this.snapshot,
-    required this.selectedDate
-  });
+    required this.selectedDate});
 
   @override
   State<PrayerTime> createState() => _PrayerTimeState();
 }
 
-
-bool dateIsToday(DateTime date){
-  return (date.day == DateTime.now().day && date.month == DateTime.now().month && date.year == DateTime.now().year);
+bool dateIsToday(DateTime date) {
+  return (date.day == DateTime
+      .now()
+      .day &&
+      date.month == DateTime
+          .now()
+          .month &&
+      date.year == DateTime
+          .now()
+          .year);
 }
 
 /// Function to return boolean if now is the time for the given parameter
@@ -424,11 +466,15 @@ bool dateIsToday(DateTime date){
 /// eg. if time is Dhuhr and the clock is between dhuhr and asr it should return
 /// true else false
 bool onTime(String time, snapshot, DateTime date) {
-  if(!dateIsToday(date)) return false;
+  if (!dateIsToday(date)) return false;
   if (time == PrayerTimes.prayerTimeZones[1]) return false;
 
-  int hour = DateTime.now().hour;
-  int min = DateTime.now().minute;
+  int hour = DateTime
+      .now()
+      .hour;
+  int min = DateTime
+      .now()
+      .minute;
   int prayerHour = pt.getPrayerTimeHour(time);
   int prayerMin = pt.getPrayerTimeMin(time);
 
@@ -473,24 +519,30 @@ class _PrayerTimeState extends State<PrayerTime> {
             width: 320,
             height: 65,
             child: Card(
-                surfaceTintColor: Theme.of(context).cardColor,
-                shadowColor: onTime(widget.time, widget.snapshot, widget.selectedDate)
+                surfaceTintColor: Theme
+                    .of(context)
+                    .cardColor,
+                shadowColor:
+                onTime(widget.time, widget.snapshot, widget.selectedDate)
                     ? Colors.green
-                    : Theme.of(context).shadowColor,
+                    : Theme
+                    .of(context)
+                    .shadowColor,
                 elevation: 12,
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    if (onTime(widget.time, widget.snapshot, widget.selectedDate))
+                    if (onTime(
+                        widget.time, widget.snapshot, widget.selectedDate))
                       Positioned(
                         left: 0,
                         child: Transform.scale(
                             scale: 0.75,
                             child: Radio(
                               fillColor:
-                                  MaterialStateProperty.all(Colors.green),
+                              MaterialStateProperty.all(Colors.green),
                               value: true,
                               groupValue: true,
                               toggleable: false,
@@ -500,8 +552,10 @@ class _PrayerTimeState extends State<PrayerTime> {
                     Positioned(
                       left: 40,
                       child: Text(
-                          /*widget.time*/
-                          "${AppLocalizations.of(context)!.prayerTime(widget.time)} / ${Strings.prayersArabic[widget.time]}",
+                        /*widget.time*/
+                          "${AppLocalizations.of(context)!.prayerTime(
+                              widget.time)} / ${Strings.prayersArabic[widget
+                              .time]}",
                           style: GoogleFonts.lato(
                               textStyle: const TextStyle(fontSize: 12))),
                     ),
@@ -512,13 +566,16 @@ class _PrayerTimeState extends State<PrayerTime> {
                           style: GoogleFonts.lato(
                               textStyle: const TextStyle(fontSize: 12)),
                         )),
-                    if (widget.time != PrayerTimes.prayerTimeZones[1])
+                    if (widget.time != PrayerTimes.prayerTimeZones[1] &&
+                        dateIsToday(widget.selectedDate))
                       Positioned(
                           right: 10,
                           child: Checkbox(
                             activeColor: Colors.green,
                             checkColor: Colors.white,
-                            value: dateIsToday(widget.selectedDate) ?  isChecked : false,
+                            value: dateIsToday(widget.selectedDate)
+                                ? isChecked
+                                : false,
                             onChanged: (bool? value) {
                               setState(() {
                                 isChecked = value!;
