@@ -5,6 +5,8 @@ class Time {
   final String asr;
   final String maghrib;
   final String isha;
+  //final DateTime gregorianDate;
+  //final String hijriDate;
 
   Time({
     required this.fajr,
@@ -12,7 +14,9 @@ class Time {
     required this.sunrise,
     required this.asr,
     required this.maghrib,
-    required this.isha
+    required this.isha,
+    //required this.gregorianDate,
+    //required this.hijriDate
   });
 
   factory Time.fromJson(Map<String, dynamic> json, int day) => Time(
@@ -22,6 +26,8 @@ class Time {
     asr: json['data'][day-1]['timings']["Asr"],
     maghrib: json['data'][day-1]['timings']["Maghrib"],
     isha: json['data'][day-1]['timings']["Isha"],
+    //gregorianDate: DateTime.parse(json['data'][day-1]['date']['gregorian']["date"]),
+    //hijriDate: "${json['data'][day-1]['date']['hijri']["month"]["en"]} ${json['data'][day-1]['date']['hijri']["day"]}, ${json['data'][day-1]['date']['hijri']["year"]}"
   );
 
   List<String> toList(){

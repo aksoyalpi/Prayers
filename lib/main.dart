@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:jhijri/_src/_jHijri.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/settings.dart';
 import 'package:prayer_times/settings_dialog.dart';
@@ -40,9 +41,7 @@ void main() async {
     prefs.setBool(Strings.notificationOn, true);
   }
   if (!prefs.containsKey(Strings.aktDay)) {
-    prefs.setInt(Strings.aktDay, DateTime
-        .now()
-        .day);
+    prefs.setInt(Strings.aktDay, DateTime.now().day);
     setCheckboxesFalse();
   }
   if (!prefs.containsKey(Strings.languageCode)) {
@@ -56,7 +55,7 @@ void main() async {
   runApp(const MyApp());
   // declaring Notification
   AwesomeNotifications().initialize(
-    // set the icon to null if you want to use the default app icon
+      // set the icon to null if you want to use the default app icon
       null,
       [
         NotificationChannel(
@@ -162,6 +161,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Future<Time?>? times;
   DateTime date = DateTime.now();
+  var hijri = JHijri.now();
 
   @override
   void initState() {
@@ -183,19 +183,14 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void setTimes() {
     List<String> savedTimes = prefs.getStringList(Strings.prayerTimes)!;
     if (savedTimes.isEmpty ||
-        prefs.getInt(Strings.aktDay) != DateTime
-            .now()
-            .day) {
-      prefs.setInt(Strings.aktDay, DateTime
-          .now()
-          .day);
+        prefs.getInt(Strings.aktDay) != DateTime.now().day) {
+      prefs.setInt(Strings.aktDay, DateTime.now().day);
       setState(() {
         times = pt.fetchPost(prefs.getBool("useGPS")!);
       });
       setCheckboxesFalse();
       times?.then(
-              (value) =>
-              prefs.setStringList(Strings.prayerTimes, value!.toList()));
+          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
       Notify.prayerTimesNotifiyAll(pt);
     }
   }
@@ -218,15 +213,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     Notify.retrieveScheduledNotifications()
         .then((value) => alreadyNotificated = value.isNotEmpty);
     times?.then((value) async =>
-    {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
+        {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
   }
 
   /// Show Location dialog
   void showLocationSetting() {
     showDialog(
-        context: context,
-        builder: (context) => const LocationSettings(),
-        barrierDismissible: true)
+            context: context,
+            builder: (context) => const LocationSettings(),
+            barrierDismissible: true)
         .then((value) {
       if (value != "") {
         setState(() {
@@ -245,8 +240,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
       });
       times?.then(
-              (value) =>
-              prefs.setStringList(Strings.prayerTimes, value!.toList()));
+          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
       notify();
     });
   }
@@ -269,6 +263,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     DateTime tmpDate = date.add(Duration(days: day));
     setState(() {
       date = tmpDate;
+      hijri = JHijri(fDate: tmpDate);
       times =
           pt.fetchPostByDate(prefs.getBool(Strings.prefs["useGPS"]!)!, date);
     });
@@ -278,15 +273,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     DateTime? tmpTime = await showDatePicker(
         context: context,
         initialDate: date,
-        firstDate: DateTime(DateTime
-            .now()
-            .year - 5),
-        lastDate: DateTime(DateTime
-            .now()
-            .year + 5));
+        firstDate: DateTime(DateTime.now().year - 5),
+        lastDate: DateTime(DateTime.now().year + 5));
     if (tmpTime != null) {
       setState(() {
         date = tmpTime;
+        hijri = JHijri(fDate: tmpTime);
         times =
             pt.fetchPostByDate(prefs.getBool(Strings.prefs["useGPS"]!)!, date);
       });
@@ -311,10 +303,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: SizedBox(
-                        height: MediaQuery
-                            .of(context)
-                            .size
-                            .height,
+                        height: MediaQuery.of(context).size.height,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -325,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                   style: ButtonStyle(
                                       iconSize: MaterialStateProperty.all(25)),
                                   padding:
-                                  const EdgeInsets.symmetric(vertical: 5),
+                                      const EdgeInsets.symmetric(vertical: 5),
                                   splashColor: Colors.transparent,
                                   highlightColor: Colors.transparent,
                                   onPressed: () => showSettings(),
@@ -345,17 +334,28 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                               style: TextStyle(
                                                   color: Colors.white),
                                             )),
-                                        TextButton(
-                                            onPressed: () =>
-                                                changeDateByDatePicker(),
-                                            child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .date(date),
-                                              style: GoogleFonts.lato(
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            )),
+                                            GestureDetector(
+                                              onTap: () => changeDateByDatePicker(),
+                                              child: Column(
+                                                children: [
+                                                  Text(AppLocalizations.of(context)!
+                                                      .date(date),
+                                                    style: GoogleFonts.lato(
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                  Text(
+                                                    "${hijri.monthName} ${hijri.day}, ${hijri.year}",
+                                                    style: GoogleFonts.lato(
+                                                        fontSize: 12,
+                                                        color: Colors.white),
+                                                  ),
+                                                ],
+
+                                              ),
+                                            ),
                                         TextButton(
                                             onPressed: () => changeDate(1),
                                             child: const Text(" >",
@@ -393,8 +393,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                         ))))));
   }
 
-  Widget buildDataWidget(context, snapshot, DateTime date) =>
-      Column(
+  Widget buildDataWidget(context, snapshot, DateTime date) => Column(
         key: UniqueKey(),
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -402,15 +401,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           for (var time in PrayerTimes.prayerTimeZones)
             if (!dateIsToday(date) ||
                 time != PrayerTimes.prayerTimeZones[1] ||
-                pt.getPrayerTimeHour(time) > DateTime
-                    .now()
-                    .hour ||
-                (pt.getPrayerTimeHour(time) >= DateTime
-                    .now()
-                    .hour &&
-                    pt.getPrayerTimeMin(time) >= DateTime
-                        .now()
-                        .minute))
+                pt.getPrayerTimeHour(time) > DateTime.now().hour ||
+                (pt.getPrayerTimeHour(time) >= DateTime.now().hour &&
+                    pt.getPrayerTimeMin(time) >= DateTime.now().minute))
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 child: PrayerTime(
@@ -440,25 +433,20 @@ class PrayerTime extends StatefulWidget {
   final snapshot;
   final DateTime selectedDate;
 
-  const PrayerTime({super.key,
-    required this.time,
-    required this.snapshot,
-    required this.selectedDate});
+  const PrayerTime(
+      {super.key,
+      required this.time,
+      required this.snapshot,
+      required this.selectedDate});
 
   @override
   State<PrayerTime> createState() => _PrayerTimeState();
 }
 
 bool dateIsToday(DateTime date) {
-  return (date.day == DateTime
-      .now()
-      .day &&
-      date.month == DateTime
-          .now()
-          .month &&
-      date.year == DateTime
-          .now()
-          .year);
+  return (date.day == DateTime.now().day &&
+      date.month == DateTime.now().month &&
+      date.year == DateTime.now().year);
 }
 
 /// Function to return boolean if now is the time for the given parameter
@@ -469,12 +457,8 @@ bool onTime(String time, snapshot, DateTime date) {
   if (!dateIsToday(date)) return false;
   if (time == PrayerTimes.prayerTimeZones[1]) return false;
 
-  int hour = DateTime
-      .now()
-      .hour;
-  int min = DateTime
-      .now()
-      .minute;
+  int hour = DateTime.now().hour;
+  int min = DateTime.now().minute;
   int prayerHour = pt.getPrayerTimeHour(time);
   int prayerMin = pt.getPrayerTimeMin(time);
 
@@ -519,15 +503,11 @@ class _PrayerTimeState extends State<PrayerTime> {
             width: 320,
             height: 65,
             child: Card(
-                surfaceTintColor: Theme
-                    .of(context)
-                    .cardColor,
+                surfaceTintColor: Theme.of(context).cardColor,
                 shadowColor:
-                onTime(widget.time, widget.snapshot, widget.selectedDate)
-                    ? Colors.green
-                    : Theme
-                    .of(context)
-                    .shadowColor,
+                    onTime(widget.time, widget.snapshot, widget.selectedDate)
+                        ? Colors.green
+                        : Theme.of(context).shadowColor,
                 elevation: 12,
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -542,7 +522,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                             scale: 0.75,
                             child: Radio(
                               fillColor:
-                              MaterialStateProperty.all(Colors.green),
+                                  MaterialStateProperty.all(Colors.green),
                               value: true,
                               groupValue: true,
                               toggleable: false,
@@ -552,10 +532,8 @@ class _PrayerTimeState extends State<PrayerTime> {
                     Positioned(
                       left: 40,
                       child: Text(
-                        /*widget.time*/
-                          "${AppLocalizations.of(context)!.prayerTime(
-                              widget.time)} / ${Strings.prayersArabic[widget
-                              .time]}",
+                          /*widget.time*/
+                          "${AppLocalizations.of(context)!.prayerTime(widget.time)} / ${Strings.prayersArabic[widget.time]}",
                           style: GoogleFonts.lato(
                               textStyle: const TextStyle(fontSize: 12))),
                     ),
