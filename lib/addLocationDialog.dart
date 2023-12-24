@@ -24,8 +24,6 @@ class _AddLocationDialogState extends State<AddLocationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    cityController.text = city;
-    countryController.text = country;
 
     return AlertDialog(
       title: Text(AppLocalizations.of(context)!.location),

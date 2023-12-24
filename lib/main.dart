@@ -171,7 +171,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Future<Time?>? times;
   DateTime date = DateTime.now();
   var hijri = JHijri.now();
-
   List<String> locationStrings = prefs.getStringList(Strings.locations)!;
   List<Location> locations = [];
 
@@ -330,13 +329,37 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
   }
 
+
+  /// Helpermethod for the Appbars Location Menu
+  void changeLocation(var value){
+    bool useGPS = prefs.getBool("useGPS")!;
+    if(value == -1 && !useGPS){
+      prefs.setBool("useGPS", true);
+      setState(() {
+        locationAppBar = AppLocalizations.of(context)!.gps;
+      });
+    }
+    else {
+      prefs.setBool("useGPS", false);
+      Location location = locations[value];
+      prefs.setString(Strings.prefs["city"]!, location.city);
+      prefs.setString(Strings.prefs["country"]!, location.country);
+      setState(() {
+        locationAppBar = location.city;
+      });
+    }
+    setTimesDefinitely();
+    setState(() {});
+  }
+
   List<PopupMenuItem> generatePopups() {
     List<PopupMenuItem> popups = [];
-    popups.add(const PopupMenuItem(child: Row(children: [Icon(Icons.location_on), Text(" GPS")],)));
-    for (String akt in locationStrings) {
+    popups.add(const PopupMenuItem(value: -1, child: Row(children: [Icon(Icons.location_on), Text(" GPS")],)));
+    for (int i = 0; i < locationStrings.length; i++) {
       PopupMenuItem popup = PopupMenuItem(
+        value: i,
           child: CityPopupItem(
-            city: akt,
+            city: locationStrings[i],
           ));
       popups.add(popup);
     }
@@ -353,6 +376,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         appBar: AppBar(
           centerTitle: true,
           title: PopupMenuButton(
+            onSelected: (value) => changeLocation(value),
+            initialValue: locationStrings.indexOf("${prefs.getString(Strings.prefs["city"]!)}, ${prefs.getString(Strings.prefs["country"]!)}"),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
