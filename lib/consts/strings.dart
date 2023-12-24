@@ -27,6 +27,7 @@ class Strings {
   static const String notificationOn = "notificationOn";
   static const String calculation_method = "Calculation method";
   static const String prayerTimes = "Prayer times";
+  static const String locations = "locations";
 
   static const String fajrArabic = "صلاة الفجر";
   static const String sunriseArabic = "شروق";

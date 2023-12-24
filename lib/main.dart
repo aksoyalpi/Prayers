@@ -12,6 +12,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'addLocationDialog.dart';
+import 'Location.dart';
 import 'consts/strings.dart';
 import 'notify.dart';
 import 'location_dialog.dart';
@@ -49,6 +51,9 @@ void main() async {
   }
   if (!prefs.containsKey(Strings.prayerTimes)) {
     prefs.setStringList(Strings.prayerTimes, []);
+  }
+  if(!prefs.containsKey(Strings.locations)){
+    prefs.setStringList(Strings.locations, []);
   }
 
   // requestPermissionToSendNotifications
@@ -160,14 +165,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final double futureContainerHeight = 400.0;
+  String locationAppBar = prefs.getBool("useGPS")!
+      ? "GPS"
+      : prefs.getString(Strings.prefs["city"]!)!;
   Future<Time?>? times;
   DateTime date = DateTime.now();
   var hijri = JHijri.now();
+
+  List<String> locationStrings = prefs.getStringList(Strings.locations)!;
+  List<Location> locations = [];
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setTimes();
+      for(String akt in locationStrings){
+        locations.add(Location.fromString(akt));
+      }
       setState(() {});
     });
     super.initState();
@@ -196,6 +210,17 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
+  /// Function that changes times parameter wihout checking conditions
+  /// see also setTimes()
+  void setTimesDefinitely(){
+    setState(() {
+      times = pt.fetchPost(prefs.getBool("useGPS")!);
+    });
+    times?.then(
+            (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
+    Notify.prayerTimesNotifiyAll(pt);
+  }
+
   /// Returns bool if notification is on
   bool notificationIsOn() {
     if (prefs.getBool(Strings.notificationOn)!) {
@@ -217,7 +242,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
   }
 
-  /// Show Location dialog
+  /*/// Show Location dialog
   void showLocationSetting() {
     showDialog(
             context: context,
@@ -231,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         notify();
       }
     });
-  }
+  }*/
 
   /// Show Settings dialog
   void showSettings() {
@@ -286,11 +311,71 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
-  TextEditingController cityController = TextEditingController();
+  void addNewLocation(){
+    showDialog(context: context, builder: (context) =>const AddLocationDialog())
+        .then((value){
+          Location location = Location.fromList(value);
+          locationStrings.add("${location.city}, ${location.country}");
+          prefs.setStringList(Strings.locations, locationStrings);
+          prefs.setString(Strings.prefs["city"]!, location.city);
+          prefs.setString(Strings.prefs["country"]!, location.country);
+          locations.add(location);
+          setTimesDefinitely();
+          setState(() {
+            locationStrings = locationStrings;
+            locations = locations;
+            locationAppBar = location.city;
+          });
+
+    });
+  }
+
+  List<PopupMenuItem> generatePopups() {
+    List<PopupMenuItem> popups = [];
+    popups.add(const PopupMenuItem(child: Row(children: [Icon(Icons.location_on), Text(" GPS")],)));
+    for (String akt in locationStrings) {
+      PopupMenuItem popup = PopupMenuItem(
+          child: CityPopupItem(
+            city: akt,
+          ));
+      popups.add(popup);
+    }
+    popups.add( PopupMenuItem(
+      onTap: () => addNewLocation(),
+      child: const Icon(Icons.add_circle_outline),
+    ));
+    return popups;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: PopupMenuButton(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(locationAppBar,
+                        style: GoogleFonts.lato(fontSize: 18))),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+            itemBuilder: (context) => generatePopups()
+          ),
+          actions: [
+            IconButton(
+                style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () => showSettings(),
+                icon: const Icon(Icons.settings)),
+          ],
+        ),
         body: GestureDetector(
             onHorizontalDragEnd: (details) {
               if (details.primaryVelocity! > 0) {
@@ -303,101 +388,84 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 onRefresh: () => _refresh(),
                 child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Positioned(
-                              top: 30,
-                              right: 10,
-                              child: IconButton(
-                                  style: ButtonStyle(
-                                      iconSize: MaterialStateProperty.all(25)),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 5),
-                                  splashColor: Colors.transparent,
-                                  highlightColor: Colors.transparent,
-                                  onPressed: () => showSettings(),
-                                  icon: const Icon(Icons.settings)),
-                            ),
-                            Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 30),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        TextButton(
-                                            onPressed: () => changeDate(-1),
-                                            child: Text(
-                                              "< ",
-                                              style: GoogleFonts.lato(fontWeight: FontWeight.bold),
-                                            )),
-                                        GestureDetector(
-                                          onTap: () => changeDateByDatePicker(),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                AppLocalizations.of(context)!
-                                                    .date(date),
-                                                style: GoogleFonts.lato(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,),
-                                              ),
-                                              Text(
-                                                "${hijri.monthName} ${hijri.day}, ${hijri.year}",
-                                                style: GoogleFonts.lato(
-                                                    fontSize: 12),
-                                              ),
-                                            ],
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 30),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 30),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () => changeDate(-1),
+                                        child: Text(
+                                          "< ",
+                                          style: GoogleFonts.lato(
+                                              fontWeight: FontWeight.bold),
+                                        )),
+                                    GestureDetector(
+                                      onTap: () => changeDateByDatePicker(),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            AppLocalizations.of(context)!
+                                                .date(date),
+                                            style: GoogleFonts.lato(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        TextButton(
-                                            onPressed: () => changeDate(1),
-                                            child: Text(" >",
-                                                style: GoogleFonts.lato(fontWeight: FontWeight.bold))),
-                                      ],
+                                          Text(
+                                            "${hijri.monthName} ${hijri.day}, ${hijri.year}",
+                                            style:
+                                                GoogleFonts.lato(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  FutureBuilder(
-                                      key: UniqueKey(),
-                                      future: times,
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.waiting) {
-                                          return SizedBox(
-                                              height: futureContainerHeight,
-                                              child: const Center(
-                                                  child: SizedBox(
-                                                      height: 40,
-                                                      width: 40,
-                                                      child:
-                                                          CircularProgressIndicator())));
-                                        } else if (snapshot.connectionState ==
-                                            ConnectionState.none) {
-                                          return SizedBox(
-                                              height: futureContainerHeight);
-                                        } else {
-                                          if (snapshot.hasData) {
-                                            return buildDataWidget(
-                                                context, snapshot, date);
-                                          } else if (snapshot.hasError) {
-                                            return Text("${snapshot.error}");
-                                          } else {
-                                            return SizedBox(
-                                              height: futureContainerHeight,
-                                            );
-                                          }
-                                        }
-                                      })
-                                ])
-                          ],
-                        ))))));
+                                    TextButton(
+                                        onPressed: () => changeDate(1),
+                                        child: Text(" >",
+                                            style: GoogleFonts.lato(
+                                                fontWeight: FontWeight.bold))),
+                                  ],
+                                ),
+                              ),
+                              FutureBuilder(
+                                  key: UniqueKey(),
+                                  future: times,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return SizedBox(
+                                          height: futureContainerHeight,
+                                          child: const Center(
+                                              child: SizedBox(
+                                                  height: 40,
+                                                  width: 40,
+                                                  child:
+                                                      CircularProgressIndicator())));
+                                    } else if (snapshot.connectionState ==
+                                        ConnectionState.none) {
+                                      return SizedBox(
+                                          height: futureContainerHeight);
+                                    } else {
+                                      if (snapshot.hasData) {
+                                        return buildDataWidget(
+                                            context, snapshot, date);
+                                      } else if (snapshot.hasError) {
+                                        return Text("${snapshot.error}");
+                                      } else {
+                                        return SizedBox(
+                                          height: futureContainerHeight,
+                                        );
+                                      }
+                                    }
+                                  })
+                            ]))))));
   }
 
   Widget buildDataWidget(context, snapshot, DateTime date) => Column(
@@ -570,5 +638,22 @@ class _PrayerTimeState extends State<PrayerTime> {
                           ))
                   ],
                 ))));
+  }
+}
+
+class CityPopupItem extends StatelessWidget {
+  const CityPopupItem({super.key, required this.city});
+
+  final String city;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      SizedBox(width: 200, child: Text(city)),
+      const Align(
+        alignment: Alignment.centerRight,
+        child: Icon(Icons.delete),
+      )
+    ]);
   }
 }
