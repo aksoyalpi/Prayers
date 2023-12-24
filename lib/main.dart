@@ -159,6 +159,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+  final double futureContainerHeight = 400.0;
   Future<Time?>? times;
   DateTime date = DateTime.now();
   var hijri = JHijri.now();
@@ -304,6 +305,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: SizedBox(
                         height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
@@ -320,12 +322,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                   onPressed: () => showSettings(),
                                   icon: const Icon(Icons.settings)),
                             ),
-                            Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Positioned(
-                                    top: 150,
+                            Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 30),
                                     child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         TextButton(
                                             onPressed: () => changeDate(-1),
@@ -334,47 +339,53 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                               style: TextStyle(
                                                   color: Colors.white),
                                             )),
-                                            GestureDetector(
-                                              onTap: () => changeDateByDatePicker(),
-                                              child: Column(
-                                                children: [
-                                                  Text(AppLocalizations.of(context)!
-                                                      .date(date),
-                                                    style: GoogleFonts.lato(
-                                                        fontSize: 24,
-                                                        fontWeight:
-                                                        FontWeight.bold,
-                                                        color: Colors.white),
-                                                  ),
-                                                  Text(
-                                                    "${hijri.monthName} ${hijri.day}, ${hijri.year}",
-                                                    style: GoogleFonts.lato(
-                                                        fontSize: 12,
-                                                        color: Colors.white),
-                                                  ),
-                                                ],
-
+                                        GestureDetector(
+                                          onTap: () => changeDateByDatePicker(),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                AppLocalizations.of(context)!
+                                                    .date(date),
+                                                style: GoogleFonts.lato(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
                                               ),
-                                            ),
+                                              Text(
+                                                "${hijri.monthName} ${hijri.day}, ${hijri.year}",
+                                                style: GoogleFonts.lato(
+                                                    fontSize: 12,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                         TextButton(
                                             onPressed: () => changeDate(1),
                                             child: const Text(" >",
                                                 style: TextStyle(
                                                     color: Colors.white))),
                                       ],
-                                    )),
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: FutureBuilder(
+                                    ),
+                                  ),
+                                  FutureBuilder(
                                       key: UniqueKey(),
                                       future: times,
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
+                                          return SizedBox(
+                                              height: futureContainerHeight,
+                                              child: const Center(
+                                                  child: SizedBox(
+                                                      height: 40,
+                                                      width: 40,
+                                                      child:
+                                                          CircularProgressIndicator())));
                                         } else if (snapshot.connectionState ==
                                             ConnectionState.none) {
-                                          return Container();
+                                          return SizedBox(
+                                              height: futureContainerHeight);
                                         } else {
                                           if (snapshot.hasData) {
                                             return buildDataWidget(
@@ -382,13 +393,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                           } else if (snapshot.hasError) {
                                             return Text("${snapshot.error}");
                                           } else {
-                                            return Container();
+                                            return SizedBox(
+                                              height: futureContainerHeight,
+                                            );
                                           }
                                         }
-                                      }),
-                                ),
-                              ],
-                            ),
+                                      })
+                                ])
                           ],
                         ))))));
   }
