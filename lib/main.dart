@@ -334,10 +334,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                       children: [
                                         TextButton(
                                             onPressed: () => changeDate(-1),
-                                            child: const Text(
+                                            child: Text(
                                               "< ",
-                                              style: TextStyle(
-                                                  color: Colors.white),
+                                              style: GoogleFonts.lato(fontWeight: FontWeight.bold),
                                             )),
                                         GestureDetector(
                                           onTap: () => changeDateByDatePicker(),
@@ -348,23 +347,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                                     .date(date),
                                                 style: GoogleFonts.lato(
                                                     fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white),
+                                                    fontWeight: FontWeight.bold,),
                                               ),
                                               Text(
                                                 "${hijri.monthName} ${hijri.day}, ${hijri.year}",
                                                 style: GoogleFonts.lato(
-                                                    fontSize: 12,
-                                                    color: Colors.white),
+                                                    fontSize: 12),
                                               ),
                                             ],
                                           ),
                                         ),
                                         TextButton(
                                             onPressed: () => changeDate(1),
-                                            child: const Text(" >",
-                                                style: TextStyle(
-                                                    color: Colors.white))),
+                                            child: Text(" >",
+                                                style: GoogleFonts.lato(fontWeight: FontWeight.bold))),
                                       ],
                                     ),
                                   ),
