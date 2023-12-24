@@ -104,24 +104,6 @@ class _SettingsState extends State<Settings> {
           ),
           SettingsSection(title: Text(AppLocalizations.of(context)!.prayerTimes), tiles: [
             SettingsTile(
-              title: Text(AppLocalizations.of(context)!.location),
-              leading: const Icon(Icons.location_on),
-              description:
-                  Text(useGPS ? AppLocalizations.of(context)!.gps : "$city, $country"),
-              onPressed: (context) => showDialog(
-                context: context,
-                builder: (context) => const LocationSettings(),
-              ).then((value) {
-                setState(() {
-                  useGPS = value;
-                  if(!value){
-                    city = prefs.getString(Strings.prefs["city"]!)!;
-                    country = prefs.getString(Strings.prefs["country"]!)!;
-                  }
-                });
-              }),
-            ),
-            SettingsTile(
               leading: const Icon(Icons.calculate),
               title: Text(AppLocalizations.of(context)!.calculationMethod),
               description: Text(calcMethod),

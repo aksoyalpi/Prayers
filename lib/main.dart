@@ -52,7 +52,7 @@ void main() async {
   if (!prefs.containsKey(Strings.prayerTimes)) {
     prefs.setStringList(Strings.prayerTimes, []);
   }
-  if(!prefs.containsKey(Strings.locations)){
+  if (!prefs.containsKey(Strings.locations)) {
     prefs.setStringList(Strings.locations, []);
   }
 
@@ -173,15 +173,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   var hijri = JHijri.now();
   List<String> locationStrings = prefs.getStringList(Strings.locations)!;
   List<Location> locations = [];
+  List<PopupMenuItem> locationsPopUpItems = [];
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setTimes();
-      for(String akt in locationStrings){
+      for (String akt in locationStrings) {
         locations.add(Location.fromString(akt));
       }
-      setState(() {});
+      setState(() {
+
+      });
     });
     super.initState();
   }
@@ -211,12 +214,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   /// Function that changes times parameter wihout checking conditions
   /// see also setTimes()
-  void setTimesDefinitely(){
+  void setTimesDefinitely() {
     setState(() {
       times = pt.fetchPost(prefs.getBool("useGPS")!);
     });
     times?.then(
-            (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
+        (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
     Notify.prayerTimesNotifiyAll(pt);
   }
 
@@ -310,36 +313,34 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
   }
 
-  void addNewLocation(){
-    showDialog(context: context, builder: (context) =>const AddLocationDialog())
-        .then((value){
-          Location location = Location.fromList(value);
-          locationStrings.add("${location.city}, ${location.country}");
-          prefs.setStringList(Strings.locations, locationStrings);
-          prefs.setString(Strings.prefs["city"]!, location.city);
-          prefs.setString(Strings.prefs["country"]!, location.country);
-          locations.add(location);
-          setTimesDefinitely();
-          setState(() {
-            locationStrings = locationStrings;
-            locations = locations;
-            locationAppBar = location.city;
-          });
-
+  void addNewLocation() {
+    showDialog(
+        context: context,
+        builder: (context) => const AddLocationDialog()).then((value) {
+      Location location = Location.fromList(value);
+      locationStrings.add("${location.city}, ${location.country}");
+      prefs.setStringList(Strings.locations, locationStrings);
+      prefs.setString(Strings.prefs["city"]!, location.city);
+      prefs.setString(Strings.prefs["country"]!, location.country);
+      locations.add(location);
+      setTimesDefinitely();
+      setState(() {
+        locationStrings = locationStrings;
+        locations = locations;
+        locationAppBar = location.city;
+      });
     });
   }
 
-
   /// Helpermethod for the Appbars Location Menu
-  void changeLocation(var value){
+  void changeLocation(var value) {
     bool useGPS = prefs.getBool("useGPS")!;
-    if(value == -1 && !useGPS){
+    if (value == -1 && !useGPS) {
       prefs.setBool("useGPS", true);
       setState(() {
         locationAppBar = AppLocalizations.of(context)!.gps;
       });
-    }
-    else {
+    } else {
       prefs.setBool("useGPS", false);
       Location location = locations[value];
       prefs.setString(Strings.prefs["city"]!, location.city);
@@ -352,45 +353,77 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     setState(() {});
   }
 
+  /// Function to delete one location out of the list
+  void deleteLocation(String location) {
+    List<String> tmpLocationString = locationStrings;
+    int indexOfLocation = tmpLocationString.indexOf(location);
+    print(indexOfLocation);
+    tmpLocationString.removeAt(indexOfLocation);
+    List<Location> tmpLocations = locations;
+    tmpLocations.removeAt(indexOfLocation);
+
+    prefs.setStringList(Strings.locations, tmpLocationString);
+    setState(() {
+      locationStrings = tmpLocationString;
+      locations = tmpLocations;
+    });
+    if(locations.isEmpty){
+      setState(() {
+        locationAppBar = AppLocalizations.of(context)!.gps;
+      });
+    }
+    Navigator.pop(context);
+  }
+
   List<PopupMenuItem> generatePopups() {
     List<PopupMenuItem> popups = [];
-    popups.add(const PopupMenuItem(value: -1, child: Row(children: [Icon(Icons.location_on), Text(" GPS")],)));
+    popups.add(const PopupMenuItem(
+        value: -1,
+        child: Row(
+          children: [Icon(Icons.location_on), Text(" GPS")],
+        )));
     for (int i = 0; i < locationStrings.length; i++) {
       PopupMenuItem popup = PopupMenuItem(
-        value: i,
+          value: i,
           child: CityPopupItem(
-            city: locationStrings[i],
+            deleteCallBack: (String location) {
+              deleteLocation(location);
+            },
+            location: locationStrings[i],
           ));
       popups.add(popup);
     }
-    popups.add( PopupMenuItem(
-      onTap: () => addNewLocation(),
-      child: const Icon(Icons.add_circle_outline),
-    ));
+    if(locations.length < 5){
+      popups.add(PopupMenuItem(
+        onTap: () => addNewLocation(),
+        child: const Icon(Icons.add_circle_outline),
+      ));
+    }
     return popups;
   }
 
   @override
   Widget build(BuildContext context) {
+    locationsPopUpItems = generatePopups();
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: PopupMenuButton(
-            onSelected: (value) => changeLocation(value),
-            initialValue: locationStrings.indexOf("${prefs.getString(Strings.prefs["city"]!)}, ${prefs.getString(Strings.prefs["country"]!)}"),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(locationAppBar,
-                        style: GoogleFonts.lato(fontSize: 18))),
-                const Icon(Icons.arrow_drop_down),
-              ],
-            ),
-            itemBuilder: (context) => generatePopups()
-          ),
+              onSelected: (value) => changeLocation(value),
+              initialValue: locationStrings.indexOf(
+                  "${prefs.getString(Strings.prefs["city"]!)}, ${prefs.getString(Strings.prefs["country"]!)}"),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(locationAppBar,
+                          style: GoogleFonts.lato(fontSize: 18))),
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
+              itemBuilder: (context) => locationsPopUpItems),
           actions: [
             IconButton(
                 style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
@@ -414,7 +447,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Padding(
-                        padding: EdgeInsets.only(top: 30),
+                        padding: const EdgeInsets.only(top: 30),
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -667,17 +700,21 @@ class _PrayerTimeState extends State<PrayerTime> {
 }
 
 class CityPopupItem extends StatelessWidget {
-  const CityPopupItem({super.key, required this.city});
+  const CityPopupItem(
+      {super.key, required this.location, required this.deleteCallBack});
 
-  final String city;
+  final deleteCallBack;
+  final String location;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      SizedBox(width: 200, child: Text(city)),
-      const Align(
+    return Row(children: [
+      SizedBox(width: 150, child: Text(location)),
+      Align(
         alignment: Alignment.centerRight,
-        child: Icon(Icons.delete),
+        child: IconButton(
+            onPressed: () => deleteCallBack(location),
+            icon: const Icon(Icons.delete)),
       )
     ]);
   }
