@@ -12,6 +12,8 @@
 
   "checkInternetError": "Bitte prüfen sie ihre Internet-Verbindung.",
 
+  "adhan": "Adhan",
+  "off": "Aus",
 
   "appTheme": "{theme, select, System{System} Dark{Dunkel} Light{Hell} other{System}}",
   "appThemeTitle": "App-Thema",

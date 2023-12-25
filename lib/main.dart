@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
+import 'package:prayer_times/notification_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/settings.dart';
 import 'package:prayer_times/settings_dialog.dart';
@@ -55,23 +56,14 @@ void main() async {
   if (!prefs.containsKey(Strings.locations)) {
     prefs.setStringList(Strings.locations, []);
   }
+  if(!prefs.containsKey(Strings.notification)){
+    prefs.setStringList(Strings.notification, List.generate(5, (index) => NotificationType.adhan.toString()));
+  }
 
   // requestPermissionToSendNotifications
   runApp(const MyApp());
   // declaring Notification
-  AwesomeNotifications().initialize(
-      // set the icon to null if you want to use the default app icon
-      null,
-      [
-        NotificationChannel(
-            channelGroupKey: 'reminders',
-            channelKey: 'prayer_notification',
-            channelName: 'Prayer notifications',
-            channelDescription: 'Notification channel for prayer times',
-            defaultColor: const Color(0xFF9D50DD),
-            ledColor: Colors.white)
-      ],
-      debug: true);
+  Notify.initialize(prefs.getStringList(Strings.notification)!);
 }
 
 void setCheckboxesFalse() {
@@ -623,6 +615,20 @@ bool onTime(String time, snapshot, DateTime date) {
 class _PrayerTimeState extends State<PrayerTime> {
   late bool? isChecked = prefs.getBool(widget.time);
 
+  void showNotificationDialog(String time){
+    showDialog(context: context, builder: (context) => NotificationDialog(time: time),)
+    .then((notificationType){
+      if(notificationType != null){
+        Notify.setNotificationForSpecificTime(time, notificationType);
+      }
+      int index = PrayerTimes.prayerTimeZones.indexOf(time);
+      if(index > 1) index--;
+      List<String> notificationTypes = prefs.getStringList(Strings.notification)!;
+      notificationTypes[index] = notificationType.toString();
+      prefs.setStringList(Strings.notification, notificationTypes);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -632,6 +638,7 @@ class _PrayerTimeState extends State<PrayerTime> {
           });
           prefs.setBool(widget.time, isChecked!);
         },
+        onLongPress: () => showNotificationDialog(widget.time),
         child: SizedBox(
             width: 320,
             height: 65,

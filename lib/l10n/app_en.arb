@@ -12,6 +12,9 @@
 
   "checkInternetError": "Please check your internet connection.",
 
+  "adhan": "Adhan",
+  "off": "Off",
+
   "appTheme": "{theme, select, System{System} Dark{Dark} Light{Light} other{System}}",
   "appThemeTitle": "App theme",
   "system": "System",
