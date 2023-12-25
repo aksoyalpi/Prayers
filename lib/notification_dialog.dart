@@ -20,12 +20,17 @@ class NotificationDialog extends StatefulWidget {
 class _NotificationDialogState extends State<NotificationDialog> {
   int index = 0;
   NotificationType aktType = NotificationType.off;
+  List notificationTypes = prefs.getStringList(Strings.notification)!;
+
+
   @override
   void initState() {
+    print(notificationTypes);
     index = PrayerTimes.prayerTimeZones.indexOf(widget.time);
     if(index > 1) index--;
     aktType = NotificationType.values.firstWhere((element) =>
-      element.toString() == prefs.getStringList(Strings.notification)![index], orElse: () => NotificationType.off);
+      element.toString() == notificationTypes[index]);
+      //element.toString() == notificationTypes[index]);
     super.initState();
   }
 

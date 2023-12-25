@@ -57,7 +57,8 @@ void main() async {
     prefs.setStringList(Strings.locations, []);
   }
   if(!prefs.containsKey(Strings.notification)){
-    prefs.setStringList(Strings.notification, List.generate(5, (index) => NotificationType.adhan.toString()));
+    List<String> notificationTypes = List.generate(5,growable: false, (index) => NotificationType.adhan.toString());
+    prefs.setStringList(Strings.notification, notificationTypes);
   }
 
   // requestPermissionToSendNotifications
@@ -621,12 +622,12 @@ class _PrayerTimeState extends State<PrayerTime> {
           .then((notificationType){
         if(notificationType != null){
           Notify.setNotificationForSpecificTime(time, notificationType);
+          int index = PrayerTimes.prayerTimeZones.indexOf(time);
+          if(index > 1) index--;
+          List<String> notificationTypes = prefs.getStringList(Strings.notification)!;
+          notificationTypes[index] = notificationType.toString();
+          prefs.setStringList(Strings.notification, notificationTypes);
         }
-        int index = PrayerTimes.prayerTimeZones.indexOf(time);
-        if(index > 1) index--;
-        List<String> notificationTypes = prefs.getStringList(Strings.notification)!;
-        notificationTypes[index] = notificationType.toString();
-        prefs.setStringList(Strings.notification, notificationTypes);
       });
     }
 
