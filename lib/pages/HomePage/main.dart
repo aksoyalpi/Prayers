@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
-import 'package:prayer_times/notification_dialog.dart';
+import 'package:prayer_times/pages/HomePage/notification_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
-import 'package:prayer_times/settings.dart';
+import 'package:prayer_times/pages/Settings/settings.dart';
 import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/time.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -14,10 +14,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'addLocationDialog.dart';
-import 'Location.dart';
-import 'consts/strings.dart';
-import 'notify.dart';
-import 'location_dialog.dart';
+import '../../Location.dart';
+import '../../consts/strings.dart';
+import '../../notify.dart';
+import '../../location_dialog.dart';
 
 PrayerTimes pt = PrayerTimes();
 late SharedPreferences prefs;
@@ -56,15 +56,18 @@ void main() async {
   if (!prefs.containsKey(Strings.locations)) {
     prefs.setStringList(Strings.locations, []);
   }
-  if(!prefs.containsKey(Strings.notification)){
-    List<String> notificationTypes = List.generate(5,growable: false, (index) => NotificationType.adhan.toString());
+  if (!prefs.containsKey(Strings.notification)) {
+    List<String> notificationTypes = List.generate(
+        5, growable: false, (index) => NotificationType.adhan.toString());
     prefs.setStringList(Strings.notification, notificationTypes);
   }
+
+  Notify.initialize(prefs.getStringList(Strings.notification)!);
 
   // requestPermissionToSendNotifications
   runApp(const MyApp());
   // declaring Notification
-  Notify.initialize(prefs.getStringList(Strings.notification)!);
+
 }
 
 void setCheckboxesFalse() {
@@ -175,9 +178,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       for (String akt in locationStrings) {
         locations.add(Location.fromString(akt));
       }
-      setState(() {
-
-      });
+      setState(() {});
     });
     super.initState();
   }
@@ -186,6 +187,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       setTimes();
+      setState(() {
+        times = times;
+      });
     }
   }
 
@@ -310,18 +314,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     showDialog(
         context: context,
         builder: (context) => const AddLocationDialog()).then((value) {
-      Location location = Location.fromList(value);
-      locationStrings.add("${location.city}, ${location.country}");
-      prefs.setStringList(Strings.locations, locationStrings);
-      prefs.setString(Strings.prefs["city"]!, location.city);
-      prefs.setString(Strings.prefs["country"]!, location.country);
-      locations.add(location);
-      setTimesDefinitely();
-      setState(() {
-        locationStrings = locationStrings;
-        locations = locations;
-        locationAppBar = location.city;
-      });
+          if(value != null){
+            Location location = Location.fromList(value);
+            locationStrings.add("${location.city}, ${location.country}");
+            prefs.setStringList(Strings.locations, locationStrings);
+            prefs.setString(Strings.prefs["city"]!, location.city);
+            prefs.setString(Strings.prefs["country"]!, location.country);
+            locations.add(location);
+            setTimesDefinitely();
+            setState(() {
+              locationStrings = locationStrings;
+              locations = locations;
+              locationAppBar = location.city;
+            });
+          }
     });
   }
 
@@ -360,7 +366,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       locationStrings = tmpLocationString;
       locations = tmpLocations;
     });
-    if(locations.isEmpty){
+    if (locations.isEmpty) {
       setState(() {
         locationAppBar = AppLocalizations.of(context)!.gps;
       });
@@ -386,7 +392,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           ));
       popups.add(popup);
     }
-    if(locations.length < 5){
+    if (locations.length < 5) {
       popups.add(PopupMenuItem(
         onTap: () => addNewLocation(),
         child: const Icon(Icons.add_circle_outline),
@@ -435,16 +441,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 changeDate(1);
               }
             },
-            child: RefreshIndicator(
-                onRefresh: () => _refresh(),
-                child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Padding(
-                        padding: const EdgeInsets.only(top: 30),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
+            child: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: RefreshIndicator(
+                    onRefresh: () => _refresh(),
+                    child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 50),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 30),
                                 child: Row(
@@ -486,37 +494,37 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                 ),
                               ),
                               FutureBuilder(
-                                  key: UniqueKey(),
-                                  future: times,
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return SizedBox(
-                                          height: futureContainerHeight,
-                                          child: const Center(
-                                              child: SizedBox(
-                                                  height: 40,
-                                                  width: 40,
-                                                  child:
-                                                      CircularProgressIndicator())));
-                                    } else if (snapshot.connectionState ==
-                                        ConnectionState.none) {
-                                      return SizedBox(
-                                          height: futureContainerHeight);
-                                    } else {
-                                      if (snapshot.hasData) {
-                                        return buildDataWidget(
-                                            context, snapshot, date);
-                                      } else if (snapshot.hasError) {
-                                        return Text("${snapshot.error}");
-                                      } else {
-                                        return SizedBox(
-                                          height: futureContainerHeight,
-                                        );
-                                      }
-                                    }
-                                  })
-                            ]))))));
+                                      key: UniqueKey(),
+                                      future: times,
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return SizedBox(
+                                              height: futureContainerHeight,
+                                              child: const Center(
+                                                  child: SizedBox(
+                                                      height: 40,
+                                                      width: 40,
+                                                      child:
+                                                          CircularProgressIndicator())));
+                                        } else if (snapshot.connectionState ==
+                                            ConnectionState.none) {
+                                          return SizedBox(
+                                              height: futureContainerHeight);
+                                        } else {
+                                          if (snapshot.hasData) {
+                                            return buildDataWidget(
+                                                context, snapshot, date);
+                                          } else if (snapshot.hasError) {
+                                            return Text("${snapshot.error}");
+                                          } else {
+                                            return SizedBox(
+                                              height: futureContainerHeight,
+                                            );
+                                          }
+                                        }
+                                      })
+                            ])))))));
   }
 
   Widget buildDataWidget(context, snapshot, DateTime date) => Column(
@@ -616,21 +624,26 @@ bool onTime(String time, snapshot, DateTime date) {
 class _PrayerTimeState extends State<PrayerTime> {
   late bool? isChecked = prefs.getBool(widget.time);
 
-  void showNotificationDialog(String time){
-    if(time != PrayerTimes.prayerTimeZones[1]){
-      showDialog(context: context, builder: (context) => NotificationDialog(time: time),)
-          .then((notificationType){
-        if(notificationType != null){
+  void showNotificationDialog(String time) {
+    if (time != PrayerTimes.prayerTimeZones[1]) {
+      showDialog(
+        context: context,
+        builder: (context) => NotificationDialog(time: time),
+      ).then((notificationType) async {
+        print("Dialog closed => NotificationType: $notificationType");
+        if (notificationType != null) {
           Notify.setNotificationForSpecificTime(time, notificationType);
           int index = PrayerTimes.prayerTimeZones.indexOf(time);
-          if(index > 1) index--;
-          List<String> notificationTypes = prefs.getStringList(Strings.notification)!;
+          if (index > 1) index--;
+          List<String> notificationTypes =
+              prefs.getStringList(Strings.notification)!;
           notificationTypes[index] = notificationType.toString();
           prefs.setStringList(Strings.notification, notificationTypes);
+          await Notify.prayerTimesNotifiyAll(pt);
+          print(await Notify.retrieveScheduledNotifications());
         }
       });
     }
-
   }
 
   @override

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'consts/strings.dart';
-import 'main.dart';
+import '../../consts/strings.dart';
+import '../HomePage/main.dart';
 
 final List<String> calcMethods = PrayerTimes.calcMethods;
 
