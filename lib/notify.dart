@@ -16,7 +16,7 @@ class Notify {
         if(notificationTypes[j] != NotificationType.off.toString()){
           soundOn = true;
           if(notificationTypes[j] == NotificationType.adhan.toString()){
-            sound = "../assets/Hafiz Mustafa Öztürk from Turkey.mp3";
+            sound = "adhan.mp3";
           }
         }
         channels.add(NotificationChannel(
@@ -41,7 +41,7 @@ class Notify {
     if (notificationType != NotificationType.off) {
       soundOn = true;
       if (notificationType == NotificationType.adhan) {
-        soundSource = "../assets/Hafiz Mustafa Öztürk from Turkey.mp3";
+        soundSource = "adhan.mp3";
       }
     }
 

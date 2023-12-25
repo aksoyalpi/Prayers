@@ -616,17 +616,20 @@ class _PrayerTimeState extends State<PrayerTime> {
   late bool? isChecked = prefs.getBool(widget.time);
 
   void showNotificationDialog(String time){
-    showDialog(context: context, builder: (context) => NotificationDialog(time: time),)
-    .then((notificationType){
-      if(notificationType != null){
-        Notify.setNotificationForSpecificTime(time, notificationType);
-      }
-      int index = PrayerTimes.prayerTimeZones.indexOf(time);
-      if(index > 1) index--;
-      List<String> notificationTypes = prefs.getStringList(Strings.notification)!;
-      notificationTypes[index] = notificationType.toString();
-      prefs.setStringList(Strings.notification, notificationTypes);
-    });
+    if(time != PrayerTimes.prayerTimeZones[1]){
+      showDialog(context: context, builder: (context) => NotificationDialog(time: time),)
+          .then((notificationType){
+        if(notificationType != null){
+          Notify.setNotificationForSpecificTime(time, notificationType);
+        }
+        int index = PrayerTimes.prayerTimeZones.indexOf(time);
+        if(index > 1) index--;
+        List<String> notificationTypes = prefs.getStringList(Strings.notification)!;
+        notificationTypes[index] = notificationType.toString();
+        prefs.setStringList(Strings.notification, notificationTypes);
+      });
+    }
+
   }
 
   @override

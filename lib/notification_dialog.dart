@@ -28,10 +28,12 @@ class _NotificationDialogState extends State<NotificationDialog> {
       element.toString() == prefs.getStringList(Strings.notification)![index], orElse: () => NotificationType.off);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("${AppLocalizations.of(context)!.notification}: "),
+      title: Text("${AppLocalizations.of(context)!.notification}: ${AppLocalizations.of(context)!.prayerTime(widget.time)}",
+      style: const TextStyle(fontSize: 20),),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.start,
