@@ -1,0 +1,1 @@
+enum NotificationTypes {adhan, on, off}

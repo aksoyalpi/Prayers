@@ -8,7 +8,6 @@ import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/pages/Settings/settings.dart';
 import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/time.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -25,7 +24,6 @@ late SharedPreferences prefs;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  await AwesomeNotifications().requestPermissionToSendNotifications();
 
   prefs = await SharedPreferences.getInstance();
   if (!prefs.containsKey(Strings.prefs["calculationMethod"]!)) {
@@ -61,8 +59,6 @@ void main() async {
         5, growable: false, (index) => NotificationType.adhan.toString());
     prefs.setStringList(Strings.notification, notificationTypes);
   }
-
-  Notify.initialize(prefs.getStringList(Strings.notification)!);
 
   // requestPermissionToSendNotifications
   runApp(const MyApp());
@@ -180,6 +176,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       }
       setState(() {});
     });
+    Notify.init(initScheduled: true);
     super.initState();
   }
 
@@ -231,12 +228,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   /// Function for prayer notifications if notifications are on else they get cancelled
   void notify() {
     if (!notificationIsOn()) {
-      Notify.cancelNotifications();
+      Notify.cancelAll();
       return;
     }
     bool alreadyNotificated = false;
-    Notify.retrieveScheduledNotifications()
-        .then((value) => alreadyNotificated = value.isNotEmpty);
     times?.then((value) async =>
         {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
   }
@@ -630,7 +625,6 @@ class _PrayerTimeState extends State<PrayerTime> {
         context: context,
         builder: (context) => NotificationDialog(time: time),
       ).then((notificationType) async {
-        print("Dialog closed => NotificationType: $notificationType");
         if (notificationType != null) {
           Notify.setNotificationForSpecificTime(time, notificationType);
           int index = PrayerTimes.prayerTimeZones.indexOf(time);
@@ -640,7 +634,6 @@ class _PrayerTimeState extends State<PrayerTime> {
           notificationTypes[index] = notificationType.toString();
           prefs.setStringList(Strings.notification, notificationTypes);
           await Notify.prayerTimesNotifiyAll(pt);
-          print(await Notify.retrieveScheduledNotifications());
         }
       });
     }
