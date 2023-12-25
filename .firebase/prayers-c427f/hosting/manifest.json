@@ -1,0 +1,18 @@
+{
+    "name": "Prayers",
+    "short_name": "Prayers",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#1c1b1f",
+    "theme_color": "#1c1b1f",
+    "description": "Minimalistic Prayer Times App",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "favicon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
