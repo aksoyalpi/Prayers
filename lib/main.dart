@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:jhijri/_src/_jHijri.dart';
 import 'package:prayer_times/pages/HomePage/notification_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/pages/Settings/settings.dart';
-import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/time.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'addLocationDialog.dart';
-import '../../Location.dart';
-import '../../consts/strings.dart';
-import '../../notify.dart';
-import '../../location_dialog.dart';
+import 'pages/HomePage/addLocationDialog.dart';
+import 'Location.dart';
+import 'consts/strings.dart';
+import 'notify.dart';
 
 PrayerTimes pt = PrayerTimes();
 late SharedPreferences prefs;
@@ -24,6 +21,9 @@ late SharedPreferences prefs;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  AndroidFlutterLocalNotificationsPlugin().requestNotificationsPermission();
+  AndroidFlutterLocalNotificationsPlugin().requestExactAlarmsPermission();
 
   prefs = await SharedPreferences.getInstance();
   if (!prefs.containsKey(Strings.prefs["calculationMethod"]!)) {
@@ -201,8 +201,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       });
       setCheckboxesFalse();
       times?.then(
-          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
-      Notify.prayerTimesNotifiyAll(pt);
+          (value) {
+            prefs.setStringList(Strings.prayerTimes, value!.toList());
+            Notify.prayerTimesNotifiyAll(pt);
+          });
+      ;
     }
   }
 
@@ -213,8 +216,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       times = pt.fetchPost(prefs.getBool("useGPS")!);
     });
     times?.then(
-        (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
-    Notify.prayerTimesNotifiyAll(pt);
+        (value) {
+          prefs.setStringList(Strings.prayerTimes, value!.toList());
+          Notify.prayerTimesNotifiyAll(pt);
+        });
+    ;
   }
 
   /// Returns bool if notification is on
@@ -236,22 +242,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         {if (!alreadyNotificated) await Notify.prayerTimesNotifiyAll(pt)});
   }
 
-  /*/// Show Location dialog
-  void showLocationSetting() {
-    showDialog(
-            context: context,
-            builder: (context) => const LocationSettings(),
-            barrierDismissible: true)
-        .then((value) {
-      if (value != "") {
-        setState(() {
-          times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
-        });
-        notify();
-      }
-    });
-  }*/
-
   /// Show Settings dialog
   void showSettings() {
     showDialog(context: context, builder: (context) => const Settings())
@@ -260,8 +250,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         times = pt.fetchPost(prefs.getBool(Strings.prefs["useGPS"]!)!);
       });
       times?.then(
-          (value) => prefs.setStringList(Strings.prayerTimes, value!.toList()));
-      notify();
+          (value) async {
+            prefs.setStringList(Strings.prayerTimes, value!.toList());
+            await Notify.prayerTimesNotifiyAll(pt);
+          });
     });
   }
 
@@ -626,7 +618,6 @@ class _PrayerTimeState extends State<PrayerTime> {
         builder: (context) => NotificationDialog(time: time),
       ).then((notificationType) async {
         if (notificationType != null) {
-          Notify.setNotificationForSpecificTime(time, notificationType);
           int index = PrayerTimes.prayerTimeZones.indexOf(time);
           if (index > 1) index--;
           List<String> notificationTypes =

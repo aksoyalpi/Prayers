@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'pages/HomePage/main.dart';
+import 'main.dart';
 import 'notify.dart';
 
 class NotificationSettings extends StatefulWidget {

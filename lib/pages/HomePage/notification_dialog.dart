@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../prayer_times.dart';
 import '../../consts/strings.dart';
-import 'main.dart';
+import '../../main.dart';
 
 enum NotificationType { off, on, adhan }
 

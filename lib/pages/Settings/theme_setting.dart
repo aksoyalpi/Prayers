@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../consts/strings.dart';
-import '../HomePage/main.dart';
+import '../../main.dart';
 
 class ThemeSetting extends StatefulWidget {
   const ThemeSetting({super.key});

@@ -11,7 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 import '../../consts/strings.dart';
-import '../HomePage/main.dart';
+import '../../main.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});

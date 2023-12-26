@@ -10,7 +10,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'Notify.dart';
 import 'consts/strings.dart';
-import 'pages/HomePage/main.dart';
+import 'main.dart';
 
 class PrayerTimes {
   static final List<String> calcMethods = [

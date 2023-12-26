@@ -1,17 +1,19 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:prayer_times/prayer_times.dart';
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 import 'consts/strings.dart';
-import 'pages/HomePage/main.dart';
+import 'main.dart';
 import 'pages/HomePage/notification_dialog.dart';
 
 
 class Notify {
   static final _notifications = FlutterLocalNotificationsPlugin();
+  static String _timezone = "unknown";
+  static List _notificationTypes = prefs.getStringList(Strings.notification)!;
+
 
   /// Function to set notification setting for specific time
   static void setNotificationForSpecificTime(String time,
@@ -32,19 +34,21 @@ class Notify {
         sound = "adhan";
       }
     }
-    print("Created: ${prayers[index]}");
 
-    return NotificationDetails(
-      android: AndroidNotificationDetails(
+    AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(time, time, importance: Importance.max);
+    if(sound == "adhan"){
+      androidNotificationDetails = AndroidNotificationDetails(
           time,
           time,
           importance: Importance.max,
-          playSound: soundOn,
-        sound: RawResourceAndroidNotificationSound(sound)
-      ),
+          sound: const RawResourceAndroidNotificationSound("adhan")
+      );
+    }
+    return NotificationDetails(
+      android: androidNotificationDetails
+      );
       // for Ios
       //ios: IOSNotificationDetails(),
-    );
   }
 
   static Future init({bool initScheduled = false}) async {
@@ -56,8 +60,8 @@ class Notify {
 
     if (initScheduled) {
       tz.initializeTimeZones();
-      final locationName = await FlutterNativeTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(locationName));
+      _timezone = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(_timezone));
     }
   }
 
@@ -68,37 +72,27 @@ class Notify {
 
     DateTime now = DateTime.now();
     DateTime scheduledDate = DateTime(now.year, now.month, now.day, hour, min);
+    print(tz.TZDateTime.from(scheduledDate, tz.local).toString());
 
-
-    _notifications.show(index, "$time: $hourStr:$minStr", "It's time for $time",
-        await _notificationDetails(time));
-    _notifications.zonedSchedule(
-        index, "$time: $hourStr:$minStr", "It's time for $time",
-        tz.TZDateTime.from(scheduledDate, tz.local)
-        , await _notificationDetails(time),
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation
-            .absoluteTime,
-        androidAllowWhileIdle: true);
-
-    /*return awesomeNotifications.createNotification(
-        schedule: NotificationCalendar(
-          hour: hour,
-          minute: min,
-        ),
-        content: NotificationContent(
-            id: index,
-            channelKey: prayer,
-            title: "$prayer: $hourStr:$minStr",
-            body: "It's time for $prayer",
-            wakeUpScreen: true,
-            category: NotificationCategory.Reminder));*/
+    if(scheduledDate.isAfter(DateTime.now())){
+      _notifications.zonedSchedule(
+          index, "$time: $hourStr:$minStr", "It's time for $time",
+          tz.TZDateTime.from(scheduledDate, tz.local)
+          , await _notificationDetails(time),
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation
+              .absoluteTime,
+          androidAllowWhileIdle: true);
+    }
   }
 
   /// sends notification for all prayer times
   static Future<bool> prayerTimesNotifiyAll(PrayerTimes pt) async {
-    for (var time in PrayerTimes.prayerTimeZones) {
-      print(time);
-      if (time != PrayerTimes.prayerTimeZones[1]) {
+    cancelAll();
+    _notificationTypes = prefs.getStringList(Strings.notification)!;
+    for (int i = 0; i < PrayerTimes.prayerTimeZones.length; i++) {
+      int j = i > 1 ? i-1 : i;
+      String time = PrayerTimes.prayerTimeZones[i];
+      if (i != 1 && _notificationTypes[j] != NotificationType.off.toString()) {
         await prayerTimesNotify(
             time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
       }
