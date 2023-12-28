@@ -26,17 +26,10 @@ class Notify {
     List<String> notificationTypes = prefs.getStringList(Strings.notification)!;
     int index = prayers.indexOf(time);
     int j = index > 1 ? index - 1 : index;
-    bool soundOn = false;
-    String? sound;
-    if (notificationTypes[j] != NotificationType.off.toString()) {
-      soundOn = true;
-      if (notificationTypes[j] == NotificationType.adhan.toString()) {
-        sound = "adhan";
-      }
-    }
 
     AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(time, time, importance: Importance.max);
-    if(sound == "adhan"){
+
+    if (notificationTypes[j] ==  NotificationType.adhan.toString()) {
       androidNotificationDetails = AndroidNotificationDetails(
           time,
           time,
@@ -44,6 +37,7 @@ class Notify {
           sound: const RawResourceAndroidNotificationSound("adhan")
       );
     }
+
     return NotificationDetails(
       android: androidNotificationDetails
       );
@@ -72,7 +66,6 @@ class Notify {
 
     DateTime now = DateTime.now();
     DateTime scheduledDate = DateTime(now.year, now.month, now.day, hour, min);
-    print(tz.TZDateTime.from(scheduledDate, tz.local).toString());
 
     if(scheduledDate.isAfter(DateTime.now())){
       _notifications.zonedSchedule(
