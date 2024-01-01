@@ -10,6 +10,18 @@
     }
   },
 
+  "skip": "überspringen",
+  "next": "weiter",
+  "done": "fertig",
+
+  "chooseLanguage": "Sprache auswählen",
+  "acceptDua": "Möge Allah deine Bittgebete annehmen",
+  "changeNotificationDescription": "Um die Benachrichtigungseinstellungen zu ändern, halten sie die Gebetszeiten-Karte gedrückt.",
+
+
+
+
+
   "checkInternetError": "Bitte prüfen sie ihre Internet-Verbindung.",
 
   "adhan": "Adhan",

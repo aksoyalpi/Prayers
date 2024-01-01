@@ -10,6 +10,14 @@
     }
   },
 
+  "skip": "skip",
+  "next": "next",
+  "done": "done",
+
+  "chooseLanguage": "Choose language",
+  "acceptDua": "May Allah accept your duas",
+  "changeNotificationDescription": "To change the notificication settings, longpress one of the prayer time cards.",
+
   "checkInternetError": "Please check your internet connection.",
 
   "adhan": "Adhan",

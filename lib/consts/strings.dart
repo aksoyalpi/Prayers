@@ -37,13 +37,15 @@ class Strings {
   static const String ishaArabic = "صلاة العشاء";
 
   static const Map<String, String> prayersArabic = {
-    "Fajr": "صلاة الفجر",
+    "Fajr": "فجر",
     "Sunrise": "شروق",
-    "Dhuhr": "صلاة الظهر",
-    "Asr": "صلاة العصر",
-    "Maghrib": "صلاة المغرب",
-    "Isha": "صلاة العشاء"
+    "Dhuhr": "ظهر",
+    "Asr": "عصر",
+    "Maghrib": "مغرب",
+    "Isha": "عشاء"
   };
+
+  static const String firstStart = "firstStart";
 
   static const String languageCode = "languageCode";
 

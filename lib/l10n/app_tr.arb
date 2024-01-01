@@ -8,6 +8,16 @@
   "light": "Açık",
   "restartAppToChangeTheme": "Uygulama temasını değiştirmek icin ayarlari kaydetmeniz lazim.",
 
+  "skip": "atla",
+  "next": "sonraki",
+  "done": "tamam",
+
+  "chooseLanguage": "Dil seciniz",
+  "acceptDua": "Allah kabul etsin",
+  "changeNotificationDescription": "Bildirim ayarlarını değiştirmek için, namaz vakitlerinin üstüne uzun basiniz.",
+
+
+
   "checkInternetError": "Lütfen internet baglantinizi kontrol ediniz.",
 
   "adhan": "Ezan",

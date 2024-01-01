@@ -59,7 +59,7 @@ class _SettingsState extends State<Settings> {
           SettingsSection(
             title: Text(AppLocalizations.of(context)!.general),
             tiles: [
-              SettingsTile.switchTile(
+              /*SettingsTile.switchTile(
                 initialValue: notificationOn,
                 title: Text(AppLocalizations.of(context)!.notification),
                 leading: const Icon(Icons.notifications),
@@ -69,7 +69,7 @@ class _SettingsState extends State<Settings> {
                   });
                   prefs.setBool(Strings.notificationOn, value);
                 },
-              ),
+              ),*/
               SettingsTile(
                   title: Text(AppLocalizations.of(context)!.language),
                 description: Text(getLanguage(language)),

@@ -4,10 +4,7 @@ class Location{
   final String city;
   final String country;
 
-  Location({
-    required this.city,
-    required this.country,
-});
+  Location({this.city = "", this.country = ""});
 
   factory Location.fromString(String location) => Location(
     city: location.split(",")[0],
@@ -18,5 +15,9 @@ class Location{
       city: location[0],
       country: location[1]
   );
+
+  bool isValid(){
+    return (city != "" && country != "");
+  }
 
 }
