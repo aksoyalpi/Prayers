@@ -314,10 +314,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                       children: [
                                         GestureDetector(
                                             onTap: () => changeDate(-1),
-                                            child: Text(
-                                              "< ",
-                                              style: GoogleFonts.lato(
-                                                  fontWeight: FontWeight.bold),
+                                            child: SizedBox(
+                                              height: 30,
+                                              width: 30,
+                                              child: Text(
+                                                "<",
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.lato(
+                                                    fontWeight: FontWeight.bold),
+                                              ),
                                             )),
                                         GestureDetector(
                                           onTap: () => changeDateByDatePicker(),
@@ -341,10 +346,15 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                                         ),
                                         GestureDetector(
                                             onTap: () => changeDate(1),
-                                            child: Text(
-                                              " >",
-                                              style: GoogleFonts.lato(
-                                                  fontWeight: FontWeight.bold),
+                                            child: SizedBox(
+                                              height: 30,
+                                              width: 30,
+                                              child: Text(
+                                                ">",
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.lato(
+                                                    fontWeight: FontWeight.bold),
+                                              ),
                                             )),
                                       ],
                                     ),
