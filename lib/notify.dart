@@ -34,6 +34,7 @@ class Notify {
           time,
           time,
           importance: Importance.max,
+          playSound: true,
           sound: const RawResourceAndroidNotificationSound("adhan")
       );
     }
