@@ -167,6 +167,12 @@ class PrayerTimes {
     return "";
   }
 
+  /// Function returns time that is left until next prayer
+  static DateTime getTimeUntilNextPrayer(snapshot){
+    // TODO: implement
+    return DateTime.now();
+  }
+
   /// Method to just get the hour of the given prayertime as int
   int getPrayerTimeHour(String time) {
     return int.parse(getPrayerTime(time)!.substring(0, 2));
