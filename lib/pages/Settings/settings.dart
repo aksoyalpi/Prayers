@@ -48,11 +48,11 @@ class _SettingsState extends State<Settings> {
       appBar: AppBar(
         leading: const Icon(Icons.settings),
         title: Text(AppLocalizations.of(context)!.settings),
-        actions: [
+        /*actions: [
           TextButton(
               onPressed: () => {Navigator.of(context).pop("save")},
               child: Text(AppLocalizations.of(context)!.save))
-        ],
+        ],*/
       ),
       body: SettingsList(
         sections: [

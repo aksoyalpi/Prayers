@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:prayer_times/pages/HomePage/home_page.dart';
+import 'package:prayer_times/pages/HomePage/prayer_times_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../consts/strings.dart';
 import '../../location.dart';
 import '../../main.dart';
+import '../home_page.dart';
 import 'introduction1.dart';
 import 'introduction2.dart';
 import 'introduction3.dart';

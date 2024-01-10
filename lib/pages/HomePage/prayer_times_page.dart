@@ -1,10 +1,11 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
 import 'package:prayer_times/consts/NotificationTypes.dart';
-import 'package:prayer_times/pages/HomePage/home_page.dart';
+import 'package:prayer_times/pages/HomePage/prayer_times_page.dart';
 import 'package:prayer_times/pages/HomePage/notification_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/pages/Settings/settings.dart';
@@ -19,18 +20,19 @@ import '../../main.dart';
 import '../../notify.dart';
 import 'addLocationDialog.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class PrayerTimesPage extends StatefulWidget {
+  const PrayerTimesPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PrayerTimesPage> createState() => _PrayerTimesPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
+class _PrayerTimesPageState extends State<PrayerTimesPage> with WidgetsBindingObserver {
   final double futureContainerHeight = 400.0;
   String locationAppBar = prefs.getBool("useGPS")!
       ? "GPS"
       : prefs.getString(Strings.prefs["city"]!)!;
+
   Future<Time?>? times;
   DateTime date = DateTime.now();
   var hijri = JHijri.now();
@@ -40,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    //setTimes();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setTimes();
       for (String akt in locationStrings) {
@@ -76,6 +79,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         Notify.prayerTimesNotifiyAll(pt);
       });
       ;
+    } else {
+      setState(() {
+        times = Future.value(Time.fromList(savedTimes));
+      });
     }
   }
 
@@ -278,7 +285,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 ],
               ),
               itemBuilder: (context) => locationsPopUpItems),
-          actions: [
+          /*actions: [
             IconButton(
                 style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
                 padding: const EdgeInsets.symmetric(vertical: 5),
@@ -286,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 highlightColor: Colors.transparent,
                 onPressed: () => showSettings(),
                 icon: const Icon(Icons.settings)),
-          ],
+          ],*/
         ),
         body: GestureDetector(
             onHorizontalDragEnd: (details) {

@@ -30,6 +30,15 @@ class Time {
     //hijriDate: "${json['data'][day-1]['date']['hijri']["month"]["en"]} ${json['data'][day-1]['date']['hijri']["day"]}, ${json['data'][day-1]['date']['hijri']["year"]}"
   );
 
+  factory Time.fromList(List<String> times) => Time(
+    fajr: times[0],
+    sunrise: times[1],
+    dhuhr: times[2],
+    asr: times[3],
+    maghrib: times[4],
+    isha: times[5],
+  );
+
   List<String> toList(){
     return [fajr, dhuhr, sunrise, asr, maghrib, isha];
   }
