@@ -10,6 +10,8 @@ class QiblaFinderPage extends StatefulWidget {
 class _QiblaFinderPageState extends State<QiblaFinderPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Center(
+      child: Image.asset("../assets/qibla-kompass.png", width: 200, height: 200,),
+    );
   }
 }
