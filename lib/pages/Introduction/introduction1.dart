@@ -14,15 +14,16 @@ class _IntroductionPage1State extends State<IntroductionPage1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text("Esselamu aleykum ve Rahmetullahi", textAlign: TextAlign.center ,style: GoogleFonts.sevillana(fontSize: 30),),
-        const SizedBox(height: 50),
-        Lottie.network("https://lottie.host/f39a2c01-4800-49f4-b281-7516e0e62287/4ExSO5l9oA.json"),
-        const SizedBox(height: 100,)
-      ],
-    ));
+        body: Center(
+          child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+          Text("Esselamu aleykum ve Rahmetullahi", textAlign: TextAlign.center ,style: GoogleFonts.sevillana(fontSize: 30),),
+          const SizedBox(height: 50),
+          Lottie.network("https://lottie.host/f39a2c01-4800-49f4-b281-7516e0e62287/4ExSO5l9oA.json", height: 300, width: 300),
+          const SizedBox(height: 100,)
+                ],
+              ),
+        ));
   }
 }

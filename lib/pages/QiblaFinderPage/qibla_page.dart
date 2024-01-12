@@ -1,17 +1,142 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_qiblah/flutter_qiblah.dart';
+import 'package:prayer_times/pages/QiblaFinderPage/qibla_compass.dart';
+import 'package:prayer_times/pages/QiblaFinderPage/qibla_maps.dart';
 
-class QiblaFinderPage extends StatefulWidget {
-  const QiblaFinderPage({super.key});
+void main() => runApp(QiblaPage());
 
+class QiblaPage extends StatefulWidget {
   @override
-  State<QiblaFinderPage> createState() => _QiblaFinderPageState();
+  _QiblaPageState createState() => _QiblaPageState();
 }
 
-class _QiblaFinderPageState extends State<QiblaFinderPage> {
+class _QiblaPageState extends State<QiblaPage> {
+  final _deviceSupport = FlutterQiblah.androidDeviceSensorSupport();
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Image.asset("../assets/qibla-kompass.png", width: 200, height: 200,),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Qibla'),
+        ),
+        body: FutureBuilder(
+          future: _deviceSupport,
+          builder: (_, AsyncSnapshot<bool?> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
+            if (snapshot.hasError)
+              return Center(
+                child: Text("Error: ${snapshot.error.toString()}"),
+              );
+
+            if (snapshot.data!)
+              return QiblaCompass();
+            else
+              return QiblaMaps();
+          },
+        ),
+      );
   }
 }
+
+/*class CenterEx extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
+        ),
+        body: Center(
+          child: FlatButton(
+            color: Colors.green,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return Example();
+                  },
+                ),
+              );
+            },
+            child: Text('Open Qiplah'),
+          ),
+        ));
+  }
+}*/
+
+
+// class CenterEx extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         appBar: AppBar(
+//           title: const Text('Plugin example app'),
+//         ),
+//         body: Center(
+//           child: RaisedButton(
+//             color: Theme.of(context).accentColor,
+//             onPressed: () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) {
+//                     return Scaffold(
+//                       appBar: AppBar(
+//                         title: Text("Compass"),
+//                       ),
+//                       body: TestingCompassWidget(),
+//                     );
+//                   },
+//                 ),
+//               );
+//             },
+//             child: Text('Open Compass'),
+//           ),
+//         ));
+//   }
+// }
+//
+// class TestingCompassWidget extends StatefulWidget {
+//   @override
+//   _TestingCompassWidgetState createState() => _TestingCompassWidgetState();
+// }
+//
+// class _TestingCompassWidgetState extends State<TestingCompassWidget> {
+//   @override
+//   void dispose() {
+//     FlutterCompass().dispose();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: _buildManualReader(),
+//     );
+//   }
+//
+//   Widget _buildManualReader() {
+//     return Padding(
+//       padding: const EdgeInsets.all(16.0),
+//       child: StreamBuilder<double>(
+//           stream: FlutterCompass.events,
+//           builder: (context, snapshot) {
+//             if (snapshot.hasError) {
+//               return Text('Error reading heading: ${snapshot.error}');
+//             }
+//
+//             if (snapshot.connectionState == ConnectionState.waiting) {
+//               return Center(
+//                 child: CircularProgressIndicator(),
+//               );
+//             }
+//
+//             double direction = snapshot.data;
+//             return Text(
+//               '$direction',
+//               style: Theme.of(context).textTheme.button,
+//             );
+//           }),
+//     );
+//   }
+// }

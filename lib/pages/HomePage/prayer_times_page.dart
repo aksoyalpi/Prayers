@@ -262,6 +262,7 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
     locationsPopUpItems = generatePopups();
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           centerTitle: true,
           title: PopupMenuButton(
               onSelected: (value) => changeLocation(value),
@@ -534,7 +535,6 @@ class _PrayerTimeState extends State<PrayerTime> {
     });
     notificationTypes[index] = notificationType;
     prefs.setStringList(Strings.notification, notificationTypes);
-    print(prefs.getStringList(Strings.notification));
   }
 
   String _getNotificationTypeAfterPress(String oldNotificationType) {
@@ -568,7 +568,6 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   @override
   Widget build(BuildContext context) {
-    print(notificationType);
     return GestureDetector(
         onTap: () {
           setState(() {

@@ -9,15 +9,17 @@ class IntroductionPage4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.acceptDua,  textAlign: TextAlign.center,
-              style: GoogleFonts.sevillana(fontSize: 30),
-            ),
-            Lottie.network("https://lottie.host/5b3af2f5-6c29-4c50-8972-c24daadb5aae/gVXUPUO4xK.json")
-          ],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.acceptDua,  textAlign: TextAlign.center,
+                style: GoogleFonts.sevillana(fontSize: 30),
+              ),
+              Lottie.network("https://lottie.host/5b3af2f5-6c29-4c50-8972-c24daadb5aae/gVXUPUO4xK.json", height: 300, width: 300)
+            ],
+          ),
         ));
   }
 }

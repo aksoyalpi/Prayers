@@ -104,6 +104,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Prayers',
         locale: _locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -113,6 +114,7 @@ class _MyAppState extends State<MyApp> {
           useMaterial3: true,
         ),
         home: MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: "Prayers",
           locale: _locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,

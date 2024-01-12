@@ -36,7 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],),
       body: [
         const PrayerTimesPage(),
-        const QiblaFinderPage(),
+        QiblaPage(),
         const Settings(),
       ][pageIndex],
     );
