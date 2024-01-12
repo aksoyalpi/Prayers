@@ -27,7 +27,8 @@ class PrayerTimesPage extends StatefulWidget {
   State<PrayerTimesPage> createState() => _PrayerTimesPageState();
 }
 
-class _PrayerTimesPageState extends State<PrayerTimesPage> with WidgetsBindingObserver {
+class _PrayerTimesPageState extends State<PrayerTimesPage>
+    with WidgetsBindingObserver {
   final double futureContainerHeight = 400.0;
   String locationAppBar = prefs.getBool("useGPS")!
       ? "GPS"
@@ -58,15 +59,13 @@ class _PrayerTimesPageState extends State<PrayerTimesPage> with WidgetsBindingOb
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       setTimes();
-      setState(() {
-        times = times;
-      });
     }
   }
 
   /// Function that checks the condition and sets the time to a new one or get it from the prefs
   void setTimes() {
     List<String> savedTimes = prefs.getStringList(Strings.prayerTimes)!;
+    print(savedTimes);
     if (savedTimes.isEmpty ||
         prefs.getInt(Strings.aktDay) != DateTime.now().day) {
       prefs.setInt(Strings.aktDay, DateTime.now().day);
@@ -75,11 +74,12 @@ class _PrayerTimesPageState extends State<PrayerTimesPage> with WidgetsBindingOb
       });
       setCheckboxesFalse();
       times?.then((value) {
+        print("VAlue: ${value!.toList()}");
         prefs.setStringList(Strings.prayerTimes, value!.toList());
         Notify.prayerTimesNotifiyAll(pt);
       });
-      ;
     } else {
+      pt.times = Time.fromList(savedTimes);
       setState(() {
         times = Future.value(Time.fromList(savedTimes));
       });
@@ -316,10 +316,11 @@ class _PrayerTimesPageState extends State<PrayerTimesPage> with WidgetsBindingOb
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   StreamBuilder(
-                                      stream:
-                                          Stream.periodic(const Duration(seconds: 1)),
+                                      stream: Stream.periodic(
+                                          const Duration(seconds: 1)),
                                       builder: (context, snapshot) {
-                                        return Text(DateFormat('HH:mm:ss').format(DateTime.now()));
+                                        return Text(DateFormat('HH:mm:ss')
+                                            .format(DateTime.now()));
                                         //return Text("${DateTime.now().hour} hrs, ${DateTime.now().minute} mins left");
                                       }),
                                   Padding(
@@ -508,6 +509,7 @@ bool onTime(String time, snapshot, DateTime date) {
   return false;
 }
 
+// Widget for one Prayer time card (eg. Dhuhr card)
 class _PrayerTimeState extends State<PrayerTime> {
   late bool isChecked = prefs.getBool(widget.time)!;
   late int index = PrayerTimes.prayerTimeZones.indexOf(widget.time) > 1
@@ -517,13 +519,22 @@ class _PrayerTimeState extends State<PrayerTime> {
       prefs.getStringList(Strings.notification)![index];
   late IconData notificationIcon;
 
-  void _changeNotificationIcon(String notificationType) {
+  @override
+  void initState() {
+    setState(() {
+      notificationIcon = _getNotificationIcon(notificationType);
+    });
+    super.initState();
+  }
+
+  // get IconData for parameter notificationType
+  IconData _getNotificationIcon(String notificationType) {
     if (notificationType == NotificationTypes.adhan.toString()) {
-      notificationIcon = Icons.notifications_active_outlined;
+      return Icons.notifications_active_outlined;
     } else if (notificationType == NotificationTypes.on.toString()) {
-      notificationIcon = Icons.notifications_outlined;
+      return Icons.notifications_outlined;
     } else {
-      notificationIcon = Icons.notifications_off_outlined;
+      return Icons.notifications_off_outlined;
     }
   }
 
@@ -534,6 +545,7 @@ class _PrayerTimeState extends State<PrayerTime> {
     });
     notificationTypes[index] = notificationType;
     prefs.setStringList(Strings.notification, notificationTypes);
+    print(prefs.getStringList(Strings.notification));
   }
 
   String _getNotificationTypeAfterPress(String oldNotificationType) {
@@ -567,7 +579,7 @@ class _PrayerTimeState extends State<PrayerTime> {
 
   @override
   Widget build(BuildContext context) {
-    _changeNotificationIcon(notificationType);
+    print(notificationType);
     return GestureDetector(
         onTap: () {
           setState(() {
@@ -588,85 +600,63 @@ class _PrayerTimeState extends State<PrayerTime> {
                 elevation: 12,
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    if (onTime(
-                        widget.time, widget.snapshot, widget.selectedDate))
-                      Positioned(
-                        left: 0,
-                        child: Transform.scale(
-                            scale: 0.75,
-                            child: Radio(
-                              fillColor:
-                                  MaterialStateProperty.all(Colors.green),
-                              value: true,
-                              groupValue: true,
-                              toggleable: false,
-                              onChanged: (bool? value) {},
-                            )),
-                      ),
+                child: Stack(alignment: Alignment.center, children: [
+                  if (onTime(widget.time, widget.snapshot, widget.selectedDate))
                     Positioned(
-                      left: 40,
-                      child: Text(
-                          /*widget.time*/
-                          "${AppLocalizations.of(context)!.prayerTime(widget.time)} / ${Strings.prayersArabic[widget.time]}",
-                          style: GoogleFonts.lato(
-                              textStyle: const TextStyle(fontSize: 12))),
+                      left: 0,
+                      child: Transform.scale(
+                          scale: 0.75,
+                          child: Radio(
+                            fillColor: MaterialStateProperty.all(Colors.green),
+                            value: true,
+                            groupValue: true,
+                            toggleable: false,
+                            onChanged: (bool? value) {},
+                          )),
                     ),
-                    Positioned(
-                        right: 0,
-                        child: Row(
-                            children: [
-                          Text(
-                            pt.getPrayerTime(widget.time)!,
-                            style: GoogleFonts.lato(
-                                textStyle: const TextStyle(fontSize: 12)),
-                          ),
-                          if (widget.time != PrayerTimes.prayerTimeZones[1])
-                            IconButton(
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        duration: const Duration(milliseconds: 300),
-                                          content: Text(_getNotificationTypeAfterPress(notificationType))));
-                                  _changeNotificationTypes(notificationType);
-                                  _changeNotificationIcon(notificationType);
-                                },
-                                icon: Icon(
-                                  notificationIcon,
-                                  size: 16,
-                                ))
-                          else
-                            SizedBox(width: 47,),
-                          if (widget.time != PrayerTimes.prayerTimeZones[1] &&
-                              dateIsToday(widget.selectedDate))
-                            Checkbox(
-                              activeColor: Colors.green,
-                              checkColor: Colors.white,
-                              value: dateIsToday(widget.selectedDate)
-                                  ? isChecked
-                                  : false,
-                              onChanged: (bool? value) {
+                  Positioned(
+                    left: 40,
+                    child: Text(
+                        /*widget.time*/
+                        "${AppLocalizations.of(context)!.prayerTime(widget.time)} / ${Strings.prayersArabic[widget.time]}",
+                        style: GoogleFonts.lato(
+                            textStyle: const TextStyle(fontSize: 12))),
+                  ),
+                  Positioned(
+                      right: 0,
+                      child: Row(children: [
+                        Text(
+                          pt.getPrayerTime(widget.time)!,
+                          style: GoogleFonts.lato(
+                              textStyle: const TextStyle(fontSize: 12)),
+                        ),
+                        if (widget.time != PrayerTimes.prayerTimeZones[1])
+                          IconButton(
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        content: Text(
+                                            _getNotificationTypeAfterPress(
+                                                notificationType))));
+                                _changeNotificationTypes(notificationType);
                                 setState(() {
-                                  isChecked = value!;
+                                  notificationIcon =
+                                      _getNotificationIcon(notificationType);
                                 });
-                                prefs.setBool(widget.time, value!);
                               },
-                            ),
-                        ])),
-                    /*Positioned(
-                        right: 55,
-                        child: Text(
-                          pt.getPrayerTime(widget.time)!,
-                          style: GoogleFonts.lato(
-                              textStyle: const TextStyle(fontSize: 12)),
-                        )),
-                    if (widget.time != PrayerTimes.prayerTimeZones[1] &&
-                        dateIsToday(widget.selectedDate))
-                      Positioned(
-                          right: 10,
-                          child: Checkbox(
+                              icon: Icon(
+                                notificationIcon,
+                                size: 16,
+                              ))
+                        else
+                          SizedBox(
+                            width: 47,
+                          ),
+                        if (widget.time != PrayerTimes.prayerTimeZones[1] &&
+                            dateIsToday(widget.selectedDate))
+                          Checkbox(
                             activeColor: Colors.green,
                             checkColor: Colors.white,
                             value: dateIsToday(widget.selectedDate)
@@ -678,73 +668,9 @@ class _PrayerTimeState extends State<PrayerTime> {
                               });
                               prefs.setBool(widget.time, value!);
                             },
-                          )),*/
-                  ],
-                ))) /*SizedBox(
-            width: 320,
-            height: 65,
-            child: Card(
-                surfaceTintColor: Theme.of(context).cardColor,
-                shadowColor:
-                    onTime(widget.time, widget.snapshot, widget.selectedDate)
-                        ? Colors.green
-                        : Theme.of(context).shadowColor,
-                elevation: 12,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    if (onTime(
-                        widget.time, widget.snapshot, widget.selectedDate))
-                      Positioned(
-                        left: 0,
-                        child: Transform.scale(
-                            scale: 0.75,
-                            child: Radio(
-                              fillColor:
-                                  MaterialStateProperty.all(Colors.green),
-                              value: true,
-                              groupValue: true,
-                              toggleable: false,
-                              onChanged: (bool? value) {},
-                            )),
-                      ),
-                    Positioned(
-                      left: 40,
-                      child: Text(
-                          /*widget.time*/
-                          "${AppLocalizations.of(context)!.prayerTime(widget.time)} / ${Strings.prayersArabic[widget.time]}",
-                          style: GoogleFonts.lato(
-                              textStyle: const TextStyle(fontSize: 12))),
-                    ),
-                    Positioned(
-                        right: 55,
-                        child: Text(
-                          pt.getPrayerTime(widget.time)!,
-                          style: GoogleFonts.lato(
-                              textStyle: const TextStyle(fontSize: 12)),
-                        )),
-                    if (widget.time != PrayerTimes.prayerTimeZones[1] &&
-                        dateIsToday(widget.selectedDate))
-                      Positioned(
-                          right: 10,
-                          child: Checkbox(
-                            activeColor: Colors.green,
-                            checkColor: Colors.white,
-                            value: dateIsToday(widget.selectedDate)
-                                ? isChecked
-                                : false,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value!;
-                              });
-                              prefs.setBool(widget.time, value!);
-                            },
-                          ))
-                  ],
-                )))*/
-        );
+                          ),
+                      ])),
+                ]))));
   }
 }
 

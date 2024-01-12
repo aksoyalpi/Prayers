@@ -9,6 +9,7 @@ import 'package:prayer_times/prayer_times.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'consts/NotificationTypes.dart';
 import 'consts/strings.dart';
 
 PrayerTimes pt = PrayerTimes();
@@ -27,7 +28,7 @@ void main() async {
   }
   if (!prefs.containsKey(Strings.notification)) {
     List<String> notificationTypes = List.generate(
-        5, growable: false, (index) => NotificationType.adhan.toString());
+        5, growable: false, (index) => NotificationTypes.adhan.toString());
     prefs.setStringList(Strings.notification, notificationTypes);
   }
   if (!prefs.containsKey(Strings.prefs["useGPS"]!)) {
