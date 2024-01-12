@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:prayer_times/pages/HomePage/prayer_times_page.dart';
 import 'package:prayer_times/pages/QiblaFinderPage/qibla_page.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'Settings/settings.dart';
 
@@ -28,15 +29,15 @@ class _MyHomePageState extends State<MyHomePage> {
             pageIndex = value;
           });
         },
-        items: const [
-          Icon(Icons.mosque_outlined),
-          Icon(Icons.not_listed_location_outlined),
+        items:  const [
+          FaIcon(FontAwesomeIcons.personPraying),
+          FaIcon(FontAwesomeIcons.compass),
           Icon(Icons.settings_outlined)
         ],),
       body: [
-        PrayerTimesPage(),
-        QiblaFinderPage(),
-        Settings(),
+        const PrayerTimesPage(),
+        const QiblaFinderPage(),
+        const Settings(),
       ][pageIndex],
     );
   }

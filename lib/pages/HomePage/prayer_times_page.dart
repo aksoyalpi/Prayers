@@ -1,16 +1,13 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
+import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:prayer_times/consts/NotificationTypes.dart';
-import 'package:prayer_times/pages/HomePage/prayer_times_page.dart';
 import 'package:prayer_times/pages/HomePage/notification_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/pages/Settings/settings.dart';
 import 'package:prayer_times/time.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -65,7 +62,6 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
   /// Function that checks the condition and sets the time to a new one or get it from the prefs
   void setTimes() {
     List<String> savedTimes = prefs.getStringList(Strings.prayerTimes)!;
-    print(savedTimes);
     if (savedTimes.isEmpty ||
         prefs.getInt(Strings.aktDay) != DateTime.now().day) {
       prefs.setInt(Strings.aktDay, DateTime.now().day);
@@ -74,7 +70,6 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
       });
       setCheckboxesFalse();
       times?.then((value) {
-        print("VAlue: ${value!.toList()}");
         prefs.setStringList(Strings.prayerTimes, value!.toList());
         Notify.prayerTimesNotifiyAll(pt);
       });
@@ -285,15 +280,6 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
                 ],
               ),
               itemBuilder: (context) => locationsPopUpItems),
-          /*actions: [
-            IconButton(
-                style: ButtonStyle(iconSize: MaterialStateProperty.all(25)),
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: () => showSettings(),
-                icon: const Icon(Icons.settings)),
-          ],*/
         ),
         body: GestureDetector(
             onHorizontalDragEnd: (details) {
@@ -305,12 +291,16 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
             },
             child: SizedBox(
                 height: MediaQuery.of(context).size.height,
-                child: RefreshIndicator(
+                child: LiquidPullToRefresh(
                     onRefresh: () => _refresh(),
+                    springAnimationDurationInMilliseconds: 300,
+                    backgroundColor: Theme.of(context).textTheme.bodySmall?.color,
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    showChildOpacityTransition: true,
                     child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         child: Padding(
-                            padding: const EdgeInsets.only(top: 75),
+                            padding: const EdgeInsets.only(top: 60),
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -409,9 +399,9 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
                                           }
                                         }
                                       }),
-                                  const SizedBox(
+                                  /*const SizedBox(
                                     height: 200,
-                                  )
+                                  )*/
                                 ])))))));
   }
 
