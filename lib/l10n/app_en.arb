@@ -1,5 +1,8 @@
 {
   "prayerTime": "{time, select, Fajr{Morning} Sunrise{Sunrise} Dhuhr{Noon} Asr{Afternoon} Maghrib{Evening} Isha{Night} other{Prayer}}",
+  "hijriMonth": "{month, select, 1{Muharram} 2{Safar} 3{Rabi' al-auwal} 4{Rabi' II.} 5{Dschumada l-ula} 6{Dschumada II.} 7{Radschab} 8{Schaban} 9{Ramadan} 10{Schauwal} 11{Dhu l-Qa'da} 12{Dhu l-Hiddscha} other{Dhu l-Hiddscha}}",
+
+
   "date": "{date}",
   "@date": {
     "placeholders": {

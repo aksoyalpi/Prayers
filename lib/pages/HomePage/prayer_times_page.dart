@@ -213,7 +213,6 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
   void deleteLocation(String location) {
     List<String> tmpLocationString = locationStrings;
     int indexOfLocation = tmpLocationString.indexOf(location);
-    print(indexOfLocation);
     tmpLocationString.removeAt(indexOfLocation);
     List<Location> tmpLocations = locations;
     tmpLocations.removeAt(indexOfLocation);
@@ -345,7 +344,7 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
                                                 ),
                                               ),
                                               Text(
-                                                "${hijri.monthName} ${hijri.day}, ${hijri.year}",
+                                                "${AppLocalizations.of(context)!.hijriMonth(hijri.month.toString())} ${hijri.day}, ${hijri.year}",
                                                 style: GoogleFonts.lato(
                                                     fontSize: 12),
                                               ),

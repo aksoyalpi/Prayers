@@ -4,9 +4,9 @@ import 'package:prayer_times/prayer_times.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'consts/NotificationTypes.dart';
 import 'consts/strings.dart';
 import 'main.dart';
-import 'pages/HomePage/notification_dialog.dart';
 
 
 class Notify {
@@ -17,7 +17,7 @@ class Notify {
 
   /// Function to set notification setting for specific time
   static void setNotificationForSpecificTime(String time,
-      NotificationType notificationType) {
+      NotificationTypes notificationType) {
     // TODO: for new notification package
   }
 
@@ -29,7 +29,7 @@ class Notify {
 
     AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(time, time, importance: Importance.max);
 
-    if (notificationTypes[j] ==  NotificationType.adhan.toString()) {
+    if (notificationTypes[j] ==  NotificationTypes.adhan.toString()) {
       androidNotificationDetails = AndroidNotificationDetails(
           time,
           time,
@@ -39,9 +39,7 @@ class Notify {
       );
     }
 
-    return NotificationDetails(
-      android: androidNotificationDetails
-      );
+    return NotificationDetails(android: androidNotificationDetails);
       // for Ios
       //ios: IOSNotificationDetails(),
   }
@@ -86,7 +84,7 @@ class Notify {
     for (int i = 0; i < PrayerTimes.prayerTimeZones.length; i++) {
       int j = i > 1 ? i-1 : i;
       String time = PrayerTimes.prayerTimeZones[i];
-      if (i != 1 && _notificationTypes[j] != NotificationType.off.toString()) {
+      if (i != 1 && _notificationTypes[j] != NotificationTypes.off.toString()) {
         await prayerTimesNotify(
             time, pt.getPrayerTimeHour(time), pt.getPrayerTimeMin(time));
       }
