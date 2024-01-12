@@ -178,12 +178,12 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
         prefs.setString(Strings.prefs["city"]!, location.city);
         prefs.setString(Strings.prefs["country"]!, location.country);
         locations.add(location);
-        setTimesDefinitely();
         setState(() {
           locationStrings = locationStrings;
           locations = locations;
           locationAppBar = location.city;
         });
+        setTimesDefinitely();
       }
     });
   }
@@ -641,7 +641,7 @@ class _PrayerTimeState extends State<PrayerTime> {
                                 size: 16,
                               ))
                         else
-                          SizedBox(
+                          const SizedBox(
                             width: 47,
                           ),
                         if (widget.time != PrayerTimes.prayerTimeZones[1] &&
