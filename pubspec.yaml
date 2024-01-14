@@ -61,7 +61,6 @@ dependencies:
   geolocator: ^9.0.2
   google_maps_flutter: ^2.5.2
   permission_handler: ^11.1.0
-  fluttertoast: ^8.2.4
 
 flutter_icons:
   android: true

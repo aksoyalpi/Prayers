@@ -76,7 +76,6 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
       child: StreamBuilder(
         stream: FlutterQiblah.qiblahStream,
         builder: (context, snapshot) {
-          print(snapshot);
           if(snapshot.connectionState == ConnectionState.waiting || snapshot.data == null){
             return const Center(child: CircularProgressIndicator());
           }
@@ -91,7 +90,7 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text("${qiblaDirection.direction.toInt()}°", style: TextStyle(fontSize: 24),),
+                Text("${qiblaDirection.direction.toInt()}°", style: const TextStyle(fontSize: 24),),
                 const SizedBox(height: 25,),
                 SizedBox(
                   height: 300,

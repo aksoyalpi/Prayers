@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -92,7 +90,6 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
       prefs.setStringList(Strings.prayerTimes, value!.toList());
       Notify.prayerTimesNotifiyAll(pt);
     });
-    ;
   }
 
   /// Returns bool if notification is on
