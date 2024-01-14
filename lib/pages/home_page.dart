@@ -1,7 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:prayer_times/pages/HomePage/prayer_times_page.dart';
-import 'package:prayer_times/pages/QiblaFinderPage/qibla_page.dart';
+import 'package:prayer_times/pages/QiblaFinderPage/qibla_finder_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'Settings/settings.dart';
@@ -22,7 +22,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Theme.of(context).backgroundColor,
-        color: Colors.black26,
+        //color: Theme.of(context).cardColor,
+        color: Colors.black87,
         animationDuration: const Duration(milliseconds: 300),
         onTap: (value) {
           setState(() {
@@ -30,13 +31,13 @@ class _MyHomePageState extends State<MyHomePage> {
           });
         },
         items:  const [
-          FaIcon(FontAwesomeIcons.personPraying),
-          FaIcon(FontAwesomeIcons.compass),
-          Icon(Icons.settings_outlined)
+          FaIcon(FontAwesomeIcons.personPraying, color: Colors.white70),
+          FaIcon(FontAwesomeIcons.compass, color: Colors.white70),
+          FaIcon(Icons.settings_outlined, color: Colors.white70)
         ],),
       body: [
         const PrayerTimesPage(),
-        QiblaPage(),
+        const QiblaFinderPage(),
         const Settings(),
       ][pageIndex],
     );

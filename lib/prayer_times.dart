@@ -1,14 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:location/location.dart';
 import 'package:prayer_times/time.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'Notify.dart';
 import 'consts/strings.dart';
 import 'main.dart';
 

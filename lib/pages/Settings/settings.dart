@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:prayer_times/pages/Settings/calculation_method_dialog.dart';
 import 'package:prayer_times/pages/Settings/language_dialog.dart';
-import 'package:prayer_times/location_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
-import 'package:prayer_times/settings_dialog.dart';
 import 'package:prayer_times/pages/Settings/theme_setting.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 

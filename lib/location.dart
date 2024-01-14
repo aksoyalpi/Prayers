@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 class Location{
   final String city;
   final String country;

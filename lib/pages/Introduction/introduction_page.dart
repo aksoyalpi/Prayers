@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:prayer_times/pages/HomePage/prayer_times_page.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
