@@ -25,6 +25,7 @@
 
   "adhan": "Adhan",
   "off": "Off",
+  "on": "On",
 
   "appTheme": "{theme, select, System{System} Dark{Dark} Light{Light} other{System}}",
   "appThemeTitle": "App theme",

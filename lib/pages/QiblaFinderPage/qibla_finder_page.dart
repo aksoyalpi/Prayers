@@ -76,7 +76,8 @@ class _QiblaScreenState extends State<QiblaScreen> with SingleTickerProviderStat
       child: StreamBuilder(
         stream: FlutterQiblah.qiblahStream,
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
+          print(snapshot);
+          if(snapshot.connectionState == ConnectionState.waiting || snapshot.data == null){
             return const Center(child: CircularProgressIndicator());
           }
 

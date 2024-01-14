@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -294,7 +295,8 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
                 child: LiquidPullToRefresh(
                     onRefresh: () => _refresh(),
                     springAnimationDurationInMilliseconds: 300,
-                    backgroundColor: Theme.of(context).textTheme.bodySmall?.color,
+                    backgroundColor:
+                        Theme.of(context).textTheme.bodySmall?.color,
                     color: Theme.of(context).scaffoldBackgroundColor,
                     showChildOpacityTransition: true,
                     child: SingleChildScrollView(
@@ -547,6 +549,18 @@ class _PrayerTimeState extends State<PrayerTime> {
     }
   }
 
+  String _getNotificationTypeMsgAfterPress(String notificationType) {
+    String msg = "${AppLocalizations.of(context)!.notification}: ";
+    if (notificationType == NotificationTypes.adhan.toString()) {
+      msg += AppLocalizations.of(context)!.adhan;
+    } else if (notificationType == NotificationTypes.on.toString()) {
+      msg += AppLocalizations.of(context)!.on;
+    } else {
+      msg += AppLocalizations.of(context)!.off;
+    }
+    return msg;
+  }
+
   void showNotificationDialog(String time) {
     if (time != PrayerTimes.prayerTimeZones[1]) {
       showDialog(
@@ -619,15 +633,16 @@ class _PrayerTimeState extends State<PrayerTime> {
                               textStyle: const TextStyle(fontSize: 12)),
                         ),
                         if (widget.time != PrayerTimes.prayerTimeZones[1])
+                          // NotificationType Icon
                           IconButton(
                               onPressed: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        duration:
-                                            const Duration(milliseconds: 300),
+                                        duration: const Duration(seconds: 1),
                                         content: Text(
-                                            _getNotificationTypeAfterPress(
-                                                notificationType))));
+                                            _getNotificationTypeMsgAfterPress(
+                                                _getNotificationTypeAfterPress(
+                                                    notificationType)))));
                                 _changeNotificationTypes(notificationType);
                                 setState(() {
                                   notificationIcon =
