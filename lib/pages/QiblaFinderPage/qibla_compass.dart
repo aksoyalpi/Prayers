@@ -44,7 +44,7 @@ class _QiblaCompassState extends State<QiblaCompass> {
             return Column(
               children: [
                 CircularProgressIndicator.adaptive(),
-                Image.asset("../assets/qibla-kompass.png")
+                Image.asset("assets/qibla-kompass.png")
               ],
             );
           if (snapshot.data!.enabled == true) {
@@ -98,8 +98,8 @@ class _QiblaCompassState extends State<QiblaCompass> {
 }
 
 class QiblahCompassWidget extends StatelessWidget {
-  final _needleSvg = Image.asset(
-    '../assets/qibla-kompass.png',
+  final _qiblaPng = Image.asset(
+    'assets/qibla-kompass.png',
     fit: BoxFit.contain,
     height: 300,
     alignment: Alignment.center,
@@ -115,11 +115,22 @@ class QiblahCompassWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircularProgressIndicator(),
-              Image.asset("../assets/qibla-kompass.png", height: 200, width: 200,)
             ],
           );
         }
         final qiblahDirection = snapshot.data!;
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("${qiblahDirection.offset.toStringAsFixed(1)}°"),
+            Transform.rotate(
+              angle: (qiblahDirection.qiblah * (pi / 180) * -1),
+              alignment: Alignment.center,
+              child: _qiblaPng,
+            )
+          ],
+        );
 
         return Stack(
           alignment: Alignment.center,
@@ -127,10 +138,10 @@ class QiblahCompassWidget extends StatelessWidget {
             Transform.rotate(
               angle: (qiblahDirection.qiblah * (pi / 180) * -1),
               alignment: Alignment.center,
-              child: _needleSvg,
+              child: _qiblaPng,
             ),
             Positioned(
-              bottom: 8,
+              bottom: 3,
               child: Text("${qiblahDirection.offset.toStringAsFixed(3)}°"),
             )
           ],
