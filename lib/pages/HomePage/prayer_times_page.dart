@@ -3,9 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:prayer_times/consts/NotificationTypes.dart';
-import 'package:prayer_times/pages/HomePage/notification_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
-import 'package:prayer_times/pages/Settings/settings.dart';
+import 'package:prayer_times/pages/Settings/settings_page.dart';
 import 'package:prayer_times/time.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -304,6 +303,7 @@ class _PrayerTimesPageState extends State<PrayerTimesPage>
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  //Lottie.network("https://lottie.host/8fdbb15c-81a3-4c9a-bc24-0e082b74bba3/zXnsE1IbaF.json", width: 200),
                                   StreamBuilder(
                                       stream: Stream.periodic(
                                           const Duration(seconds: 1)),
@@ -558,7 +558,7 @@ class _PrayerTimeState extends State<PrayerTime> {
     return msg;
   }
 
-  void showNotificationDialog(String time) {
+  /*void showNotificationDialog(String time) {
     if (time != PrayerTimes.prayerTimeZones[1]) {
       showDialog(
         context: context,
@@ -575,7 +575,7 @@ class _PrayerTimeState extends State<PrayerTime> {
         }
       });
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -586,7 +586,6 @@ class _PrayerTimeState extends State<PrayerTime> {
           });
           prefs.setBool(widget.time, isChecked);
         },
-        onLongPress: () => showNotificationDialog(widget.time),
         child: SizedBox(
             width: 320,
             height: 65,

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:prayer_times/pages/Settings/calculation_method_dialog.dart';
 import 'package:prayer_times/pages/Settings/language_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/pages/Settings/theme_setting.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 
 import '../../consts/strings.dart';
 import '../../main.dart';
@@ -23,19 +23,32 @@ class _SettingsState extends State<Settings> {
   bool useGPS = prefs.getBool(Strings.prefs["useGPS"]!)!;
   String city = prefs.getString(Strings.prefs["city"]!)!;
   String country = prefs.getString(Strings.prefs["country"]!)!;
+
   // returns the country code of the saved languageCode
   String language = prefs.getString(Strings.languageCode)!;
 
   String calcMethod = PrayerTimes
       .calcMethods[prefs.getInt(Strings.prefs["calculationMethod"]!)!];
 
-  String getLanguage(String value){
+  String getLanguage(String value) {
     const Map<String, String> langs = {
       "en": "English",
       "de": "Deutsch",
       "tr": "Türkçe"
     };
     return langs[value].toString();
+  }
+
+  // Function to share the App
+  Future<void> _shareApp() async {
+    // Set the app link and the message to be shared
+    const String appLink =
+        'https://play.google.com/store/apps/details?id=com.alaksoftware.prayer_times';
+    const String message = 'Check out Prayers: $appLink';
+
+    // Share the app link and message using the share dialog
+    await FlutterShare.share(
+        title: 'Share App', text: message, linkUrl: appLink);
   }
 
   @override
@@ -45,35 +58,21 @@ class _SettingsState extends State<Settings> {
       appBar: AppBar(
         leading: const Icon(Icons.settings),
         title: Text(AppLocalizations.of(context)!.settings),
-        /*actions: [
-          TextButton(
-              onPressed: () => {Navigator.of(context).pop("save")},
-              child: Text(AppLocalizations.of(context)!.save))
-        ],*/
       ),
       body: SettingsList(
         sections: [
+          // General Section
           SettingsSection(
             title: Text(AppLocalizations.of(context)!.general),
             tiles: [
-              /*SettingsTile.switchTile(
-                initialValue: notificationOn,
-                title: Text(AppLocalizations.of(context)!.notification),
-                leading: const Icon(Icons.notifications),
-                onToggle: (bool value) {
-                  setState(() {
-                    notificationOn = value;
-                  });
-                  prefs.setBool(Strings.notificationOn, value);
-                },
-              ),*/
+              // language settings
               SettingsTile(
-                  title: Text(AppLocalizations.of(context)!.language),
+                title: Text(AppLocalizations.of(context)!.language),
                 description: Text(getLanguage(language)),
                 leading: const Icon(Icons.language),
                 onPressed: (context) => showDialog(
-                    context: context,
-                    builder: (context) => const LanguageDialog(),
+                  context: context,
+                  builder: (context) => const LanguageDialog(),
                 ).then((value) {
                   MyApp.of(context)!.setLocale(Locale(value!));
                   setState(() {
@@ -81,9 +80,12 @@ class _SettingsState extends State<Settings> {
                   });
                 }),
               ),
+
+              // App theme settings
               SettingsTile(
                 title: Text(AppLocalizations.of(context)!.appThemeTitle),
-                description: Text(AppLocalizations.of(context)!.appTheme(aktTheme)),
+                description:
+                    Text(AppLocalizations.of(context)!.appTheme(aktTheme)),
                 leading: const Icon(Icons.smartphone),
                 onPressed: (context) {
                   showDialog(
@@ -99,20 +101,35 @@ class _SettingsState extends State<Settings> {
               ),
             ],
           ),
-          SettingsSection(title: Text(AppLocalizations.of(context)!.prayerTimes), tiles: [
+
+          // Support Section (share, donate, feedback)
+          SettingsSection(
+              title: Text(AppLocalizations.of(context)!.prayerTimes),
+              tiles: [
+                // calculation method setting
+                SettingsTile(
+                  leading: const Icon(Icons.calculate),
+                  title: Text(AppLocalizations.of(context)!.calculationMethod),
+                  description: Text(calcMethod),
+                  onPressed: (context) => showDialog(
+                    context: context,
+                    builder: (context) => const CalculationMethodDialog(),
+                  ).then((value) {
+                    setState(() {
+                      calcMethod = value!;
+                    });
+                  }),
+                )
+              ]),
+
+          // Support Section (Feedback, share App, Donate)
+          SettingsSection(title: Text("Support"), tiles: [
+
+            // Share App Tile
             SettingsTile(
-              leading: const Icon(Icons.calculate),
-              title: Text(AppLocalizations.of(context)!.calculationMethod),
-              description: Text(calcMethod),
-              onPressed: (context) => showDialog(
-                context: context,
-                builder: (context) => const CalculationMethodDialog(),
-              ).then((value) {
-                setState(() {
-                  calcMethod = value!;
-                });
-              }),
-            )
+                leading: const Icon(Icons.ios_share_outlined),
+                title: Text("Share with friends"),
+                onPressed: (context) => _shareApp())
           ])
         ],
       ),

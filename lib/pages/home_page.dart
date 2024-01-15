@@ -4,7 +4,7 @@ import 'package:prayer_times/pages/HomePage/prayer_times_page.dart';
 import 'package:prayer_times/pages/QiblaFinderPage/qibla_finder_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import 'Settings/settings.dart';
+import 'Settings/settings_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
