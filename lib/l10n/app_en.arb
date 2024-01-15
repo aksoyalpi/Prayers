@@ -17,6 +17,10 @@
   "next": "next",
   "done": "done",
 
+  "support": "Support",
+  "share_with_friends": "Share with friends",
+  "feedback": "Feedback",
+
   "chooseLanguage": "Choose language",
   "acceptDua": "May Allah accept your duas",
   "changeNotificationDescription": "To change the notificication settings, longpress one of the prayer time cards.",

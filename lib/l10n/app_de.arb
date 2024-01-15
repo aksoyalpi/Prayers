@@ -12,6 +12,10 @@
     }
   },
 
+  "support": "Support",
+  "share_with_friends": "Teile mit Freunden",
+  "feedback": "Feedback",
+
   "skip": "überspringen",
   "next": "weiter",
   "done": "fertig",
@@ -26,6 +30,7 @@
 
   "checkInternetError": "Bitte prüfen sie ihre Internet-Verbindung.",
 
+  "on": "An",
   "adhan": "Adhan",
   "off": "Aus",
 

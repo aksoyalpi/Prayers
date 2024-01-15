@@ -9,6 +9,10 @@
   "light": "Açık",
   "restartAppToChangeTheme": "Uygulama temasını değiştirmek icin ayarlari kaydetmeniz lazim.",
 
+  "support": "Destek",
+  "share_with_friends": "Arkadaslarinla paylas",
+  "feedback": "Feedback",
+
   "skip": "atla",
   "next": "sonraki",
   "done": "tamam",
@@ -21,6 +25,7 @@
 
   "checkInternetError": "Lütfen internet baglantinizi kontrol ediniz.",
 
+  "on": "Acik",
   "adhan": "Ezan",
   "off": "Kapali",
 

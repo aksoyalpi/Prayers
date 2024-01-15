@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:prayer_times/pages/Settings/calculation_method_dialog.dart';
 import 'package:prayer_times/pages/Settings/language_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
@@ -48,6 +49,14 @@ class _SettingsState extends State<Settings> {
     print(message);
     // Share the app link and message using the share dialog
     Share.share(message);
+  }
+
+  Future<void> _giveFeedback() async {
+    final InAppReview inAppReview = InAppReview.instance;
+
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
+    }
   }
 
   @override
@@ -122,14 +131,22 @@ class _SettingsState extends State<Settings> {
               ]),
 
           // Support Section (Feedback, share App, Donate)
-          SettingsSection(title: Text("Support"), tiles: [
+          SettingsSection(
+              title: Text(AppLocalizations.of(context)!.support),
+              tiles: [
+                // Share App Tile
+                SettingsTile(
+                    leading: const Icon(Icons.ios_share_outlined),
+                    title:
+                        Text(AppLocalizations.of(context)!.share_with_friends),
+                    onPressed: (context) => _shareApp()),
 
-            // Share App Tile
-            SettingsTile(
-                leading: const Icon(Icons.ios_share_outlined),
-                title: Text("Share with friends"),
-                onPressed: (context) => _shareApp())
-          ])
+                // Feedback Tile
+                SettingsTile(
+                    leading: const Icon(Icons.feedback_outlined),
+                    title: Text(AppLocalizations.of(context)!.feedback),
+                    onPressed: (context) => _giveFeedback())
+              ]),
         ],
       ),
     ));
