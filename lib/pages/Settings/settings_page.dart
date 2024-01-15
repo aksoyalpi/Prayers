@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_share/flutter_share.dart';
 import 'package:prayer_times/pages/Settings/calculation_method_dialog.dart';
 import 'package:prayer_times/pages/Settings/language_dialog.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/pages/Settings/theme_setting.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../consts/strings.dart';
 import '../../main.dart';
@@ -45,10 +45,9 @@ class _SettingsState extends State<Settings> {
     const String appLink =
         'https://play.google.com/store/apps/details?id=com.alaksoftware.prayer_times';
     const String message = 'Check out Prayers: $appLink';
-
+    print(message);
     // Share the app link and message using the share dialog
-    await FlutterShare.share(
-        title: 'Share App', text: message, linkUrl: appLink);
+    Share.share(message);
   }
 
   @override

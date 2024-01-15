@@ -36,9 +36,7 @@ class _QiblaFinderPageState extends State<QiblaFinderPage> {
           if(hasPermission){
             return const QiblaScreen();
           } else {
-            return const Scaffold(
-              backgroundColor: Colors.white54,
-            );
+            return const Scaffold();
           }
         },);
   }

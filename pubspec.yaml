@@ -62,10 +62,12 @@ dependencies:
   google_maps_flutter: ^2.5.2
   permission_handler: ^11.1.0
   flutter_share: ^2.0.0
+  share_plus: ^7.2.1
 
 flutter_icons:
   android: true
   ios: true
+  web: true
   image_path: "assets/prayers(3).png"
 
 dev_dependencies:

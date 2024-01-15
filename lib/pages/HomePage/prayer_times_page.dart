@@ -558,25 +558,6 @@ class _PrayerTimeState extends State<PrayerTime> {
     return msg;
   }
 
-  /*void showNotificationDialog(String time) {
-    if (time != PrayerTimes.prayerTimeZones[1]) {
-      showDialog(
-        context: context,
-        builder: (context) => NotificationDialog(time: time),
-      ).then((notificationType) async {
-        if (notificationType != null) {
-          int index = PrayerTimes.prayerTimeZones.indexOf(time);
-          if (index > 1) index--;
-          List<String> notificationTypes =
-              prefs.getStringList(Strings.notification)!;
-          notificationTypes[index] = notificationType.toString();
-          prefs.setStringList(Strings.notification, notificationTypes);
-          await Notify.prayerTimesNotifiyAll(pt);
-        }
-      });
-    }
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
