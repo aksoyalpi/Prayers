@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_donation_buttons/donationButtons/ko-fiButton.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:prayer_times/pages/Settings/calculation_method_dialog.dart';
 import 'package:prayer_times/pages/Settings/language_dialog.dart';
@@ -46,17 +47,13 @@ class _SettingsState extends State<Settings> {
     const String appLink =
         'https://play.google.com/store/apps/details?id=com.alaksoftware.prayer_times';
     const String message = 'Check out Prayers: $appLink';
-    print(message);
     // Share the app link and message using the share dialog
     Share.share(message);
   }
 
   Future<void> _giveFeedback() async {
     final InAppReview inAppReview = InAppReview.instance;
-
-    if (await inAppReview.isAvailable()) {
-      inAppReview.requestReview();
-    }
+    inAppReview.openStoreListing();
   }
 
   @override
@@ -67,86 +64,112 @@ class _SettingsState extends State<Settings> {
         leading: const Icon(Icons.settings),
         title: Text(AppLocalizations.of(context)!.settings),
       ),
-      body: SettingsList(
-        sections: [
-          // General Section
-          SettingsSection(
-            title: Text(AppLocalizations.of(context)!.general),
-            tiles: [
-              // language settings
-              SettingsTile(
-                title: Text(AppLocalizations.of(context)!.language),
-                description: Text(getLanguage(language)),
-                leading: const Icon(Icons.language),
-                onPressed: (context) => showDialog(
-                  context: context,
-                  builder: (context) => const LanguageDialog(),
-                ).then((value) {
-                  MyApp.of(context)!.setLocale(Locale(value!));
-                  setState(() {
-                    language = value!;
-                  });
-                }),
-              ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: SettingsList(
+                sections: [
+                  // General Section
+                  SettingsSection(
+                    title: Text(AppLocalizations.of(context)!.general),
+                    tiles: [
+                      // language settings
+                      SettingsTile(
+                        title: Text(AppLocalizations.of(context)!.language),
+                        description: Text(getLanguage(language)),
+                        leading: const Icon(Icons.language),
+                        onPressed: (context) => showDialog(
+                          context: context,
+                          builder: (context) => const LanguageDialog(),
+                        ).then((value) {
+                          MyApp.of(context)!.setLocale(Locale(value!));
+                          setState(() {
+                            language = value!;
+                          });
+                        }),
+                      ),
 
-              // App theme settings
-              SettingsTile(
-                title: Text(AppLocalizations.of(context)!.appThemeTitle),
-                description:
-                    Text(AppLocalizations.of(context)!.appTheme(aktTheme)),
-                leading: const Icon(Icons.smartphone),
-                onPressed: (context) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => const ThemeSetting(),
-                  ).then((value) {
-                    MyApp.of(context)?.setThemeMode(getThemeMode());
-                    setState(() {
-                      aktTheme = value;
-                    });
-                  });
-                },
+                      // App theme settings
+                      SettingsTile(
+                        title:
+                            Text(AppLocalizations.of(context)!.appThemeTitle),
+                        description: Text(
+                            AppLocalizations.of(context)!.appTheme(aktTheme)),
+                        leading: const Icon(Icons.smartphone),
+                        onPressed: (context) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => const ThemeSetting(),
+                          ).then((value) {
+                            MyApp.of(context)?.setThemeMode(getThemeMode());
+                            setState(() {
+                              aktTheme = value;
+                            });
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+
+                  // Support Section (share, donate, feedback)
+                  SettingsSection(
+                      title: Text(AppLocalizations.of(context)!.prayerTimes),
+                      tiles: [
+                        // calculation method setting
+                        SettingsTile(
+                          leading: const Icon(Icons.calculate),
+                          title: Text(
+                              AppLocalizations.of(context)!.calculationMethod),
+                          description: Text(calcMethod),
+                          onPressed: (context) => showDialog(
+                            context: context,
+                            builder: (context) =>
+                                const CalculationMethodDialog(),
+                          ).then((value) {
+                            setState(() {
+                              calcMethod = value!;
+                            });
+                          }),
+                        )
+                      ]),
+
+                  // Support Section (Feedback, share App, Donate)
+                  SettingsSection(
+                      title: Text(AppLocalizations.of(context)!.support),
+                      tiles: [
+                        // Share App Tile
+                        SettingsTile(
+                            leading: const Icon(Icons.ios_share_outlined),
+                            title: Text(AppLocalizations.of(context)!
+                                .share_with_friends),
+                            onPressed: (context) => _shareApp()),
+
+                        // Feedback Tile
+                        SettingsTile(
+                            leading: const Icon(Icons.feedback_outlined),
+                            title: Text(AppLocalizations.of(context)!.feedback),
+                            onPressed: (context) => _giveFeedback())
+                      ]),
+                ],
               ),
-            ],
+            ),
           ),
-
-          // Support Section (share, donate, feedback)
-          SettingsSection(
-              title: Text(AppLocalizations.of(context)!.prayerTimes),
-              tiles: [
-                // calculation method setting
-                SettingsTile(
-                  leading: const Icon(Icons.calculate),
-                  title: Text(AppLocalizations.of(context)!.calculationMethod),
-                  description: Text(calcMethod),
-                  onPressed: (context) => showDialog(
-                    context: context,
-                    builder: (context) => const CalculationMethodDialog(),
-                  ).then((value) {
-                    setState(() {
-                      calcMethod = value!;
-                    });
-                  }),
-                )
-              ]),
-
-          // Support Section (Feedback, share App, Donate)
-          SettingsSection(
-              title: Text(AppLocalizations.of(context)!.support),
-              tiles: [
-                // Share App Tile
-                SettingsTile(
-                    leading: const Icon(Icons.ios_share_outlined),
-                    title:
-                        Text(AppLocalizations.of(context)!.share_with_friends),
-                    onPressed: (context) => _shareApp()),
-
-                // Feedback Tile
-                SettingsTile(
-                    leading: const Icon(Icons.feedback_outlined),
-                    title: Text(AppLocalizations.of(context)!.feedback),
-                    onPressed: (context) => _giveFeedback())
-              ]),
+            
+          // Paypal Donation Button
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 25),
+              child: KofiButton(
+                  kofiName: "prayersApp",
+                  style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStatePropertyAll(Colors.white)),
+                  kofiColor: KofiColor.Red),
+            ),
+          )
         ],
       ),
     ));
