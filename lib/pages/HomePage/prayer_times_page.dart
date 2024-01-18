@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/_src/_jHijri.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+import 'package:motion_toast/motion_toast.dart';
 import 'package:prayer_times/consts/NotificationTypes.dart';
 import 'package:prayer_times/prayer_times.dart';
 import 'package:prayer_times/pages/Settings/settings_page.dart';
@@ -546,7 +549,7 @@ class _PrayerTimeState extends State<PrayerTime> {
     }
   }
 
-  String _getNotificationTypeMsgAfterPress(String notificationType) {
+  String _getNotificationTypeToastMessage(String notificationType) {
     String msg = "${AppLocalizations.of(context)!.notification}: ";
     if (notificationType == NotificationTypes.adhan.toString()) {
       msg += AppLocalizations.of(context)!.adhan;
@@ -613,14 +616,23 @@ class _PrayerTimeState extends State<PrayerTime> {
                           // NotificationType Icon
                           IconButton(
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        duration: const Duration(seconds: 1),
-                                        content: Text(
-                                            _getNotificationTypeMsgAfterPress(
-                                                _getNotificationTypeAfterPress(
-                                                    notificationType)))));
+
                                 _changeNotificationTypes(notificationType);
+
+                                MotionToast(
+                                  title: Text(AppLocalizations.of(context)!.notification),
+                                  description: Text(notificationType.split(".")[1].toUpperCase()),
+                                  animationDuration: const Duration(milliseconds: 200),
+                                  toastDuration: const Duration(seconds: 1),
+                                  primaryColor: Theme.of(context).scaffoldBackgroundColor,
+                                  icon: Icons.notifications,
+                                  backgroundType: BackgroundType.transparent,
+                                  secondaryColor: Colors.green,
+                                  padding: const EdgeInsets.only(bottom: 75),
+                                  dismissable: true,
+                                  animationType: AnimationType.fromLeft,
+                                ).show(context);
+
                                 setState(() {
                                   notificationIcon =
                                       _getNotificationIcon(notificationType);

@@ -65,6 +65,8 @@ dependencies:
   share_plus: ^7.2.1
   in_app_review: ^2.0.8
   flutter_donation_buttons: ^0.4.8
+  home_widget: ^0.4.1
+  motion_toast: ^2.7.10
 
 flutter_icons:
   android: true
