@@ -19,7 +19,9 @@ A clean and user-friendly app for Muslim prayer times – simple, powerful, and 
 ## 📱 Screenshots
 
 ![image](https://github.com/user-attachments/assets/96b6e198-7268-41b6-b444-8b208553e58a)
+![image](https://github.com/user-attachments/assets/abf3a264-5053-41e8-8365-0d7789cf7a30)
 ![image](https://github.com/user-attachments/assets/546018a9-7422-4acd-a2ae-94ba5f06b9af)
+![image](https://github.com/user-attachments/assets/13490950-bd09-4011-a180-fd37c49fd7ea)
 
 ---
 
@@ -31,7 +33,9 @@ Coming soon for:
 ✅ Android (Google Play) [Android](https://play.google.com/store/apps/details?id=com.alaksoftware.prayer_times&pcampaignid=web_share)
 
 ⏳ iOS (App Store in progress)
+
 ---
+
 # 🌍 Localization
 The app supports the following languages:
 
@@ -40,17 +44,20 @@ The app supports the following languages:
 🇹🇷 Turkish
 
 🇩🇪 German
+
 ---
+
 # 🤝 Contributing
 Pull requests, feedback, and language suggestions are welcome!
+
 ---
+
 # 📜 License
 MIT License – free to use, modify, and share.
+
 ---
+
 # 🙏 Thank you for your support!
-If you like the app, share it with others or support the project on ![Ko-fi](https://ko-fi.com/alaksoftware) ☕
+If you like the app, share it with others or support the project on [Ko-fi](https://ko-fi.com/alaksoftware) ☕
 
 ```md
-![Home Screen](screenshots/home.png)
-![Qibla Screen](screenshots/qibla.png)
-
