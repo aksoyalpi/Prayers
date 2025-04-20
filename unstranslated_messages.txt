@@ -1,0 +1,42 @@
+{
+  "ar": [
+    "hijriMonth",
+    "date",
+    "skip",
+    "next",
+    "done",
+    "support",
+    "share_with_friends",
+    "feedback",
+    "chooseLanguage",
+    "acceptDua",
+    "changeNotificationDescription",
+    "checkInternetError",
+    "adhan",
+    "off",
+    "on",
+    "appThemeTitle",
+    "restartAppToChangeTheme",
+    "language",
+    "english",
+    "turkish",
+    "german",
+    "location",
+    "useGPS",
+    "gps",
+    "city",
+    "country",
+    "save",
+    "cancel",
+    "settings",
+    "general",
+    "notification",
+    "calculationMethod",
+    "prayerTimes"
+  ],
+
+  "tr": [
+    "date",
+    "useGPS"
+  ]
+}
