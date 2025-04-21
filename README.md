@@ -25,7 +25,7 @@ A clean and user-friendly app for Muslim prayer times – simple, powerful, and 
 
 ---
 
-# 🔧 Installation
+## 🔧 Installation
 The app is currently free and ad-free.
 
 Coming soon for:
@@ -36,7 +36,7 @@ Coming soon for:
 
 ---
 
-# 🌍 Localization
+## 🌍 Localization
 The app supports the following languages:
 
 🇬🇧 English
@@ -47,17 +47,16 @@ The app supports the following languages:
 
 ---
 
-# 🤝 Contributing
+## 🤝 Contributing
 Pull requests, feedback, and language suggestions are welcome!
 
 ---
 
-# 📜 License
+## 📜 License
 MIT License – free to use, modify, and share.
 
 ---
 
-# 🙏 Thank you for your support!
+## 🙏 Thank you for your support!
 If you like the app, share it with others or support the project on [Ko-fi](https://ko-fi.com/alaksoftware) ☕
 
-```md
