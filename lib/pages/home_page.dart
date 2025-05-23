@@ -16,12 +16,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int pageIndex = 0;
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
-        backgroundColor: Theme.of(context).backgroundColor,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         //color: Theme.of(context).cardColor,
         color: Colors.black87,
         animationDuration: const Duration(milliseconds: 300),
@@ -30,11 +29,12 @@ class _MyHomePageState extends State<MyHomePage> {
             pageIndex = value;
           });
         },
-        items:  const [
+        items: const [
           FaIcon(FontAwesomeIcons.personPraying, color: Colors.white70),
           FaIcon(FontAwesomeIcons.compass, color: Colors.white70),
           FaIcon(Icons.settings_outlined, color: Colors.white70)
-        ],),
+        ],
+      ),
       body: [
         const PrayerTimesPage(),
         const QiblaFinderPage(),
