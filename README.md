@@ -19,10 +19,7 @@ A clean and user-friendly app for Muslim prayer times – simple, powerful, and 
 
 ## 📱 Screenshots
 
-![image](https://github.com/user-attachments/assets/96b6e198-7268-41b6-b444-8b208553e58a)
-![image](https://github.com/user-attachments/assets/abf3a264-5053-41e8-8365-0d7789cf7a30)
-![image](https://github.com/user-attachments/assets/546018a9-7422-4acd-a2ae-94ba5f06b9af)
-![image](https://github.com/user-attachments/assets/13490950-bd09-4011-a180-fd37c49fd7ea)
+![marketing_colorful_prayers](https://github.com/user-attachments/assets/746d05f4-9032-428e-9f9e-fa0e2424c34d)
 
 ---
 
